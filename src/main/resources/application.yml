@@ -1,0 +1,26 @@
+server:
+  address: 0.0.0.0
+
+staffect:
+  site_url: "http://130.61.252.200"
+
+keycloak:
+  realm: staffect
+  auth-server-url: http://130.61.252.200:8180/
+  resource: spring-app
+  bearer-only: true
+  ssl-required: NONE
+
+spring:
+  datasource:
+    password: docker
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false
