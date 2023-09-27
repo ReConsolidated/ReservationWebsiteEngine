@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,7 +20,7 @@ public class Item {
     protected Long Id;
     protected Integer capacity;
     @OneToMany
-    protected ArrayList<AppUser> users;
+    protected List<AppUser> users;
     protected Integer quantity;
     protected LocalDateTime rentalStart;
     protected LocalDateTime rentalEnd;

@@ -2,7 +2,7 @@ package io.github.reconsolidated.zpiBackend.features.scheme;
 
 import io.github.reconsolidated.zpiBackend.features.parameter.ParameterMapping;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +20,5 @@ public class LayoutConfig {
     private String phoneNumber;
     private Boolean enableFiltering;
     private Boolean enablePossibleValues;
-    private ArrayList<ParameterMapping> parameterMap;
+    private List<ParameterMapping> parameterMap;
 }
