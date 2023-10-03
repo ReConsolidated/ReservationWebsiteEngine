@@ -6,8 +6,5 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class ParameterNumberSettings extends ParameterSettings {
-    protected String units;
-    protected Integer maxValue;
-    protected Integer minValue;
+public class ParameterBooleanSettings extends ParameterSettings{
 }
