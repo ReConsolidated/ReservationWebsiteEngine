@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class StoreConfig {
     @Id
-    @GeneratedValue(generator="store_config_generator")
+    @GeneratedValue(generator = "store_config_generator")
     private Long storeConfigId;
     @OneToOne(cascade = CascadeType.ALL)
     private CoreConfig coreConfig;

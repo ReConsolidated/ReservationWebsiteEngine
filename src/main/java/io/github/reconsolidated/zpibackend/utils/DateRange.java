@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class DateRange {
+    private final int millisecondsInDay = 86400000;
     private Date start;
     private Date end;
 
@@ -18,7 +19,7 @@ public class DateRange {
         Date current = new Date(start.getTime());
         while (current.before(end)) {
             result.add(new Date(current.getTime()));
-            current.setTime(current.getTime() + 24 * 60 * 60 * 1000);
+            current.setTime(current.getTime() + millisecondsInDay);
         }
         result.add(end);
         return result;

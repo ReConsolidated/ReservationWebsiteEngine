@@ -14,7 +14,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 @Configuration
 public class ZPIBackendApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ZPIBackendApplication.class, args);
 	}
