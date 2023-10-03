@@ -73,4 +73,72 @@ public class StoreConfigTest {
         StoreConfigsListDto dto = storeConfigService.listStoreConfigs(user);
         assertThat(dto.getStoreConfigList().size()).isEqualTo(1);
     }
+
+
+    @Test
+    @Transactional
+    public void testUpdateStoreConfig() {
+        CoreConfig coreConfig = CoreConfig.builder().build();
+        LayoutConfig layoutConfig = LayoutConfig.builder().build();
+        ItemConfig itemConfig = ItemConfig.builder().build();
+        StoreConfig storeConfig = StoreConfig.builder()
+                .coreConfig(coreConfig)
+                .layoutConfig(layoutConfig)
+                .itemConfig(itemConfig)
+                .build();
+
+        Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
+        assertThat(storeId).isNotNull();
+
+        CoreConfig coreConfig2 = CoreConfig.builder()
+                .coreConfigId(storeConfig.getCoreConfig().getCoreConfigId()).build();
+        StoreConfig storeConfig2 = StoreConfig.builder()
+                .storeConfigId(storeId)
+                .coreConfig(coreConfig2)
+                .layoutConfig(layoutConfig)
+                .itemConfig(itemConfig)
+                .build();
+
+        final String keycloakId = "unique_id";
+        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
+
+        storeConfigService.updateStoreConfig(user, storeConfig2);
+    }
+
+    @Test
+    @Transactional
+    public void testUpdateStoreConfig_fail_different_core_config() {
+        CoreConfig coreConfig = CoreConfig.builder()
+                .flexibility(false)
+                .build();
+        LayoutConfig layoutConfig = LayoutConfig.builder().build();
+        ItemConfig itemConfig = ItemConfig.builder().build();
+        StoreConfig storeConfig = StoreConfig.builder()
+                .coreConfig(coreConfig)
+                .layoutConfig(layoutConfig)
+                .itemConfig(itemConfig)
+                .build();
+
+        Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
+        assertThat(storeId).isNotNull();
+
+        CoreConfig coreConfig2 = CoreConfig.builder()
+                .coreConfigId(storeConfig.getCoreConfig().getCoreConfigId())
+                .flexibility(true)
+                .build();
+        StoreConfig storeConfig2 = StoreConfig.builder()
+                .storeConfigId(storeId)
+                .coreConfig(coreConfig2)
+                .layoutConfig(layoutConfig)
+                .itemConfig(itemConfig)
+                .build();
+
+        final String keycloakId = "unique_id";
+        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            storeConfigService.updateStoreConfig(user, storeConfig2);
+        });
+    }
+
 }
