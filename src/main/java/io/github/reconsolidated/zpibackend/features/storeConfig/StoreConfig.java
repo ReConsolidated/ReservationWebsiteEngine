@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Getter
 @Entity
@@ -19,10 +16,10 @@ public class StoreConfig {
     @Id
     @GeneratedValue(generator="store_config_generator")
     private Long storeConfigId;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private CoreConfig coreConfig;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private LayoutConfig layoutConfig;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private ItemConfig itemConfig;
 }
