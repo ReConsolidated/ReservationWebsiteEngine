@@ -1,6 +1,6 @@
 package io.github.reconsolidated.zpiBackend.features.parameter;
 
-public class ParameterNumberMapping extends ParameterMapping{
+public class ParameterNumberSettings extends ParameterSettings {
 
     protected String units;
     protected Integer maxValue;

@@ -1,6 +1,6 @@
 package io.github.reconsolidated.zpiBackend.features.scheme;
 
-public class Scheme {
+public class StoreConfig {
 
     private CoreConfig coreConfig;
     private LayoutConfig layoutConfig;

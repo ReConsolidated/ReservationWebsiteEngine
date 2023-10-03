@@ -1,6 +1,6 @@
 package io.github.reconsolidated.zpiBackend.features.scheme;
 
-import io.github.reconsolidated.zpiBackend.features.parameter.ParameterMapping;
+import io.github.reconsolidated.zpiBackend.features.parameter.ParameterSettings;
 
 import java.util.List;
 
@@ -20,5 +20,5 @@ public class LayoutConfig {
     private String phoneNumber;
     private Boolean enableFiltering;
     private Boolean enablePossibleValues;
-    private List<ParameterMapping> parameterMap;
+    private List<ParameterSettings> parameterMap;
 }
