@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -26,5 +23,11 @@ public class StoreConfigController {
     @GetMapping
     public ResponseEntity<StoreConfigsListDto> listConfigs(@CurrentUser AppUser currentUser) {
         return ResponseEntity.ok(storeConfigService.listStoreConfigs(currentUser));
+    }
+
+    @PutMapping("/{storeConfigId}")
+    public ResponseEntity<?> updateStoreConfig(@CurrentUser AppUser currentUser, StoreConfig storeConfig) {
+        storeConfigService.updateStoreConfig(currentUser, storeConfig);
+        return ResponseEntity.ok().build();
     }
 }
