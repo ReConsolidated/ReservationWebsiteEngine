@@ -1,18 +1,6 @@
 server:
   address: 0.0.0.0
 
-staffect:
-  site_url: http://localhost:8080
-  invite_emails_from: zaproszenia@businesssherif.pl
-  default_role:
-    name: Domyślne
-    color: #ff5812
-  images:
-    url_endpoint: 'https://ik.imagekit.io/businesssherif/profile-images/'
-    private_key: 'private_wV32lA7CUqRX2k3ndCicG0oTFFs='
-    public_key: 'public_WxjElhwF+zP9MaP5i7VfrKwWvsE='
-    default_image: 'https://ik.imagekit.io/businesssherif/profile_images/default'
-
 spring:
   datasource:
     password: sa
