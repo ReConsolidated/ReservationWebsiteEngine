@@ -16,7 +16,7 @@ import javax.persistence.Id;
 public class Owner {
 
     @Id
-    @GeneratedValue(generator = "owner_config_generator")
+    @GeneratedValue(generator = "owner_generator")
     private Long ownerId;
     private String name;
     private String logoSrc;
