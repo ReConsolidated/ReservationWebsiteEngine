@@ -1,9 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
-import io.github.reconsolidated.zpibackend.features.parameter.ParameterSettings;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class StoreConfigValidator {
@@ -35,10 +32,4 @@ public class StoreConfigValidator {
             }
         }
     }
-
-    private void validateParametersSettings(List<ParameterSettings> paramSettings){
-
-
-    }
-
 }
