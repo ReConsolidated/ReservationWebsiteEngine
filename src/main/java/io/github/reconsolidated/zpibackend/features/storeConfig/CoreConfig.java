@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
-import org.hibernate.Hibernate;
 import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
