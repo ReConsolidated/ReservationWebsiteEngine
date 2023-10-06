@@ -3,7 +3,6 @@ package io.github.reconsolidated.zpibackend.features.item;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -17,14 +16,14 @@ import java.util.List;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    protected Long Id;
-    protected Integer capacity;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long itemId;
+    private Integer capacity;
     @OneToMany
-    protected List<AppUser> users;
-    protected Integer quantity;
-    protected LocalDateTime rentalStart;
-    protected LocalDateTime rentalEnd;
+    private List<AppUser> users;
+    private Integer quantity;
+    private LocalDateTime rentalStart;
+    private LocalDateTime rentalEnd;
 
 
 }

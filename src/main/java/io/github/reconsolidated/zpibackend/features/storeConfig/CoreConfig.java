@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.Hibernate;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,15 +28,19 @@ public class CoreConfig {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CoreConfig that)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CoreConfig that)) {
+            return false;
+        }
         return Objects.equals(coreConfigId, that.coreConfigId) &&
-                Objects.equals(simultaneous,that.simultaneous) &&
-                Objects.equals(uniqueness,that.uniqueness) &&
-                Objects.equals(flexibility,that.flexibility) &&
-                Objects.equals(granularity,that.granularity) &&
-                Objects.equals(periodicity,that.periodicity) &&
-                Objects.equals(specificReservation,that.specificReservation);
+                Objects.equals(simultaneous, that.simultaneous) &&
+                Objects.equals(uniqueness, that.uniqueness) &&
+                Objects.equals(flexibility, that.flexibility) &&
+                Objects.equals(granularity, that.granularity) &&
+                Objects.equals(periodicity, that.periodicity) &&
+                Objects.equals(specificReservation, that.specificReservation);
     }
 
     @Override

@@ -25,9 +25,13 @@ public class AppUser {
     private AppUserRole role = AppUserRole.USER;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
         AppUser appUser = (AppUser) o;
         return id != null && Objects.equals(id, appUser.id);
     }

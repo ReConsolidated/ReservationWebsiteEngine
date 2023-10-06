@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.features.parameter;
 
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -10,7 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class ParameterSettings {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
 
     protected String name;

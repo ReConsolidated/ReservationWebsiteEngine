@@ -10,7 +10,7 @@ import java.util.Optional;
 @Validated
 public class AppUserService {
 
-    private final static String USER_NOT_FOUND_MESSAGE =
+    private static final String USER_NOT_FOUND_MESSAGE =
             "user with email %s not found";
     private final AppUserRepository appUserRepository;
 
