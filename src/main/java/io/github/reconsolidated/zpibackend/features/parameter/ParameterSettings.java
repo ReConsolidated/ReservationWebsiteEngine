@@ -1,12 +1,13 @@
 package io.github.reconsolidated.zpibackend.features.parameter;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor
+@Getter
 public class ParameterSettings {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
