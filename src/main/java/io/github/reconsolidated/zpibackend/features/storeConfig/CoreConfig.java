@@ -1,10 +1,7 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import org.hibernate.Hibernate;
+import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
