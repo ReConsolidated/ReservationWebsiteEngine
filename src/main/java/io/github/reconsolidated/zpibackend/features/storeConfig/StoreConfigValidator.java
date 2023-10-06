@@ -10,7 +10,6 @@ public class StoreConfigValidator {
 
     public void validateStoreConfig(StoreConfig storeConfig){
         validateCoreConfig(storeConfig.getCoreConfig());
-        validateParametersSettings(storeConfig.get);
     }
     private void validateCoreConfig(CoreConfig coreConfig){
 

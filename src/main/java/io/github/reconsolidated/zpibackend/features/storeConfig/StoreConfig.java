@@ -1,11 +1,13 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import io.github.reconsolidated.zpibackend.features.parameter.ParameterSettings;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -19,7 +21,9 @@ public class StoreConfig {
     @OneToOne(cascade = CascadeType.ALL)
     private CoreConfig coreConfig;
     @OneToOne(cascade = CascadeType.ALL)
-    private LayoutConfig layoutConfig;
+    private MainPageConfig mainPageConfig;
     @OneToOne(cascade = CascadeType.ALL)
-    private ItemConfig itemConfig;
+    private DetailsPageConfig detailsPageConfig;
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<ParameterSettings> parameterMap;
 }
