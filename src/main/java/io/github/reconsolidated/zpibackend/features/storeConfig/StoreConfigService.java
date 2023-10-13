@@ -10,6 +10,7 @@ import java.util.List;
 @Service
 public class StoreConfigService {
     private final StoreConfigRepository storeConfigRepository;
+    private final StoreConfigValidator storeConfigValidator;
 
     public StoreConfig createStoreConfig(StoreConfig storeConfig) {
         // TODO ZPI-59 add Owner
@@ -17,7 +18,9 @@ public class StoreConfigService {
             throw new IllegalArgumentException("Store Config Id cannot be defined before creating Store Config. " +
                     "Send configuration without Id if you want to create a new Store Config.");
         }
-        // add validation here
+
+        storeConfigValidator.validateStoreConfig(storeConfig);
+
         return storeConfigRepository.save(storeConfig);
     }
 

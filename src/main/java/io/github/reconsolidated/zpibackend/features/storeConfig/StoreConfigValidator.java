@@ -1,8 +1,11 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import io.github.reconsolidated.zpibackend.features.parameter.ParameterSettings;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class StoreConfigValidator {
 
     public void validateStoreConfig(StoreConfig storeConfig) {
