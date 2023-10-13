@@ -18,6 +18,8 @@ public class StoreConfig {
     @Id
     @GeneratedValue(generator = "store_config_generator")
     private Long storeConfigId;
+    @OneToOne
+    private Owner owner;
     @OneToOne(cascade = CascadeType.ALL)
     private CoreConfig coreConfig;
     @OneToOne(cascade = CascadeType.ALL)

@@ -1,8 +1,11 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import io.github.reconsolidated.zpibackend.features.parameter.ParameterSettings;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class StoreConfigValidator {
 
     public void validateStoreConfig(StoreConfig storeConfig) {
@@ -30,6 +33,12 @@ public class StoreConfigValidator {
                 //{ "simultaneous": false, "specificReservation": true }
                 throw new IllegalArgumentException("Impossible combination of core configuration options! simultaneous: false + specificReservation: true");
             }
+        }
+    }
+
+    private void validateParameterSettings(ParameterSettings parameterSettings){
+        switch (parameterSettings.getType()){
+            case STRING -> {}
         }
     }
 }
