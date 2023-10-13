@@ -36,9 +36,13 @@ public class StoreConfigValidator {
         }
     }
 
-    private void validateParameterSettings(ParameterSettings parameterSettings){
-        switch (parameterSettings.getType()){
-            case STRING -> {}
+    private void validateParameterSettings(ParameterSettings parameterSettings) {
+        switch (parameterSettings.getType()) {
+            case STRING -> {
+
+            }
+            default -> {
+            }
         }
     }
 }
