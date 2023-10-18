@@ -20,7 +20,11 @@ public class StoreConfigTest {
     @Test
     @Transactional
     public void testCreateStoreConfig() {
-        CoreConfig coreConfig = CoreConfig.builder().build();
+        CoreConfig coreConfig = CoreConfig.builder()
+                .flexibility(false)
+                .uniqueness(false)
+                .simultaneous(true)
+                .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
         StoreConfig storeConfig = StoreConfig.builder()
@@ -36,7 +40,11 @@ public class StoreConfigTest {
     @Test
     @Transactional
     public void testCreateStoreConfig_fail_when_id_given() {
-        CoreConfig coreConfig = CoreConfig.builder().build();
+        CoreConfig coreConfig = CoreConfig.builder()
+                .flexibility(false)
+                .uniqueness(false)
+                .simultaneous(true)
+                .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
         StoreConfig storeConfig = StoreConfig.builder()
@@ -52,7 +60,11 @@ public class StoreConfigTest {
     @Test
     @Transactional
     public void testFetchStoreConfigs() {
-        CoreConfig coreConfig = CoreConfig.builder().build();
+        CoreConfig coreConfig = CoreConfig.builder()
+                .flexibility(false)
+                .uniqueness(false)
+                .simultaneous(true)
+                .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
         StoreConfig storeConfig = StoreConfig.builder()
@@ -75,7 +87,11 @@ public class StoreConfigTest {
     @Test
     @Transactional
     public void testUpdateStoreConfig() {
-        CoreConfig coreConfig = CoreConfig.builder().build();
+        CoreConfig coreConfig = CoreConfig.builder()
+                .flexibility(false)
+                .uniqueness(false)
+                .simultaneous(true)
+                .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
         StoreConfig storeConfig = StoreConfig.builder()
@@ -88,7 +104,11 @@ public class StoreConfigTest {
         assertThat(storeId).isNotNull();
 
         CoreConfig coreConfig2 = CoreConfig.builder()
-                .coreConfigId(storeConfig.getCore().getCoreConfigId()).build();
+                .coreConfigId(storeConfig.getCore().getCoreConfigId())
+                .flexibility(false)
+                .uniqueness(false)
+                .simultaneous(true)
+                .build();
         StoreConfig storeConfig2 = StoreConfig.builder()
                 .storeConfigId(storeId)
                 .core(coreConfig2)
@@ -107,6 +127,8 @@ public class StoreConfigTest {
     public void testUpdateStoreConfig_fail_different_core_config() {
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
+                .uniqueness(false)
+                .simultaneous(true)
                 .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
@@ -122,6 +144,9 @@ public class StoreConfigTest {
         CoreConfig coreConfig2 = CoreConfig.builder()
                 .coreConfigId(storeConfig.getCore().getCoreConfigId())
                 .flexibility(true)
+                .periodicity(false)
+                .specificReservation(false)
+                .simultaneous(true)
                 .build();
         StoreConfig storeConfig2 = StoreConfig.builder()
                 .storeConfigId(storeId)
