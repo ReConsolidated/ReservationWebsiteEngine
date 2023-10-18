@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,12 +16,12 @@ public class CoreConfig {
     @Id
     @GeneratedValue(generator = "core_config_generator")
     private Long coreConfigId;
-    private Boolean flexibility;
-    private Boolean granularity;
-    private Boolean simultaneous;
-    private Boolean uniqueness;
-    private Boolean periodicity;
-    private Boolean specificReservation;
+    private Boolean flexibility = false;
+    private Boolean granularity = false;
+    private Boolean simultaneous = false;
+    private Boolean uniqueness = false;
+    private Boolean periodicity = false;
+    private Boolean specificReservation = false;
 
     @Override
     public boolean equals(Object o) {
