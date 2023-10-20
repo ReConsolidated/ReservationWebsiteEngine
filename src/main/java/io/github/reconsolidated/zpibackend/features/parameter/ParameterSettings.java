@@ -1,15 +1,18 @@
 package io.github.reconsolidated.zpibackend.features.parameter;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import lombok.*;
+
 import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@NoArgsConstructor
+@Builder
 @Getter
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonDeserialize(using = ParameterSettingsDeserializer.class)
 public class ParameterSettings {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
