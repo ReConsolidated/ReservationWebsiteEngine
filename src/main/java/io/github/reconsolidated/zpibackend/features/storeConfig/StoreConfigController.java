@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class StoreConfigController {
     private final StoreConfigService storeConfigService;
     @PostMapping
-    public ResponseEntity<Long> createStoreConfig(@CurrentUser AppUser currentUser, StoreConfig storeConfig) {
+    public ResponseEntity<Long> createStoreConfig(@CurrentUser AppUser currentUser, @RequestBody StoreConfig storeConfig) {
         StoreConfig result = storeConfigService.createStoreConfig(storeConfig);
         return ResponseEntity.ok(result.getStoreConfigId());
     }
@@ -26,7 +26,7 @@ public class StoreConfigController {
     }
 
     @PutMapping("/{storeConfigId}")
-    public ResponseEntity<?> updateStoreConfig(@CurrentUser AppUser currentUser, StoreConfig storeConfig) {
+    public ResponseEntity<?> updateStoreConfig(@CurrentUser AppUser currentUser, @RequestBody StoreConfig storeConfig) {
         storeConfigService.updateStoreConfig(currentUser, storeConfig);
         return ResponseEntity.ok().build();
     }
