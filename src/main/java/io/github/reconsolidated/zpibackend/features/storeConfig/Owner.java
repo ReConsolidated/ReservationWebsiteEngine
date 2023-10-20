@@ -22,4 +22,5 @@ public class Owner {
     private String logoSrc;
     private String phone;
     private String email;
+    private String color;
 }

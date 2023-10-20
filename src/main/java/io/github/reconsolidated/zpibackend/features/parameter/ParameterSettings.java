@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.parameter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
@@ -8,15 +9,15 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @NoArgsConstructor
 @Getter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ParameterSettings {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
-
+    protected Long parameterSettingsId;
     protected String name;
-    protected ParameterType type;
+    protected ParameterType dataType;
     protected Boolean isRequired;
     protected Boolean isFilterable;
-    protected Boolean showFirstScreen;
-    protected Boolean showSecondScreen;
+    protected Boolean showMainPage;
+    protected Boolean showDetailsPage;
 }

@@ -37,7 +37,7 @@ public class StoreConfigService {
         }
         StoreConfig currentStoreConfig = storeConfigRepository.findById(newStoreConfig.getStoreConfigId()).orElseThrow();
         // Core Config cannot be edited
-        if (!currentStoreConfig.getCoreConfig().equals(newStoreConfig.getCoreConfig())) {
+        if (!currentStoreConfig.getCore().equals(newStoreConfig.getCore())) {
             throw new IllegalArgumentException("Core Config cannot be edited");
         }
         // TODO validate

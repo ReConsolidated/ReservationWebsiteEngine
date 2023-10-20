@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +20,7 @@ public class StoreConfigValidatorTest {
                 .periodicity(true)
                 .build();
         StoreConfig storeFP = StoreConfig.builder()
-                .coreConfig(coreFP)
+                .core(coreFP)
                 .build();
         CoreConfig coreFSr = CoreConfig.builder()
                 .flexibility(true)
@@ -29,14 +28,14 @@ public class StoreConfigValidatorTest {
                 .specificReservation(true)
                 .build();
         StoreConfig storeFSr = StoreConfig.builder()
-                .coreConfig(coreFSr)
+                .core(coreFSr)
                 .build();
         CoreConfig coreU = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(true)
                 .build();
         StoreConfig storeU = StoreConfig.builder()
-                .coreConfig(coreU)
+                .core(coreU)
                 .build();
         CoreConfig coreSSr = CoreConfig.builder()
                 .flexibility(false)
@@ -45,7 +44,7 @@ public class StoreConfigValidatorTest {
                 .specificReservation(true)
                 .build();
         StoreConfig storeSSr = StoreConfig.builder()
-                .coreConfig(coreSSr)
+                .core(coreSSr)
                 .build();
 
         assertThrows(IllegalArgumentException.class,() -> storeConfigValidator.validateStoreConfig(storeFP));

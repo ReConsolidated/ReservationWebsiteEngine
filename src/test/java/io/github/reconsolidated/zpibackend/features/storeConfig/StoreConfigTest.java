@@ -24,9 +24,9 @@ public class StoreConfigTest {
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
         StoreConfig storeConfig = StoreConfig.builder()
-                .coreConfig(coreConfig)
-                .mainPageConfig(mainPageConfig)
-                .detailsPageConfig(detailsPageConfig)
+                .core(coreConfig)
+                .mainPage(mainPageConfig)
+                .detailsPage(detailsPageConfig)
                 .build();
 
         Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
@@ -41,9 +41,9 @@ public class StoreConfigTest {
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
         StoreConfig storeConfig = StoreConfig.builder()
                 .storeConfigId(1L)
-                .coreConfig(coreConfig)
-                .mainPageConfig(mainPageConfig)
-                .detailsPageConfig(detailsPageConfig)
+                .core(coreConfig)
+                .mainPage(mainPageConfig)
+                .detailsPage(detailsPageConfig)
                 .build();
 
         assertThrows(IllegalArgumentException.class, () -> storeConfigService.createStoreConfig(storeConfig));
@@ -56,9 +56,9 @@ public class StoreConfigTest {
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
         StoreConfig storeConfig = StoreConfig.builder()
-                .coreConfig(coreConfig)
-                .mainPageConfig(mainPageConfig)
-                .detailsPageConfig(detailsPageConfig)
+                .core(coreConfig)
+                .mainPage(mainPageConfig)
+                .detailsPage(detailsPageConfig)
                 .build();
 
         Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
@@ -79,21 +79,21 @@ public class StoreConfigTest {
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
         StoreConfig storeConfig = StoreConfig.builder()
-                .coreConfig(coreConfig)
-                .mainPageConfig(mainPageConfig)
-                .detailsPageConfig(detailsPageConfig)
+                .core(coreConfig)
+                .mainPage(mainPageConfig)
+                .detailsPage(detailsPageConfig)
                 .build();
 
         Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
 
         CoreConfig coreConfig2 = CoreConfig.builder()
-                .coreConfigId(storeConfig.getCoreConfig().getCoreConfigId()).build();
+                .coreConfigId(storeConfig.getCore().getCoreConfigId()).build();
         StoreConfig storeConfig2 = StoreConfig.builder()
                 .storeConfigId(storeId)
-                .coreConfig(coreConfig2)
-                .mainPageConfig(mainPageConfig)
-                .detailsPageConfig(detailsPageConfig)
+                .core(coreConfig2)
+                .mainPage(mainPageConfig)
+                .detailsPage(detailsPageConfig)
                 .build();
 
         final String keycloakId = "unique_id";
@@ -111,23 +111,23 @@ public class StoreConfigTest {
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
         StoreConfig storeConfig = StoreConfig.builder()
-                .coreConfig(coreConfig)
-                .mainPageConfig(mainPageConfig)
-                .detailsPageConfig(detailsPageConfig)
+                .core(coreConfig)
+                .mainPage(mainPageConfig)
+                .detailsPage(detailsPageConfig)
                 .build();
 
         Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
 
         CoreConfig coreConfig2 = CoreConfig.builder()
-                .coreConfigId(storeConfig.getCoreConfig().getCoreConfigId())
+                .coreConfigId(storeConfig.getCore().getCoreConfigId())
                 .flexibility(true)
                 .build();
         StoreConfig storeConfig2 = StoreConfig.builder()
                 .storeConfigId(storeId)
-                .coreConfig(coreConfig2)
-                .mainPageConfig(mainPageConfig)
-                .detailsPageConfig(detailsPageConfig)
+                .core(coreConfig2)
+                .mainPage(mainPageConfig)
+                .detailsPage(detailsPageConfig)
                 .build();
 
         final String keycloakId = "unique_id";

@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 public class ParameterStringSettings extends ParameterSettings {
-    protected Boolean isConstrained;
+    protected Boolean limitValues;
     @ElementCollection
     protected List<String> possibleValues;
 }
