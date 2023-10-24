@@ -2,11 +2,11 @@ package io.github.reconsolidated.zpibackend.features.item;
 
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
+import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -27,12 +27,12 @@ public class Item {
     private String subtitle;
     private String description;
     private String image;
+    @OneToOne
+    private Schedule schedule;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Parameter> customAttributeList;
     private Integer capacity;
     private Integer quantity;
-    private LocalDateTime rentalStart;
-    private LocalDateTime rentalEnd;
 
     public Item(Store store, ItemDto itemDto) {
         this.store = store;
