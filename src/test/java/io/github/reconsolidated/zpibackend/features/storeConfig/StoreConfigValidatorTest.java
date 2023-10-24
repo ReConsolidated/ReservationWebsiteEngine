@@ -20,6 +20,7 @@ public class StoreConfigValidatorTest {
                 .flexibility(true)
                 .periodicity(true)
                 .build();
+        // store with core: { "flexibility": true, "periodicity": true }
         StoreConfig storeFP = StoreConfig.builder()
                 .core(coreFP)
                 .build();
@@ -29,6 +30,7 @@ public class StoreConfigValidatorTest {
                 .periodicity(false)
                 .specificReservation(true)
                 .build();
+        // store with core: { "flexibility": true, "specificReservation": true }
         StoreConfig storeFSr = StoreConfig.builder()
                 .core(coreFSr)
                 .build();
@@ -37,6 +39,7 @@ public class StoreConfigValidatorTest {
                 .flexibility(false)
                 .uniqueness(true)
                 .build();
+        // store with core: { "flexibility": false, "uniqueness": true }
         StoreConfig storeFU = StoreConfig.builder()
                 .core(coreFU)
                 .build();
@@ -47,6 +50,7 @@ public class StoreConfigValidatorTest {
                 .simultaneous(false)
                 .specificReservation(true)
                 .build();
+        //store with core: { "simultaneous": false, "specificReservation": true }
         StoreConfig storeSSr = StoreConfig.builder()
                 .core(coreSSr)
                 .build();
