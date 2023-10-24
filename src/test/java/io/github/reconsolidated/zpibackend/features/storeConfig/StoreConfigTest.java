@@ -20,6 +20,9 @@ public class StoreConfigTest {
     @Test
     @Transactional
     public void testCreateStoreConfig() {
+        final String keycloakId = "unique_id";
+        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
+
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -33,13 +36,18 @@ public class StoreConfigTest {
                 .detailsPage(detailsPageConfig)
                 .build();
 
-        Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
-        assertThat(storeId).isNotNull();
+        StoreConfig createdConfig = storeConfigService.createStoreConfig(user, storeConfig);
+        assertThat(createdConfig.getStoreConfigId()).isNotNull();
+        assertThat(createdConfig.getOwner().getAppUserId().equals(user.getId())).isTrue();
+
     }
 
     @Test
     @Transactional
     public void testCreateStoreConfig_fail_when_id_given() {
+        final String keycloakId = "unique_id";
+        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
+
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -54,12 +62,15 @@ public class StoreConfigTest {
                 .detailsPage(detailsPageConfig)
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> storeConfigService.createStoreConfig(storeConfig));
+        assertThrows(IllegalArgumentException.class, () -> storeConfigService.createStoreConfig(user, storeConfig));
     }
 
     @Test
     @Transactional
     public void testFetchStoreConfigs() {
+        final String keycloakId = "unique_id";
+        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
+
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -73,11 +84,8 @@ public class StoreConfigTest {
                 .detailsPage(detailsPageConfig)
                 .build();
 
-        Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
+        Long storeId = storeConfigService.createStoreConfig(user, storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
-
-        final String keycloakId = "unique_id";
-        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
 
         StoreConfigsListDto dto = storeConfigService.listStoreConfigs(user);
         assertThat(dto.getStoreConfigList().size()).isEqualTo(1);
@@ -87,6 +95,9 @@ public class StoreConfigTest {
     @Test
     @Transactional
     public void testUpdateStoreConfig() {
+        final String keycloakId = "unique_id";
+        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
+
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -100,7 +111,7 @@ public class StoreConfigTest {
                 .detailsPage(detailsPageConfig)
                 .build();
 
-        Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
+        Long storeId = storeConfigService.createStoreConfig(user, storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
 
         CoreConfig coreConfig2 = CoreConfig.builder()
@@ -116,15 +127,15 @@ public class StoreConfigTest {
                 .detailsPage(detailsPageConfig)
                 .build();
 
-        final String keycloakId = "unique_id";
-        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
-
         storeConfigService.updateStoreConfig(user, storeConfig2);
     }
 
     @Test
     @Transactional
     public void testUpdateStoreConfig_fail_different_core_config() {
+        final String keycloakId = "unique_id";
+        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
+
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -138,7 +149,7 @@ public class StoreConfigTest {
                 .detailsPage(detailsPageConfig)
                 .build();
 
-        Long storeId = storeConfigService.createStoreConfig(storeConfig).getStoreConfigId();
+        Long storeId = storeConfigService.createStoreConfig(user, storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
 
         CoreConfig coreConfig2 = CoreConfig.builder()
@@ -154,9 +165,6 @@ public class StoreConfigTest {
                 .mainPage(mainPageConfig)
                 .detailsPage(detailsPageConfig)
                 .build();
-
-        final String keycloakId = "unique_id";
-        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
 
         assertThrows(IllegalArgumentException.class, () -> storeConfigService.updateStoreConfig(user, storeConfig2));
     }

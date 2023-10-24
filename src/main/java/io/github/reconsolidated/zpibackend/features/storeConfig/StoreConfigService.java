@@ -12,12 +12,15 @@ public class StoreConfigService {
     private final StoreConfigRepository storeConfigRepository;
     private final StoreConfigValidator storeConfigValidator;
 
-    public StoreConfig createStoreConfig(StoreConfig storeConfig) {
-        // TODO ZPI-59 add Owner
+    public StoreConfig createStoreConfig(AppUser currentUser, StoreConfig storeConfig) {
         if (storeConfig.getStoreConfigId() != null) {
             throw new IllegalArgumentException("Store Config Id cannot be defined before creating Store Config. " +
                     "Send configuration without Id if you want to create a new Store Config.");
         }
+        Owner owner = Owner.builder()
+                        .appUserId(currentUser.getId())
+                        .build();
+        storeConfig.setOwner(owner);
 
         storeConfigValidator.validateStoreConfig(storeConfig);
 
@@ -42,5 +45,14 @@ public class StoreConfigService {
         }
         // TODO validate
         storeConfigRepository.save(newStoreConfig);
+    }
+
+    public StoreConfig getStoreConfig(AppUser currentUser, Long storeConfigId) {
+        StoreConfig config = storeConfigRepository.findById(storeConfigId).orElseThrow();
+        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
+            || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot access it.");
+        }
+        return config;
     }
 }

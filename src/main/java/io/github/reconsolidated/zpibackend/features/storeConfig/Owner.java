@@ -18,9 +18,5 @@ public class Owner {
     @Id
     @GeneratedValue(generator = "owner_generator")
     private Long ownerId;
-    private String name;
-    private String logoSrc;
-    private String phone;
-    private String email;
-    private String color;
+    private Long appUserId;
 }
