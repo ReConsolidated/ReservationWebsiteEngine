@@ -33,6 +33,12 @@ public class AppUserController {
         return ResponseEntity.ok(user);
     }
 
+    @PostMapping("/color")
+    public ResponseEntity<AppUser> setColor(@CurrentUser AppUser user, @RequestParam String color) {
+        appUserService.setColor(user, color);
+        return ResponseEntity.ok(user);
+    }
+
     // TODO remove before going to production
     @DeleteMapping
     public ResponseEntity<?> deleteUser(@CurrentUser AppUser user) {

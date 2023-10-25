@@ -21,6 +21,7 @@ public class AppUser {
     private String email = "";
     private String imageUrl = "";
     private String phoneNumber = "";
+    private String color = "";
     @Enumerated(EnumType.STRING)
     private AppUserRole role = AppUserRole.USER;
 

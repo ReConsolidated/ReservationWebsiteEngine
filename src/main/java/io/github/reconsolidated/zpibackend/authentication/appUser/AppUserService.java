@@ -60,4 +60,9 @@ public class AppUserService {
     public void deleteUser(AppUser user) {
         appUserRepository.delete(user);
     }
+
+    public void setColor(AppUser user, String color) {
+        user.setColor(color);
+        appUserRepository.save(user);
+    }
 }
