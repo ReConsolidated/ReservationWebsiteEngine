@@ -33,6 +33,7 @@ public class AppUserService {
             appUser.setEmail(email);
             appUser.setFirstName(firstName);
             appUser.setLastName(lastName);
+            appUser.setNickname(firstName + " " + lastName);
 
             return appUserRepository.save(appUser);
         });

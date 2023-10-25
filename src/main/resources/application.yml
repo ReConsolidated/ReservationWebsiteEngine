@@ -1,5 +1,8 @@
 server:
   address: 0.0.0.0
+  tomcat:
+    threads:
+      max: 4
 
 staffect:
   site_url: "http://130.61.252.200"
@@ -16,6 +19,7 @@ spring:
     password: docker
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
