@@ -17,9 +17,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class Schedule {
     @Id
-    @GeneratedValue(generator = "schedule_id_generator")
+    @GeneratedValue(generator = "schedule_generator")
     private Long scheduleId;
-
     @OneToMany
     private List<ScheduleSlot> scheduleSlots;
 }
