@@ -18,6 +18,7 @@ public class StoreConfig {
     private Long storeConfigId;
     @OneToOne(cascade = CascadeType.ALL)
     private Owner owner;
+    private StoreAccessType requiredStoreAccessType = StoreAccessType.ALL;
     @OneToOne(cascade = CascadeType.ALL)
     private CoreConfig core;
     @OneToOne(cascade = CascadeType.ALL)

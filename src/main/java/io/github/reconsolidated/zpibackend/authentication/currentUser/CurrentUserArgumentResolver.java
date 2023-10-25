@@ -26,7 +26,7 @@ public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolve
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal() == null) {
-            throw new BadCredentialsException("Authentication required");
+            return null;
         }
         if (!(authentication.getPrincipal() instanceof KeycloakPrincipal principal)) {
             throw new BadCredentialsException("User not found");

@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.features.item;
 
 import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
+import io.github.reconsolidated.zpibackend.features.storeConfig.StoreConfig;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,8 @@ public class Item {
     private Integer quantity;
     private LocalDateTime rentalStart;
     private LocalDateTime rentalEnd;
+    @ManyToOne
+    private StoreConfig storeConfig;
 
 
 }
