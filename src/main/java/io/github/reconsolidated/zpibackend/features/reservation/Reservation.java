@@ -23,7 +23,7 @@ public class Reservation {
     private AppUser user;
     @OneToOne
     private Item item;
-    @OneToMany
-    private List<ScheduleSlot> scheduleSlot;
+    @OneToOne
+    private ScheduleSlot scheduleSlot;
 
 }
