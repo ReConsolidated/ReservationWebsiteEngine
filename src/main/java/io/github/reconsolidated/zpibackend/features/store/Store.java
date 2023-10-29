@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.store;
 
+import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.storeConfig.StoreConfig;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class Store {
     private StoreConfig storeConfig;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Item> items;
-
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<AppUser> addedUsers;
 
 }

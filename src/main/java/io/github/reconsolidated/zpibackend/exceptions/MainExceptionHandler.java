@@ -30,6 +30,21 @@ public class MainExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value
+            = { NoAccessException.class })
+    protected ResponseEntity<Object> handleNoAccess(
+            NoAccessException ex, WebRequest request) {
+        StringBuilder bodyOfResponse = new StringBuilder("No access: %s".formatted(ex.getMessage()));
+        if (debug) {
+            for (StackTraceElement line : ex.getStackTrace()) {
+                bodyOfResponse.append("\n");
+                bodyOfResponse.append(line.toString());
+            }
+        }
+        return handleExceptionInternal(ex, bodyOfResponse,
+                new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
+    }
+
+    @ExceptionHandler(value
             = { NoSuchElementException.class })
     protected ResponseEntity<Object> handleIllegalArgument(
             NoSuchElementException ex, WebRequest request) {
