@@ -5,10 +5,10 @@ server:
       max: 4
 
 staffect:
-  site_url: "http://130.61.252.200"
+  site_url: "https://keycloak.weasked.pl:8443"
 
 keycloak:
-  realm: staffect
+  realm: zpi
   auth-server-url: http://130.61.252.200:8180/
   resource: spring-app
   bearer-only: true
