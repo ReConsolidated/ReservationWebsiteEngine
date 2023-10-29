@@ -12,7 +12,7 @@ keycloak:
   auth-server-url: https://keycloak.weasked.pl:8443/
   resource: spring-app
   bearer-only: true
-  ssl-required: NONE
+  ssl-required: ALWAYS
 
 spring:
   datasource:
