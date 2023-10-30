@@ -5,7 +5,7 @@ server:
       max: 4
 
 staffect:
-  site_url: "http://keycloak.weasked.pl:8080"
+  site_url: "https://keycloak.weasked.pl:8443"
 
 keycloak:
   realm: zpi
