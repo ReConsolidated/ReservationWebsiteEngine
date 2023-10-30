@@ -5,14 +5,14 @@ server:
       max: 4
 
 staffect:
-  site_url: "https://keycloak.weasked.pl:8443"
+  site_url: "http://keycloak.weasked.pl:8080"
 
 keycloak:
   realm: zpi
   auth-server-url: https://keycloak.weasked.pl:8443/
   resource: spring-app
   bearer-only: true
-  ssl-required: ALWAYS
+  ssl-required: NONE
 
 spring:
   datasource:
