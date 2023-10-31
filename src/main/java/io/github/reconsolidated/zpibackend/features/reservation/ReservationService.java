@@ -40,24 +40,4 @@ public class ReservationService {
 
         return reservationRepository.save(reservation);
     }
-
-    public Boolean verifyTime(Schedule schedule, LocalDateTime startDateTime, LocalDateTime endDateTime, CoreConfig config) {
-
-        if(config.getFlexibility()) {
-            if(config.getGranularity()) {
-                //return scheduleSlot.overlaps(schedule.getScheduleSlots());
-            }
-            else {
-                //boolean t = schedule.getScheduleSlots().stream().anyMatch(scheduleSlot::isIncluded);
-            }
-
-        }
-        else {
-
-
-
-        }
-
-        return false;
-    }
 }

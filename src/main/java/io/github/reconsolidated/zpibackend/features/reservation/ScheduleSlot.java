@@ -4,9 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Getter
@@ -26,6 +24,41 @@ public class ScheduleSlot {
 
     public String toString(){
         return startDateTime.toString() + "-" + endDateTime.toString();
+    }
+
+    public ScheduleSlot[] split(LocalDateTime splitBy) {
+        if(!startDateTime.isBefore(splitBy) || !endDateTime.isAfter(splitBy)) {
+            throw new IllegalArgumentException();
+        }
+        ScheduleSlot first = ScheduleSlot.builder()
+                .startDateTime(startDateTime)
+                .endDateTime(splitBy)
+                .capacity(capacity)
+                .amount(amount)
+                .build();
+        ScheduleSlot second = ScheduleSlot.builder()
+                .startDateTime(splitBy)
+                .endDateTime(endDateTime)
+                .capacity(capacity)
+                .amount(amount)
+                .build();
+        return new ScheduleSlot[]{first, second};
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ScheduleSlot that)) return false;
+
+        if (!startDateTime.equals(that.startDateTime)) return false;
+        return endDateTime.equals(that.endDateTime);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = startDateTime.hashCode();
+        result = 31 * result + endDateTime.hashCode();
+        return result;
     }
 
     public boolean equalsTime(ScheduleSlot scheduleSlot){
@@ -51,22 +84,9 @@ public class ScheduleSlot {
         return endDateTime.isAfter(slot.getEndDateTime());
     }
 
-//    public boolean overlapsLoos(List<ScheduleSlot> slots) {
-//
-//        if(slots.isEmpty()) {
-//            return false;
-//        }
-//
-//        ScheduleSlot earliest = slots.get(0);
-//        ScheduleSlot latest = slots.get(0);
-//
-//        for(ScheduleSlot slot : slots){
-//                earliest = slot.startsEarlierThan(earliest) ? slot : earliest;
-//                latest = slot.endsLaterThan(latest) ? slot : latest;
-//        }
-//
-//        return !startDateTime.isAfter(earliest.startDateTime) && !endDateTime.isBefore(latest.endDateTime);
-//    }
+    public boolean overlap(ScheduleSlot slots) {
+        return startDateTime.isBefore(slots.endDateTime) && endDateTime.isAfter(slots.startDateTime);
+    }
 
 //    public boolean overlaps(List<ScheduleSlot> slots) {
 //
