@@ -87,35 +87,4 @@ public class ScheduleSlot {
     public boolean overlap(ScheduleSlot slots) {
         return startDateTime.isBefore(slots.endDateTime) && endDateTime.isAfter(slots.startDateTime);
     }
-
-//    public boolean overlaps(List<ScheduleSlot> slots) {
-//
-//        if(slots.isEmpty()) {
-//            return false;
-//        }
-//
-//        slots.sort(Comparator.comparing((ScheduleSlot slot) -> slot.startDateTime));
-//
-//        boolean overlaps = false;
-//        LocalDateTime prevSlotEndTime = slots.get(0).startDateTime;
-//
-//        if(!prevSlotEndTime.isAfter(startDateTime)) {
-//            Iterator<ScheduleSlot> iterator = slots.listIterator();
-//
-//            while (iterator.hasNext()) {
-//                ScheduleSlot currSlot = iterator.next();
-//                if(currSlot.startDateTime.isAfter(prevSlotEndTime)) {
-//                    break;
-//                }
-//                if(currSlot.getAmount() < amount || currSlot.getCapacity() < capacity)
-//                if(currSlot.endDateTime.isAfter(endDateTime)) {
-//                    overlaps = true;
-//                    break;
-//                }
-//            }
-//        }
-//
-//        return overlaps;
-//    }
-
 }

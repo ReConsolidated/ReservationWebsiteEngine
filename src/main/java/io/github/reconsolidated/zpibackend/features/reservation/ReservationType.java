@@ -8,5 +8,5 @@ public enum ReservationType {
     @JsonProperty("morning") MORNING,
     @JsonProperty("slot") SLOT,
     @JsonProperty("continuous") CONTINUOUS,
-    @JsonProperty("continuous") OVERNIGHT
+    @JsonProperty("overnight") OVERNIGHT
 }
