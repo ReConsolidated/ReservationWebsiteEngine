@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/store-configs", produces = MediaType.APPLICATION_JSON_VALUE)
-@Validated
 public class StoreConfigController {
     private final StoreConfigService storeConfigService;
     private final AppUserService appUserService;

@@ -28,6 +28,9 @@ public class AppUserService {
 
     public AppUser getOrCreateUser(String keycloakId, String email, String firstName, String lastName) {
         return appUserRepository.findByKeycloakId(keycloakId).orElseGet(() -> {
+            if (appUserRepository.findByEmail(email).isPresent()) {
+                throw new IllegalArgumentException("User with email " + email + " already exists");
+            }
             AppUser appUser = new AppUser();
             appUser.setKeycloakId(keycloakId);
             appUser.setEmail(email);

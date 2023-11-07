@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,11 +20,17 @@ public class Store {
 
     @Id
     @GeneratedValue(generator = "store_generator")
-    private Long storeId;
+    private Long id;
+    private String storeName;
     @OneToOne
     private StoreConfig storeConfig;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Item> items;
 
 
+    public Store(String storeName, StoreConfig storeConfig) {
+        this.storeName = storeName;
+        this.storeConfig = storeConfig;
+        this.items = new ArrayList<>();
+    }
 }
