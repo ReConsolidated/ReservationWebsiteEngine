@@ -13,7 +13,7 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Schedule implements ISchedule{
+public class Schedule implements ISchedule {
     @Id
     @GeneratedValue(generator = "schedule_generator")
     private Long scheduleId;
@@ -25,22 +25,65 @@ public class Schedule implements ISchedule{
     @OneToMany
     private List<ScheduleSlot> scheduleSlots;//it must be sorted, and not overlapping
 
+    public Schedule(Long scheduleId, Item item) {
+
+        this.scheduleId = scheduleId;
+        this.item = item;
+        this.scheduleSlots = new ArrayList<>();
+
+    }
+
     public void addSlot(ScheduleSlot scheduleSlot) {
         CoreConfig coreConfig = item.getStoreConfig().getCore();
 
         setSlotType(scheduleSlot);
 
+        ScheduleSlot slotToAdd = scheduleSlot;
+
         for(int i = 0; i < scheduleSlots.size(); i++) {
             if(coreConfig.getFlexibility()) {
+                if(scheduleSlots.get(i).startsEarlierThan(slotToAdd) &&
+                        scheduleSlots.get(i).getEndDateTime().isAfter(slotToAdd.getStartDateTime())) {
+                    //overlap by end of slot in schedule and front of new task
+                    ScheduleSlot[] splitOld = scheduleSlots.get(i).split(slotToAdd.getStartDateTime());
+                    ScheduleSlot[] splitNew = slotToAdd.split(scheduleSlots.get(i).getEndDateTime());
+                    //remove then add in the same place, so it is safe
+                    scheduleSlots.remove(i);
+                    scheduleSlots.addAll(i, Arrays.asList(splitOld[0], splitOld[1].marge(splitNew[0])));
+                    slotToAdd = splitNew[1];
 
+                } else if(scheduleSlots.get(i).getStartDateTime().isBefore(slotToAdd.getEndDateTime()) &&
+                        slotToAdd.startsEarlierThan(scheduleSlots.get(i))) {
+                    //overlap by front of task in schedule and end of new task
+                    ScheduleSlot[] splitOld = scheduleSlots.get(i).split(slotToAdd.getEndDateTime());
+                    ScheduleSlot[] splitNew = slotToAdd.split(scheduleSlots.get(i).getStartDateTime());
+                    //remove then add in the same place, so it is safe
+                    scheduleSlots.remove(i);
+                    scheduleSlots.addAll(i, Arrays.asList(splitNew[0], splitOld[0].marge(splitNew[1]), splitOld[1]));
+                    return;
+
+                } else if(slotToAdd.startsEarlierThan(scheduleSlots.get(i))) {
+                    //new slot is before next slot but they are disjunctive
+                    scheduleSlots.add(i, slotToAdd);
+                    return;
+                }
             } else {
-                if(scheduleSlot.startsEarlierThan(scheduleSlots.get(i))) {
-                    scheduleSlots.add(i, scheduleSlot);
+                if(slotToAdd.startsEarlierThan(scheduleSlots.get(i))) {
+                    //slot is before next slot so its its place
+                    if(!slotToAdd.getEndDateTime().isAfter(scheduleSlots.get(i).getStartDateTime()) &&
+                            (i == 0  || !scheduleSlots.get(i - 1).getEndDateTime().isAfter(slotToAdd.getStartDateTime()))) {
+                        //slots do not overlap
+                        scheduleSlots.add(i, slotToAdd);
+                        return;
+                    } else {
+                        //slots overlap
+                        throw new IllegalArgumentException();
+                    }
                 }
             }
-
         }
-
+        //it is first slot in the list or last slot in existing schedule
+        scheduleSlots.add(slotToAdd);
     }
     //TODO optimize
     public void addSlots(List<ScheduleSlot> scheduleSlots) {
@@ -56,15 +99,15 @@ public class Schedule implements ISchedule{
             scheduleSlot.setType(ReservationType.SLOT);
         }
         else if(core.getIsAllowOvernight()) {
-            //slots available on same day as scheduleSlot
+            //slots available on same day as new scheduleSlot
             List<ScheduleSlot> daySlots = scheduleSlots.stream()
                     .filter(slot ->
                             slot.getStartDateTime().getYear() == scheduleSlot.getStartDateTime().getYear() && slot.getStartDateTime().getDayOfYear() == scheduleSlot.getStartDateTime().getDayOfYear())
                     .toList();
             boolean isLastOnDay = true;
             if (!daySlots.isEmpty()) {
-
-                if (scheduleSlot.startsEarlierThan(daySlots.get(0))) {//first slot of a day
+                //new slot starts earlier than first slot of a day -> adjust morning event
+                if (scheduleSlot.startsEarlierThan(daySlots.get(0))) {
                     ScheduleSlot daySlot = daySlots.get(0);
                     int index = scheduleSlots.indexOf(daySlot);
 
@@ -80,21 +123,24 @@ public class Schedule implements ISchedule{
                             .build();
                     scheduleSlots.add(index, morningSlot);
                     scheduleSlot.setType(ReservationType.CONTINUOUS);
-                } else {//check whether scheduleSlot is last on its day
-
+                } else {
+                    //check whether scheduleSlot is last on its day
                     for (ScheduleSlot slot : daySlots) {
                         if (slot.endsLaterThan(scheduleSlot)) {
                             isLastOnDay = false;
                             break;
                         }
                     }
-                    if (isLastOnDay) {//last on a day
+                    if (isLastOnDay) {
+                        //last on a day
                         scheduleSlot.setType(ReservationType.OVERNIGHT);
-                    } else {//slot between other slots
+                    } else {
+                        //slot between other slots
                         scheduleSlot.setType(ReservationType.CONTINUOUS);
                     }
                 }
-            } else { //first and last slot of a day
+            } else {
+                //first and last slot of a day
                 scheduleSlot.setType(ReservationType.OVERNIGHT);
             }
 
@@ -153,16 +199,14 @@ public class Schedule implements ISchedule{
         LocalDateTime prevSlotEndTime = scheduleSlots.get(0).getStartDateTime();
 
         if(!prevSlotEndTime.isAfter(startDate)) {
-            Iterator<ScheduleSlot> iterator = scheduleSlots.listIterator();
 
-            while (iterator.hasNext()) {
-                ScheduleSlot currSlot = iterator.next();
-                if(currSlot.getStartDateTime().isAfter(prevSlotEndTime) ||
+            for (ScheduleSlot currSlot : scheduleSlots) {
+                if (currSlot.getStartDateTime().isAfter(prevSlotEndTime) ||
                         currSlot.getAmount() < amount ||
                         currSlot.getCapacity() < places) {
                     break;
                 }
-                if(currSlot.getEndDateTime().isAfter(endDate)) {
+                if (currSlot.getEndDateTime().isAfter(endDate)) {
                     verified = true;
                     break;
                 }

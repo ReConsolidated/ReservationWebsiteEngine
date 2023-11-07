@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
 
 @Entity
 @Getter
@@ -50,6 +49,7 @@ public class ScheduleSlot {
         if (this == o) return true;
         if (!(o instanceof ScheduleSlot that)) return false;
 
+        if (!amount.equals(that.amount) || !capacity.equals(that.capacity)) return false;
         if (!startDateTime.equals(that.startDateTime)) return false;
         return endDateTime.equals(that.endDateTime);
     }
@@ -74,6 +74,16 @@ public class ScheduleSlot {
 
     public boolean isIncluded(ScheduleSlot slot) {
         return !startDateTime.isAfter(slot.startDateTime) && !endDateTime.isBefore(slot.endDateTime);
+    }
+
+    public ScheduleSlot marge(ScheduleSlot scheduleSlot) {
+        if(scheduleSlot.startDateTime.equals(startDateTime) && scheduleSlot.endDateTime.equals(endDateTime)) {
+            amount += scheduleSlot.amount;
+            capacity += scheduleSlot.capacity;
+            return this;
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public boolean startsEarlierThan(ScheduleSlot slot){
