@@ -21,30 +21,60 @@ public class ParameterSettingsDeserializer extends JsonDeserializer<ParameterSet
         ParameterSettings base = ParameterSettings.builder()
                 .name(node.get("name").asText())
                 .dataType(type)
-                .isRequired(node.get("isRequired").asBoolean(false))
-                .isFilterable(node.get("isFilterable").asBoolean(false))
-                .showMainPage(node.get("showMainPage").asBoolean(false))
-                .showDetailsPage(node.get("showDetailsPage").asBoolean(false))
+                .isRequired(node.get("isRequired") != null && node.get("isRequired").asBoolean())
+                .isFilterable(node.get("isFilterable") != null && node.get("isFilterable").asBoolean())
+                .showMainPage(node.get("showMainPage") != null && node.get("showMainPage").asBoolean())
+                .showDetailsPage(node.get("showDetailsPage") != null && node.get("showDetailsPage").asBoolean())
                 .build();
         switch (type) {
             case STRING -> {
                 List<String> possibleValues = new ArrayList<>();
-                if (node.get("limitValues").asBoolean(false)) {
+                boolean limitValues = node.get("limitValues") != null && node.get("limitValues").asBoolean();
+                if (limitValues) {
                     Iterator<JsonNode> iterator = node.get("possibleValues").elements();
                     while (iterator.hasNext()) {
                         possibleValues.add(iterator.next().asText());
                     }
                     base.setDataType(ParameterType.LIST);
                 }
-                return new  ParameterStringSettings(
-                        base, node.get("limitValues").asBoolean(false), possibleValues);
+                ParameterStringSettings result = new ParameterStringSettings();
+                result.setName(base.name);
+                result.setDataType(base.dataType);
+                result.setIsRequired(base.isRequired);
+                result.setIsFilterable(base.isFilterable);
+                result.setShowMainPage(base.showMainPage);
+                result.setShowDetailsPage(base.showDetailsPage);
+                result.setLimitValues(limitValues);
+                result.setPossibleValues(possibleValues);
+                return result;
             }
             case BOOLEAN -> {
-                return new ParameterBooleanSettings(base);
+                ParameterBooleanSettings result = new ParameterBooleanSettings();
+                result.setName(base.name);
+                result.setDataType(base.dataType);
+                result.setIsRequired(base.isRequired);
+                result.setIsFilterable(base.isFilterable);
+                result.setShowMainPage(base.showMainPage);
+                result.setShowDetailsPage(base.showDetailsPage);
+                return result;
             }
             case NUMBER -> {
-                return new ParameterNumberSettings(
-                        base, node.get("unit").asText(), node.get("maxValue").asInt(), node.get("minValue").asInt());
+                String unit = node.get("unit") != null ? node.get("unit").asText() : "";
+                Integer minValue = node.get("minValue") != null ? node.get("minValue").asInt() : null;
+                Integer maxValue = node.get("maxValue") != null ? node.get("maxValue").asInt() : null;
+
+                ParameterNumberSettings result = new ParameterNumberSettings();
+                result.setName(base.name);
+                result.setDataType(base.dataType);
+                result.setIsRequired(base.isRequired);
+                result.setIsFilterable(base.isFilterable);
+                result.setShowMainPage(base.showMainPage);
+                result.setShowDetailsPage(base.showDetailsPage);
+                result.setUnits(unit);
+                result.setMaxValue(maxValue);
+                result.setMinValue(minValue);
+                return result;
+
             }
             default -> {
                 return base;

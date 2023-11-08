@@ -15,9 +15,10 @@ import javax.persistence.*;
 @JsonDeserialize(using = ParameterSettingsDeserializer.class)
 public class ParameterSettings {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "parameter_settings_generator")
     protected Long parameterSettingsId;
     protected String name;
+    @Column(insertable = false, updatable = false)
     protected ParameterType dataType;
     protected Boolean isRequired;
     protected Boolean isFilterable;

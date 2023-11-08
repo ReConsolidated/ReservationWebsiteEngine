@@ -2,6 +2,7 @@ package io.github.reconsolidated.zpibackend.features.parameter;
 
 import lombok.*;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
@@ -13,14 +14,4 @@ public class ParameterNumberSettings extends ParameterSettings {
     private Integer maxValue;
     private Integer minValue;
 
-    public ParameterNumberSettings(ParameterSettings parameterSettings, String units, Integer maxValue,
-                                   Integer minValue) {
-        super(null,
-                parameterSettings.getName(),
-                parameterSettings.getDataType(),
-                parameterSettings.getIsRequired(),
-                parameterSettings.getIsFilterable(),
-                parameterSettings.getShowMainPage(),
-                parameterSettings.getShowDetailsPage());
-    }
 }
