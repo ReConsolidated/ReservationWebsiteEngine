@@ -39,5 +39,13 @@ public class StoreConfigController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{storeConfigId}/mainPageConfig")
+    public ResponseEntity<StoreConfig> updateMainPageConfig(@CurrentUser AppUser currentUser,
+                                                  @PathVariable Long storeConfigId,
+                                                  @RequestBody MainPageConfig mainPageConfig) {
+        StoreConfig config = storeConfigService.updateMainPageConfig(currentUser, storeConfigId, mainPageConfig);
+        return ResponseEntity.ok(config);
+    }
+
 
 }

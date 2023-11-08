@@ -55,4 +55,12 @@ public class StoreConfigService {
         }
         return config;
     }
+
+    public StoreConfig updateMainPageConfig(AppUser currentUser, Long storeConfigId, MainPageConfig mainPageConfig) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigId);
+        config.setMainPage(mainPageConfig);
+        storeConfigValidator.validateStoreConfig(config);
+        storeConfigRepository.save(config);
+        return config;
+    }
 }
