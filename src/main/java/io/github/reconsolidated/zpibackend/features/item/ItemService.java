@@ -2,15 +2,20 @@ package io.github.reconsolidated.zpibackend.features.item;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemListDto;
+import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
+import io.github.reconsolidated.zpibackend.features.parameter.ParameterRepository;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final ParameterRepository parameterRepository;
     private final StoreService storeService;
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow();
@@ -21,15 +26,23 @@ public class ItemService {
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
-        return new ItemListDto(itemRepository.findAllByStore_Id(storeId));
+        return new ItemListDto(itemRepository
+                .findAllByStore_Id(storeId)
+                .stream()
+                .map(ItemDto::new)
+                .collect(Collectors.toList()));
     }
 
-    public Item createItem(AppUser currentUser, Long storeId, Item item) {
+    public Item createItem(AppUser currentUser, Long storeId, ItemDto itemDto) {
         Store store = storeService.getStore(currentUser, storeId);
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
-        item.setStore(store);
-        return itemRepository.save(item);
+        Item item = new Item(store, itemDto);
+        item = itemRepository.save(item);
+        for (Parameter p : item.getCustomAttributeList()) {
+            parameterRepository.save(p);
+        }
+        return item;
     }
 }

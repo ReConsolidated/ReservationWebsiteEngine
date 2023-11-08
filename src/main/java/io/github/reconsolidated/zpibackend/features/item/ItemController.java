@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(value = "/store/{storeId}/items", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/stores/{storeId}/items", produces = MediaType.APPLICATION_JSON_VALUE)
 @Validated
 public class ItemController {
     private final ItemService itemService;
@@ -25,7 +25,7 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<Long> createItem(@CurrentUser AppUser currentUser,
                                            @PathVariable Long storeId,
-                                           @RequestBody Item item) {
+                                           @RequestBody ItemDto item) {
         Item result = itemService.createItem(currentUser, storeId, item);
         return ResponseEntity.ok(result.getItemId());
     }

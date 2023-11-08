@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 interface StoreRepository extends JpaRepository<Store, Long> {
-    List<Store> findAllByStoreConfig_Owner(AppUser currentUser);
+
+    List<Store> findAllByOwnerAppUserId(Long id);
 }

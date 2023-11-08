@@ -4,9 +4,6 @@ server:
     threads:
       max: 4
 
-staffect:
-  site_url: "https://keycloak.weasked.pl:8443"
-
 keycloak:
   realm: zpi
   auth-server-url: https://keycloak.weasked.pl:8443/
@@ -22,7 +19,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect

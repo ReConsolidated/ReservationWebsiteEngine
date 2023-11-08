@@ -27,11 +27,22 @@ public class Item {
     private String description;
     private String image;
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Parameter> customAtributeList;
+    private List<Parameter> customAttributeList;
     private Integer capacity;
     private Integer quantity;
     private LocalDateTime rentalStart;
     private LocalDateTime rentalEnd;
 
+    public Item(Store store, ItemDto itemDto) {
+        this.store = store;
+        this.active = itemDto.getActive();
+        this.title = itemDto.getTitle();
+        this.subtitle = itemDto.getSubtitle();
+        this.description = itemDto.getDescription();
+        this.image = itemDto.getImage();
+        this.capacity = itemDto.getCapacity();
+        this.quantity = itemDto.getQuantity();
+        this.customAttributeList = itemDto.getCustomAttributeList();
+    }
 
 }

@@ -21,6 +21,8 @@ public class Store {
     @Id
     @GeneratedValue(generator = "store_generator")
     private Long id;
+    private Long ownerAppUserId;
+
     private String storeName;
     @OneToOne
     private StoreConfig storeConfig;
@@ -31,6 +33,7 @@ public class Store {
     public Store(String storeName, StoreConfig storeConfig) {
         this.storeName = storeName;
         this.storeConfig = storeConfig;
+        this.ownerAppUserId = storeConfig.getOwner().getAppUserId();
         this.items = new ArrayList<>();
     }
 }
