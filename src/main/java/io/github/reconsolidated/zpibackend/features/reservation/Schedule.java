@@ -13,7 +13,7 @@ import java.util.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Schedule implements ISchedule {
+public class Schedule {
     @Id
     @GeneratedValue(generator = "schedule_generator")
     private Long scheduleId;
