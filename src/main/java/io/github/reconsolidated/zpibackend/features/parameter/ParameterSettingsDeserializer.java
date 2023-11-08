@@ -37,44 +37,17 @@ public class ParameterSettingsDeserializer extends JsonDeserializer<ParameterSet
                     }
                     base.setDataType(ParameterType.LIST);
                 }
-                ParameterStringSettings result = new ParameterStringSettings();
-                result.setName(base.name);
-                result.setDataType(base.dataType);
-                result.setIsRequired(base.isRequired);
-                result.setIsFilterable(base.isFilterable);
-                result.setShowMainPage(base.showMainPage);
-                result.setShowDetailsPage(base.showDetailsPage);
-                result.setLimitValues(limitValues);
-                result.setPossibleValues(possibleValues);
-                return result;
+                return new  ParameterStringSettings(base, limitValues, possibleValues);
             }
             case BOOLEAN -> {
-                ParameterBooleanSettings result = new ParameterBooleanSettings();
-                result.setName(base.name);
-                result.setDataType(base.dataType);
-                result.setIsRequired(base.isRequired);
-                result.setIsFilterable(base.isFilterable);
-                result.setShowMainPage(base.showMainPage);
-                result.setShowDetailsPage(base.showDetailsPage);
-                return result;
+                return new ParameterBooleanSettings(base);
             }
             case NUMBER -> {
                 String unit = node.get("unit") != null ? node.get("unit").asText() : "";
                 Integer minValue = node.get("minValue") != null ? node.get("minValue").asInt() : null;
                 Integer maxValue = node.get("maxValue") != null ? node.get("maxValue").asInt() : null;
 
-                ParameterNumberSettings result = new ParameterNumberSettings();
-                result.setName(base.name);
-                result.setDataType(base.dataType);
-                result.setIsRequired(base.isRequired);
-                result.setIsFilterable(base.isFilterable);
-                result.setShowMainPage(base.showMainPage);
-                result.setShowDetailsPage(base.showDetailsPage);
-                result.setUnits(unit);
-                result.setMaxValue(maxValue);
-                result.setMinValue(minValue);
-                return result;
-
+                return new ParameterNumberSettings(base, unit, maxValue, minValue);
             }
             default -> {
                 return base;

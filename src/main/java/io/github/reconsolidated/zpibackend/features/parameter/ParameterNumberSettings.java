@@ -13,4 +13,14 @@ public class ParameterNumberSettings extends ParameterSettings {
     private Integer maxValue;
     private Integer minValue;
 
+    public ParameterNumberSettings(ParameterSettings parameterSettings, String units, Integer maxValue,
+                                   Integer minValue) {
+        super(null,
+                parameterSettings.getName(),
+                parameterSettings.getDataType(),
+                parameterSettings.getIsRequired(),
+                parameterSettings.getIsFilterable(),
+                parameterSettings.getShowMainPage(),
+                parameterSettings.getShowDetailsPage());
+    }
 }
