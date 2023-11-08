@@ -2,7 +2,6 @@ package io.github.reconsolidated.zpibackend.features.parameter;
 
 import lombok.*;
 
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import java.util.List;
