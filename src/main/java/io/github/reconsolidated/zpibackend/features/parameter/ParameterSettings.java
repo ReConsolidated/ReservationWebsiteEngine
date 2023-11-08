@@ -18,7 +18,6 @@ public class ParameterSettings {
     @GeneratedValue(generator = "parameter_settings_generator")
     protected Long parameterSettingsId;
     protected String name;
-    @Column(insertable = false, updatable = false)
     protected ParameterType dataType;
     protected Boolean isRequired;
     protected Boolean isFilterable;
