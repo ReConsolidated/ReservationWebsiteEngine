@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class Parameter {
 
     @Id
-    @GeneratedValue(generator = "parameter_ids")
+    @GeneratedValue(generator = "parameter_generator")
     private Long id;
     private String name;
     private String value;
