@@ -47,6 +47,13 @@ public class StoreConfigController {
         return ResponseEntity.ok(config);
     }
 
+    @GetMapping("/{storeConfigId}/mainPageConfig")
+    public ResponseEntity<MainPageConfig> getMainPageConfig(@CurrentUser AppUser currentUser,
+                                                            @PathVariable Long storeConfigId) {
+        MainPageConfig config = storeConfigService.getMainPageConfig(currentUser, storeConfigId);
+        return ResponseEntity.ok(config);
+    }
+
     @PutMapping("/{storeConfigId}/detailsPageConfig")
     public ResponseEntity<StoreConfig> updateDetailsPageConfig(@CurrentUser AppUser currentUser,
                                                             @PathVariable Long storeConfigId,
@@ -55,5 +62,11 @@ public class StoreConfigController {
         return ResponseEntity.ok(config);
     }
 
+    @GetMapping("/{storeConfigId}/detailsPageConfig")
+    public ResponseEntity<DetailsPageConfig> getDetailsPageConfig(@CurrentUser AppUser currentUser,
+                                                            @PathVariable Long storeConfigId) {
+        DetailsPageConfig config = storeConfigService.getDetailsPageConfig(currentUser, storeConfigId);
+        return ResponseEntity.ok(config);
+    }
 
 }

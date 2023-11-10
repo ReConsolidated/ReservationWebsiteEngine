@@ -71,4 +71,14 @@ public class StoreConfigService {
         storeConfigRepository.save(config);
         return config;
     }
+
+    public MainPageConfig getMainPageConfig(AppUser currentUser, Long storeConfigId) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigId);
+        return config.getMainPage();
+    }
+
+    public DetailsPageConfig getDetailsPageConfig(AppUser currentUser, Long storeConfigId) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigId);
+        return config.getDetailsPage();
+    }
 }
