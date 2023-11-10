@@ -49,8 +49,8 @@ public class ReservationService {
             schedule.processReservation(reservation);
 
             return reservationRepository.save(reservation);
-        } else if (core.getPeriodicity()) {
-        //reservation with periodic sub items
+        } else if (core.getPeriodicity() || core.getSpecificReservation()) {
+
         }
         return null;
     }
