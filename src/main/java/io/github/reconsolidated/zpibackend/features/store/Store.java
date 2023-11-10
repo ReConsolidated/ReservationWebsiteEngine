@@ -22,13 +22,11 @@ public class Store {
     @GeneratedValue(generator = "store_generator")
     private Long id;
     private Long ownerAppUserId;
-
     private String storeName;
     @OneToOne
     private StoreConfig storeConfig;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Item> items;
-
 
     public Store(String storeName, StoreConfig storeConfig) {
         this.storeName = storeName;

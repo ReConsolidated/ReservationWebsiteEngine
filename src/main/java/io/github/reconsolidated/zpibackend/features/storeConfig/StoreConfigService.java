@@ -63,4 +63,12 @@ public class StoreConfigService {
         storeConfigRepository.save(config);
         return config;
     }
+
+    public StoreConfig updateDetailsPageConfig(AppUser currentUser, Long storeConfigId, DetailsPageConfig detailsPageConfig) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigId);
+        config.setDetailsPage(detailsPageConfig);
+        storeConfigValidator.validateStoreConfig(config);
+        storeConfigRepository.save(config);
+        return config;
+    }
 }
