@@ -4,9 +4,12 @@ import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.item.ItemRepository;
 import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class ReservationService {
 
     private ReservationRepository reservationRepository;
@@ -18,11 +21,6 @@ public class ReservationService {
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStoreConfig().getCore();
 
-        if(!schedule.verify(core.getFlexibility(), request.getStartDate(), request.getEndDate(), request.getAmount(),
-                request.getPlaces())) {
-            throw new IllegalArgumentException();
-        }
-
         ScheduleSlot requestSlot = ScheduleSlot.builder()
                 .startDateTime(request.getStartDate())
                 .endDateTime(request.getEndDate())
@@ -31,16 +29,29 @@ public class ReservationService {
                 .type(ReservationType.NONE)
                 .build();
 
-        Reservation reservation = Reservation.builder()
-                .user(appUser)
-                .item(item)
-                .scheduleSlot(requestSlot)
-                .amount(request.getAmount())
-                .places(request.getPlaces())
-                .build();
+        if(core.getFlexibility()) {
+            //reservation with schedule
+            //TODO ask about specific items with schedule
+            //TODO specific + periodicity
+            if (!schedule.verify(core.getGranularity(), requestSlot)) {
+                throw new IllegalArgumentException();
+            }
 
-        schedule.processReservation(reservation);
+            Reservation reservation = Reservation.builder()
+                    .user(appUser)
+                    .item(item)
+                    .startDateTime(request.getStartDate())
+                    .endDateTime(request.getEndDate())
+                    .amount(request.getAmount())
+                    .places(request.getPlaces())
+                    .build();
 
-        return reservationRepository.save(reservation);
+            schedule.processReservation(reservation);
+
+            return reservationRepository.save(reservation);
+        } else if (core.getPeriodicity()) {
+        //reservation with periodic sub items
+        }
+        return null;
     }
 }

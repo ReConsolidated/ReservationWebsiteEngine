@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -23,9 +24,21 @@ public class Reservation {
     private AppUser user;
     @ManyToOne
     private Item item;
-    @OneToOne
-    private ScheduleSlot scheduleSlot;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
     private Integer amount;
     private Integer places;
+    private String message;
+    private Boolean confirmed;
+
+    public ScheduleSlot getScheduleSlot() {
+
+        return ScheduleSlot.builder()
+                .startDateTime(startDateTime)
+                .endDateTime(endDateTime)
+                .amount(amount)
+                .capacity(places)
+                .build();
+    }
 
 }
