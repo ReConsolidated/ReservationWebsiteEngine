@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.features.item.dtos;
 
-import io.github.reconsolidated.zpibackend.features.item.ItemDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.item;
 
+import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import lombok.*;

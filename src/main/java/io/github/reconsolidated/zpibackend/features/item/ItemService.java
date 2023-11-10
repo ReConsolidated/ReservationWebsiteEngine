@@ -1,8 +1,9 @@
 package io.github.reconsolidated.zpibackend.features.item;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemListDto;
-import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
+import io.github.reconsolidated.zpibackend.features.item.dtos.ItemStatus;
 import io.github.reconsolidated.zpibackend.features.parameter.ParameterRepository;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
@@ -17,6 +18,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ParameterRepository parameterRepository;
     private final StoreService storeService;
+
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow();
     }
@@ -29,7 +31,7 @@ public class ItemService {
         return new ItemListDto(itemRepository
                 .findAllByStore_Id(storeId)
                 .stream()
-                .map(ItemDto::new)
+                .map((item) -> new ItemDto(item, getItemStatus(item.getItemId())))
                 .collect(Collectors.toList()));
     }
 
@@ -40,9 +42,12 @@ public class ItemService {
         }
         Item item = new Item(store, itemDto);
         item = itemRepository.save(item);
-        for (Parameter p : item.getCustomAttributeList()) {
-            parameterRepository.save(p);
-        }
+        parameterRepository.saveAll(item.getCustomAttributeList());
         return item;
+    }
+
+    public ItemStatus getItemStatus(Long itemId) {
+        Item item = getItem(itemId);
+        return new ItemStatus();
     }
 }
