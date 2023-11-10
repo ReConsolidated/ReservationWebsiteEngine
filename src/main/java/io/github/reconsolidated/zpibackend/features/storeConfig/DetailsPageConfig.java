@@ -1,13 +1,13 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Builder

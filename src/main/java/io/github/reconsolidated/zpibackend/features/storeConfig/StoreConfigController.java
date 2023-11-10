@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/store-configs", produces = MediaType.APPLICATION_JSON_VALUE)
-@Validated
 public class StoreConfigController {
     private final StoreConfigService storeConfigService;
     private final AppUserService appUserService;
@@ -40,5 +39,34 @@ public class StoreConfigController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{storeConfigId}/mainPageConfig")
+    public ResponseEntity<StoreConfig> updateMainPageConfig(@CurrentUser AppUser currentUser,
+                                                  @PathVariable Long storeConfigId,
+                                                  @RequestBody MainPageConfig mainPageConfig) {
+        StoreConfig config = storeConfigService.updateMainPageConfig(currentUser, storeConfigId, mainPageConfig);
+        return ResponseEntity.ok(config);
+    }
+
+    @GetMapping("/{storeConfigId}/mainPageConfig")
+    public ResponseEntity<MainPageConfig> getMainPageConfig(@CurrentUser AppUser currentUser,
+                                                            @PathVariable Long storeConfigId) {
+        MainPageConfig config = storeConfigService.getMainPageConfig(currentUser, storeConfigId);
+        return ResponseEntity.ok(config);
+    }
+
+    @PutMapping("/{storeConfigId}/detailsPageConfig")
+    public ResponseEntity<StoreConfig> updateDetailsPageConfig(@CurrentUser AppUser currentUser,
+                                                            @PathVariable Long storeConfigId,
+                                                            @RequestBody DetailsPageConfig detailsPageConfig) {
+        StoreConfig config = storeConfigService.updateDetailsPageConfig(currentUser, storeConfigId, detailsPageConfig);
+        return ResponseEntity.ok(config);
+    }
+
+    @GetMapping("/{storeConfigId}/detailsPageConfig")
+    public ResponseEntity<DetailsPageConfig> getDetailsPageConfig(@CurrentUser AppUser currentUser,
+                                                            @PathVariable Long storeConfigId) {
+        DetailsPageConfig config = storeConfigService.getDetailsPageConfig(currentUser, storeConfigId);
+        return ResponseEntity.ok(config);
+    }
 
 }

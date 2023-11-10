@@ -55,4 +55,30 @@ public class StoreConfigService {
         }
         return config;
     }
+
+    public StoreConfig updateMainPageConfig(AppUser currentUser, Long storeConfigId, MainPageConfig mainPageConfig) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigId);
+        config.setMainPage(mainPageConfig);
+        storeConfigValidator.validateStoreConfig(config);
+        storeConfigRepository.save(config);
+        return config;
+    }
+
+    public StoreConfig updateDetailsPageConfig(AppUser currentUser, Long storeConfigId, DetailsPageConfig detailsPageConfig) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigId);
+        config.setDetailsPage(detailsPageConfig);
+        storeConfigValidator.validateStoreConfig(config);
+        storeConfigRepository.save(config);
+        return config;
+    }
+
+    public MainPageConfig getMainPageConfig(AppUser currentUser, Long storeConfigId) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigId);
+        return config.getMainPage();
+    }
+
+    public DetailsPageConfig getDetailsPageConfig(AppUser currentUser, Long storeConfigId) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigId);
+        return config.getDetailsPage();
+    }
 }
