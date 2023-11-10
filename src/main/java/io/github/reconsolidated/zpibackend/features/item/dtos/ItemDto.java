@@ -1,5 +1,6 @@
-package io.github.reconsolidated.zpibackend.features.item;
+package io.github.reconsolidated.zpibackend.features.item.dtos;
 
+import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,8 +23,9 @@ public class ItemDto {
     private List<Parameter> customAttributeList;
     private Integer capacity;
     private Integer quantity;
+    private ItemStatus itemStatus;
 
-    public ItemDto(Item item) {
+    public ItemDto(Item item, ItemStatus itemStatus) {
         this.id = item.getItemId();
         this.active = item.getActive();
         this.title = item.getTitle();
@@ -33,5 +35,6 @@ public class ItemDto {
         this.customAttributeList = item.getCustomAttributeList();
         this.capacity = item.getCapacity();
         this.quantity = item.getQuantity();
+        this.itemStatus = itemStatus;
     }
 }
