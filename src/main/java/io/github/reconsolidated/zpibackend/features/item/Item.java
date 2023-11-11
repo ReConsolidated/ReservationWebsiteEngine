@@ -32,7 +32,6 @@ public class Item {
     private Schedule schedule;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Parameter> customAttributeList;
-    private Integer capacity;
     private Integer amount;
     @OneToMany
     private List<SubItem> subItems;
@@ -46,8 +45,7 @@ public class Item {
         this.subtitle = itemDto.getSubtitle();
         this.description = itemDto.getDescription();
         this.image = itemDto.getImage();
-        this.capacity = itemDto.getCapacity();
-        this.quantity = itemDto.getQuantity();
+        this.amount = itemDto.getCapacity();
         this.customAttributeList = itemDto.getCustomAttributeList();
     }
 

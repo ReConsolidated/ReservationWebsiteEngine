@@ -23,7 +23,6 @@ public class SubItem {
     private String subtitle;
     @OneToOne
     private ScheduleSlot slot;
-    private Integer capacity;
     private Integer amount;
 
 }

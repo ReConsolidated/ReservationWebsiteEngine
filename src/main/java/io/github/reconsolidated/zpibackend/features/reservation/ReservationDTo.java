@@ -1,8 +1,15 @@
 package io.github.reconsolidated.zpibackend.features.reservation;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReservationDTo {
 
     private Long id;

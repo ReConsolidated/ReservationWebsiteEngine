@@ -26,23 +26,18 @@ public class Reservation {
     private AppUser user;
     @ManyToOne
     private Item item;
+    private Long subItemId;
     @ManyToMany
     private List<SubItem> subItemList;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     private Integer amount;
-    private Integer places;
     private String message;
     private Boolean confirmed;
 
     public ScheduleSlot getScheduleSlot() {
 
-        return ScheduleSlot.builder()
-                .startDateTime(startDateTime)
-                .endDateTime(endDateTime)
-                .amount(amount)
-                .capacity(places)
-                .build();
+        return new ScheduleSlot(startDateTime, endDateTime, amount);
     }
 
 }
