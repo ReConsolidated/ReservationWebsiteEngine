@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.features.parameter;
 
-import io.github.reconsolidated.zpibackend.features.item.Item;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

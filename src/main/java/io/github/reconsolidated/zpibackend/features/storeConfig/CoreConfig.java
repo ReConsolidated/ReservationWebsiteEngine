@@ -21,6 +21,7 @@ public class CoreConfig {
     private Boolean uniqueness = false;
     private Boolean periodicity = false;
     private Boolean specificReservation = false;
+    private Boolean isAllowOvernight = false;
 
     @Override
     public boolean equals(Object o) {
@@ -36,7 +37,8 @@ public class CoreConfig {
                 Objects.equals(flexibility, that.flexibility) &&
                 Objects.equals(granularity, that.granularity) &&
                 Objects.equals(periodicity, that.periodicity) &&
-                Objects.equals(specificReservation, that.specificReservation);
+                Objects.equals(specificReservation, that.specificReservation) &&
+                Objects.equals(isAllowOvernight, that.isAllowOvernight);
     }
 
     @Override

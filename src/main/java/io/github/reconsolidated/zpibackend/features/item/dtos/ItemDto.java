@@ -22,7 +22,6 @@ public class ItemDto {
     private String image;
     private List<Parameter> customAttributeList;
     private Integer capacity;
-    private Integer quantity;
     private ItemStatus itemStatus;
 
     public ItemDto(Item item, ItemStatus itemStatus) {
@@ -33,8 +32,7 @@ public class ItemDto {
         this.description = item.getDescription();
         this.image = item.getImage();
         this.customAttributeList = item.getCustomAttributeList();
-        this.capacity = item.getCapacity();
-        this.quantity = item.getQuantity();
+        this.capacity = item.getAmount();
         this.itemStatus = itemStatus;
     }
 }
