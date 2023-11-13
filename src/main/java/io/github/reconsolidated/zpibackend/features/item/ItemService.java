@@ -87,7 +87,9 @@ public class ItemService {
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
-
+        if (!item.getReservations().isEmpty()) {
+            throw new RuntimeException("Can't delete item with reservations");
+        }
         itemRepository.deleteById(itemId);
     }
 }
