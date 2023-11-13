@@ -1,9 +1,7 @@
 package io.github.reconsolidated.zpibackend.features.item;
 
 import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 @Entity
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

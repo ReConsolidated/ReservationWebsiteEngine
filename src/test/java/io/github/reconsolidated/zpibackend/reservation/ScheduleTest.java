@@ -243,7 +243,7 @@ public class ScheduleTest {
                 schedule.verify(false,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 12, 30), 1)));
-        //too big amount and capacity
+        //too big amount
         assertFalse(
                 schedule.verify(false,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
@@ -299,7 +299,7 @@ public class ScheduleTest {
                 schedule.verify(true,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 12, 30), 1)));
-        //too big amount and capacity
+        //too big amount
         assertFalse(
                 schedule.verify(true,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),

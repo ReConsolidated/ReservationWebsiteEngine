@@ -15,6 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleSlot {
+
+    private static final int HASHCODE_CONSTANT = 31;
     @Id
     @GeneratedValue(generator = "schedule_slot_generator")
     private Long scheduleSlotId;
@@ -30,7 +32,7 @@ public class ScheduleSlot {
         this.endDateTime = endDateTime;
         this.amount = amount;
         this.itemsAvailability = new ArrayList<>(amount);
-        for(int i = 0; i < amount; i++) {
+        for (int i = 0; i < amount; i++) {
             itemsAvailability.add(true);
         }
     }
@@ -41,22 +43,23 @@ public class ScheduleSlot {
         this.type = type;
         this.amount = amount;
         this.itemsAvailability = new ArrayList<>(amount);
-        for(int i = 0; i < amount; i++) {
+        for (int i = 0; i < amount; i++) {
             itemsAvailability.add(true);
         }
     }
 
-    public String toString(){
+    public String toString() {
         return startDateTime.toString() + "-" + endDateTime.toString() + ": " + this.amount;
     }
 
     public ScheduleSlot[] split(LocalDateTime splitBy) {
-        if(!startDateTime.isBefore(splitBy) || !endDateTime.isAfter(splitBy)) {
-            throw new IllegalArgumentException();
+        if (!startDateTime.isBefore(splitBy) || !endDateTime.isAfter(splitBy)) {
+            throw new IllegalArgumentException("Cannot split Schedule slot by time outside the slot!\nSlot: "
+                    + this.toString() + ", splitBy: " + splitBy);
         }
         ScheduleSlot first = new ScheduleSlot(startDateTime, splitBy, itemsAvailability.size());
         ScheduleSlot second = new ScheduleSlot(splitBy, endDateTime, itemsAvailability.size());
-        for(int i = 0; i < itemsAvailability.size(); i++) {
+        for (int i = 0; i < itemsAvailability.size(); i++) {
             first.getItemsAvailability().set(i, itemsAvailability.get(i));
             second.getItemsAvailability().set(i, itemsAvailability.get(i));
         }
@@ -66,11 +69,11 @@ public class ScheduleSlot {
         return new ScheduleSlot[]{first, second};
     }
 
-    public boolean equalsTime(ScheduleSlot scheduleSlot){
+    public boolean equalsTime(ScheduleSlot scheduleSlot) {
         return startDateTime.equals(scheduleSlot.startDateTime) && endDateTime.equals(scheduleSlot.endDateTime);
     }
 
-    public boolean equalsTimeFitAmount(ScheduleSlot scheduleSlot){
+    public boolean equalsTimeFitAmount(ScheduleSlot scheduleSlot) {
         return startDateTime.equals(scheduleSlot.startDateTime) &&
                 endDateTime.equals(scheduleSlot.endDateTime) &&
                 amount >= scheduleSlot.amount;
@@ -81,7 +84,7 @@ public class ScheduleSlot {
     }
 
     public ScheduleSlot marge(ScheduleSlot scheduleSlot) {
-        if(scheduleSlot.startDateTime.equals(startDateTime) && scheduleSlot.endDateTime.equals(endDateTime)) {
+        if (scheduleSlot.startDateTime.equals(startDateTime) && scheduleSlot.endDateTime.equals(endDateTime)) {
             amount += scheduleSlot.amount;
             return this;
         } else {
@@ -89,11 +92,11 @@ public class ScheduleSlot {
         }
     }
 
-    public boolean startsEarlierThan(ScheduleSlot slot){
+    public boolean startsEarlierThan(ScheduleSlot slot) {
         return startDateTime.isBefore(slot.getStartDateTime());
     }
 
-    public boolean endsLaterThan(ScheduleSlot slot){
+    public boolean endsLaterThan(ScheduleSlot slot) {
         return endDateTime.isAfter(slot.getEndDateTime());
     }
 
@@ -104,25 +107,28 @@ public class ScheduleSlot {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ScheduleSlot that)) return false;
-
-        if (!amount.equals(that.amount)) return false;
-        if (!itemsAvailability.equals(that.itemsAvailability)) return false;
-//        if (itemsAvailability.size() != that.itemsAvailability.size()) return false;
-//        for(int i = 0; i < itemsAvailability.size(); i++) {
-//            if (itemsAvailability.get(i) != that.itemsAvailability.get(i)) {
-//                return false;
-//            }
-//        }
-        if (!startDateTime.equals(that.startDateTime)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ScheduleSlot that)) {
+            return false;
+        }
+        if (!amount.equals(that.amount)) {
+            return false;
+        }
+        if (!itemsAvailability.equals(that.itemsAvailability)) {
+            return false;
+        }
+        if (!startDateTime.equals(that.startDateTime)) {
+            return false;
+        }
         return endDateTime.equals(that.endDateTime);
     }
 
     @Override
     public int hashCode() {
         int result = startDateTime.hashCode();
-        result = 31 * result + endDateTime.hashCode();
+        result = HASHCODE_CONSTANT * result + endDateTime.hashCode();
         return result;
     }
 }
