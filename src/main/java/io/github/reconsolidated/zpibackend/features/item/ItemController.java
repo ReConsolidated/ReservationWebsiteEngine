@@ -31,10 +31,37 @@ public class ItemController {
         return ResponseEntity.ok(result.getItemId());
     }
 
+    @PutMapping("/{itemId}")
+    public ResponseEntity<?> updateItem(@CurrentUser AppUser currentUser,
+                                        @PathVariable Long itemId,
+                                        @RequestBody ItemDto itemDto) {
+
+        return ResponseEntity.ok(itemService.updateItem(currentUser, itemId, itemDto));
+    }
+
     @GetMapping("/{itemId}")
     public ResponseEntity<Item> getItem(@CurrentUser AppUser currentUser,
                                         @PathVariable Long itemId) {
         return ResponseEntity.ok(itemService.getItem(itemId));
+    }
+
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<?> deleteItem(@CurrentUser AppUser currentUser,
+                                        @PathVariable Long itemId) {
+        itemService.deleteItem(currentUser, itemId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{itemId}/activate")
+    public ResponseEntity<?> activateItem(@CurrentUser AppUser currentUser,
+                                          @PathVariable Long itemId) {
+        return ResponseEntity.ok(itemService.activateItem(currentUser, itemId));
+    }
+
+    @PostMapping("/{itemId}/deactivate")
+    public ResponseEntity<?> deactivateItem(@CurrentUser AppUser currentUser,
+                                            @PathVariable Long itemId) {
+        return ResponseEntity.ok(itemService.deactivateItem(currentUser, itemId));
     }
 
     @GetMapping("/{itemId}/status")

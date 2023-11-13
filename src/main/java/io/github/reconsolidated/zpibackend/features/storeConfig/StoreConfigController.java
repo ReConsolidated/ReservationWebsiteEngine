@@ -21,6 +21,11 @@ public class StoreConfigController {
         return ResponseEntity.ok(result.getStoreConfigId());
     }
 
+    @GetMapping("/{storeConfigId}")
+    public ResponseEntity<StoreConfig> getStoreConfig(@CurrentUser AppUser currentUser, @PathVariable Long storeConfigId) {
+        return ResponseEntity.ok(storeConfigService.getStoreConfig(currentUser, storeConfigId));
+    }
+
     @GetMapping
     public ResponseEntity<StoreConfigsListDto> listConfigs(@CurrentUser AppUser currentUser) {
         return ResponseEntity.ok(storeConfigService.listStoreConfigs(currentUser));

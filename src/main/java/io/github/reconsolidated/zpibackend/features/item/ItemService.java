@@ -50,4 +50,44 @@ public class ItemService {
         Item item = getItem(itemId);
         return new ItemStatus();
     }
+
+    public ItemDto updateItem(AppUser currentUser, Long itemId, ItemDto itemDto) {
+        Item item = getItem(itemId);
+        Store store = item.getStore();
+        if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new RuntimeException("You are not the owner of this store");
+        }
+        Item newItem = new Item(store, itemDto);
+        return new ItemDto(itemRepository.save(newItem), getItemStatus(item.getItemId()));
+    }
+
+    public ItemDto activateItem(AppUser currentUser, Long itemId) {
+        Item item = getItem(itemId);
+        Store store = item.getStore();
+        if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new RuntimeException("You are not the owner of this store");
+        }
+        item.setActive(true);
+        return new ItemDto(itemRepository.save(item), getItemStatus(item.getItemId()));
+    }
+
+    public ItemDto deactivateItem(AppUser currentUser, Long itemId) {
+        Item item = getItem(itemId);
+        Store store = item.getStore();
+        if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new RuntimeException("You are not the owner of this store");
+        }
+        item.setActive(false);
+        return new ItemDto(itemRepository.save(item), getItemStatus(item.getItemId()));
+    }
+
+    public void deleteItem(AppUser currentUser, Long itemId) {
+        Item item = getItem(itemId);
+        Store store = item.getStore();
+        if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new RuntimeException("You are not the owner of this store");
+        }
+
+        itemRepository.deleteById(itemId);
+    }
 }
