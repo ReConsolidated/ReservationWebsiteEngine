@@ -28,22 +28,24 @@ public class StoreConfigService {
     }
 
     public StoreConfigsListDto listStoreConfigs(AppUser currentUser) {
-        // TODO ZPI-59 add user personalization
-        List<StoreConfig> configList = storeConfigRepository.findAll();
+        List<StoreConfig> configList = storeConfigRepository.findByOwner_AppUserId(currentUser.getId());
         return new StoreConfigsListDto(configList);
     }
 
     public void updateStoreConfig(AppUser currentUser, StoreConfig newStoreConfig) {
-        // TODO ZPI-59 add user personalization
         if (newStoreConfig.getStoreConfigId() == null) {
             throw new IllegalArgumentException("Updated Store Config Id cannot be null.");
         }
         StoreConfig currentStoreConfig = storeConfigRepository.findById(newStoreConfig.getStoreConfigId()).orElseThrow();
+        if (currentStoreConfig.getOwner() == null || currentStoreConfig.getOwner().getAppUserId() == null
+                || !currentStoreConfig.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot edit it.");
+        }
         // Core Config cannot be edited
         if (!currentStoreConfig.getCore().equals(newStoreConfig.getCore())) {
             throw new IllegalArgumentException("Core Config cannot be edited");
         }
-        // TODO validate
+        storeConfigValidator.validateStoreConfig(newStoreConfig);
         storeConfigRepository.save(newStoreConfig);
     }
 
