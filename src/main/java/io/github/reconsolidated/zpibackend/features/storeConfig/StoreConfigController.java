@@ -23,11 +23,6 @@ public class StoreConfigController {
         return ResponseEntity.ok(result.getStoreConfigId());
     }
 
-    @GetMapping("/{storeConfigId}")
-    public ResponseEntity<StoreConfig> getStoreConfig(@CurrentUser AppUser currentUser, @PathVariable Long storeConfigId) {
-        return ResponseEntity.ok(storeConfigService.getStoreConfig(currentUser, storeConfigId));
-    }
-
     @GetMapping
     public ResponseEntity<StoreConfigsListDto> listConfigs(@CurrentUser AppUser currentUser) {
         return ResponseEntity.ok(storeConfigService.listStoreConfigs(currentUser));
@@ -41,7 +36,7 @@ public class StoreConfigController {
     }
 
     @GetMapping("/{storeConfigId}")
-    public ResponseEntity<StoreConfigDto> getStoreConfig(@CurrentUser AppUser currentUser, @PathVariable Long storeConfigId) {
+    public ResponseEntity<StoreConfigDto> getStoreConfigDto(@CurrentUser AppUser currentUser, @PathVariable Long storeConfigId) {
         StoreConfigDto config = storeConfigService.getStoreConfigDto(currentUser, storeConfigId);
         return ResponseEntity.ok(config);
     }
