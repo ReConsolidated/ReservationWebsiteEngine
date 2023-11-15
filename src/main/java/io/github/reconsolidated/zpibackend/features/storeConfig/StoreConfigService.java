@@ -1,6 +1,8 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigDto;
+import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigsListDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ import java.util.List;
 public class StoreConfigService {
     private final StoreConfigRepository storeConfigRepository;
     private final StoreConfigValidator storeConfigValidator;
+    private final StoreConfigMapper storeConfigMapper;
 
     public StoreConfig createStoreConfig(AppUser currentUser, StoreConfig storeConfig) {
         if (storeConfig.getStoreConfigId() != null) {
@@ -28,22 +31,24 @@ public class StoreConfigService {
     }
 
     public StoreConfigsListDto listStoreConfigs(AppUser currentUser) {
-        // TODO ZPI-59 add user personalization
-        List<StoreConfig> configList = storeConfigRepository.findAll();
-        return new StoreConfigsListDto(configList);
+        List<StoreConfig> configList = storeConfigRepository.findByOwner_AppUserId(currentUser.getId());
+        return new StoreConfigsListDto(configList.stream().map(storeConfigMapper::toDto).toList());
     }
 
     public void updateStoreConfig(AppUser currentUser, StoreConfig newStoreConfig) {
-        // TODO ZPI-59 add user personalization
         if (newStoreConfig.getStoreConfigId() == null) {
             throw new IllegalArgumentException("Updated Store Config Id cannot be null.");
         }
         StoreConfig currentStoreConfig = storeConfigRepository.findById(newStoreConfig.getStoreConfigId()).orElseThrow();
+        if (currentStoreConfig.getOwner() == null || currentStoreConfig.getOwner().getAppUserId() == null
+                || !currentStoreConfig.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot edit it.");
+        }
         // Core Config cannot be edited
         if (!currentStoreConfig.getCore().equals(newStoreConfig.getCore())) {
             throw new IllegalArgumentException("Core Config cannot be edited");
         }
-        // TODO validate
+        storeConfigValidator.validateStoreConfig(newStoreConfig);
         storeConfigRepository.save(newStoreConfig);
     }
 
@@ -54,6 +59,15 @@ public class StoreConfigService {
             throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot access it.");
         }
         return config;
+    }
+
+    public StoreConfigDto getStoreConfigDto(AppUser currentUser, Long storeConfigId) {
+        StoreConfig config = storeConfigRepository.findById(storeConfigId).orElseThrow();
+        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
+                || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot access it.");
+        }
+        return storeConfigMapper.toDto(config);
     }
 
     public StoreConfig updateMainPageConfig(AppUser currentUser, Long storeConfigId, MainPageConfig mainPageConfig) {

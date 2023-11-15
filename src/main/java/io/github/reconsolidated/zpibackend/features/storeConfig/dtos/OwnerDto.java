@@ -1,6 +1,7 @@
-package io.github.reconsolidated.zpibackend.features.storeConfig;
+package io.github.reconsolidated.zpibackend.features.storeConfig.dtos;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.features.storeConfig.Owner;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

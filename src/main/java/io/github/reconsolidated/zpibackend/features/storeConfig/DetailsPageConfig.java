@@ -21,7 +21,7 @@ public class DetailsPageConfig {
     private boolean showItemDescription;
     private boolean showSubItemTitle;
     private boolean showSubItemSubtitle;
-    private boolean reservationConfirmationPrompt;
+    private String reservationConfirmationPrompt;
     private String reservationFailurePrompt;
     private String reservationSummaryPrompt;
 

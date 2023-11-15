@@ -3,6 +3,9 @@ package io.github.reconsolidated.zpibackend.features.storeConfig;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUserService;
 import io.github.reconsolidated.zpibackend.authentication.currentUser.CurrentUser;
+import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.OwnerDto;
+import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigDto;
+import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigsListDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +38,12 @@ public class StoreConfigController {
         Owner owner = storeConfigService.getStoreConfig(currentUser, storeConfigId).getOwner();
         AppUser appUser = appUserService.getUser(owner.getAppUserId());
         return ResponseEntity.ok(new OwnerDto(owner, appUser));
+    }
+
+    @GetMapping("/{storeConfigId}")
+    public ResponseEntity<StoreConfigDto> getStoreConfig(@CurrentUser AppUser currentUser, @PathVariable Long storeConfigId) {
+        StoreConfigDto config = storeConfigService.getStoreConfigDto(currentUser, storeConfigId);
+        return ResponseEntity.ok(config);
     }
 
     @PutMapping("/{storeConfigId}")
