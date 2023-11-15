@@ -4,6 +4,7 @@ import io.github.reconsolidated.zpibackend.utils.BooleanListToStringConverter;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +72,24 @@ public class ScheduleSlot {
 
     public boolean equalsTime(ScheduleSlot scheduleSlot) {
         return startDateTime.equals(scheduleSlot.startDateTime) && endDateTime.equals(scheduleSlot.endDateTime);
+    }
+
+    public ArrayList<Integer> getAvailableItemsIndexes(){
+        ArrayList<Integer> indexes = new ArrayList<>();
+        for(int i = 0; i < itemsAvailability.size(); i++) {
+            if(itemsAvailability.get(1)) {
+                indexes.add(i);
+            }
+        }
+        return indexes;
+    }
+
+    /**
+     This method check if passed scheduleSlot is continuation of this slot
+     [this.end == slot.start]
+     */
+    public boolean isContinuousWith(ScheduleSlot scheduleSlot) {
+        return endDateTime.equals(scheduleSlot.startDateTime);
     }
 
     public boolean equalsTimeFitAmount(ScheduleSlot scheduleSlot) {

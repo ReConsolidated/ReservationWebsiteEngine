@@ -92,4 +92,35 @@ public class ReservationService {
             }
         }
     }
+
+    public CheckAvailabilityResponse checkAvailability(CheckAvailabilityRequest request) {
+
+        Item item = itemService.getItem(request.getItemId());
+        Schedule schedule = item.getSchedule();
+        CoreConfig core = item.getStore().getStoreConfig().getCore();
+
+        ScheduleSlot requestSlot = new ScheduleSlot(request.getStartDate(), request.getEndDate(), request.getAmount());
+        if(schedule.verify(core.getGranularity(), requestSlot)) {
+            return CheckAvailabilityResponseSuccess.builder()
+                    .itemId(request.getItemId())
+                    .amount(request.getAmount())
+                    .startDate(request.getStartDate())
+                    .endDate(request.getEndDate())
+                    .build();
+        } else {
+            ArrayList<ScheduleSlot> suggestions = schedule.suggest(requestSlot);
+            if(suggestions.isEmpty()) {
+                return CheckAvailabilityResponseFailure.builder()
+                        .itemId(item.getItemId())
+                        .amount(request.getAmount())
+                        .build();
+            } else {
+                return CheckAvailabilityResponseSuggestion.builder()
+                        .itemId(item.getItemId())
+                        .amount(request.getAmount())
+                        .schedule(suggestions)
+                        .build();
+            }
+        }
+    }
 }

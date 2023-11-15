@@ -58,11 +58,11 @@ public class ScheduleTest {
         schedule.addSlot(firstSlot);
         ArrayList<ScheduleSlot> result = new ArrayList<>();
         result.add(firstSlot);
-        assertEquals(result, schedule.getScheduleSlots());
+        assertEquals(result, schedule.getAvailableScheduleSlots());
 
         schedule.addSlot(secondSlot);
         result.add(secondSlot);
-        assertEquals(result, schedule.getScheduleSlots());
+        assertEquals(result, schedule.getAvailableScheduleSlots());
 
         assertThrows(IllegalArgumentException.class, () -> schedule.addSlot(overlappingSlot));
     }
@@ -92,7 +92,7 @@ public class ScheduleTest {
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 1));
 
-        assertEquals(ReservationType.SLOT, schedule.getScheduleSlots().get(0).getType());
+        assertEquals(ReservationType.SLOT, schedule.getAvailableScheduleSlots().get(0).getType());
     }
 
     @Test
@@ -129,9 +129,9 @@ public class ScheduleTest {
                 LocalDateTime.of(2023, 1, 2, 12, 0),
                 1, ReservationType.MORNING));
 
-        assertEquals(result, schedule.getScheduleSlots());
+        assertEquals(result, schedule.getAvailableScheduleSlots());
         for (int i = 0; i < result.size(); i++) {
-            assertEquals(result.get(i).getType(), schedule.getScheduleSlots().get(i).getType());
+            assertEquals(result.get(i).getType(), schedule.getAvailableScheduleSlots().get(i).getType());
         }
 
         schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 14, 0),
@@ -149,9 +149,9 @@ public class ScheduleTest {
                 LocalDateTime.of(2023, 1, 2, 12, 0),
                 1, ReservationType.MORNING));
 
-        assertEquals(result, schedule.getScheduleSlots());
+        assertEquals(result, schedule.getAvailableScheduleSlots());
         for (int i = 0; i < result.size(); i++) {
-            assertEquals(result.get(i).getType(), schedule.getScheduleSlots().get(i).getType());
+            assertEquals(result.get(i).getType(), schedule.getAvailableScheduleSlots().get(i).getType());
         }
 
         schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 2, 13, 0),
@@ -175,9 +175,9 @@ public class ScheduleTest {
                 LocalDateTime.of(2023, 1, 3, 13, 0),
                 1, ReservationType.MORNING));
 
-        assertEquals(result, schedule.getScheduleSlots());
+        assertEquals(result, schedule.getAvailableScheduleSlots());
         for (int i = 0; i < result.size(); i++) {
-            assertEquals(result.get(i).getType(), schedule.getScheduleSlots().get(i).getType());
+            assertEquals(result.get(i).getType(), schedule.getAvailableScheduleSlots().get(i).getType());
         }
     }
 
@@ -205,7 +205,7 @@ public class ScheduleTest {
         schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0), 1));
 
-        assertEquals(ReservationType.SLOT, schedule.getScheduleSlots().get(0).getType());
+        assertEquals(ReservationType.SLOT, schedule.getAvailableScheduleSlots().get(0).getType());
     }
 
     @Test
@@ -363,7 +363,7 @@ public class ScheduleTest {
                 .build();
         schedule.processReservation(reservation);
 
-        assertEquals(result, schedule.getScheduleSlots());
+        assertEquals(result, schedule.getAvailableScheduleSlots());
 
         result.clear();
         result.add(ScheduleSlot.builder()
@@ -381,7 +381,7 @@ public class ScheduleTest {
                 .amount(2)
                 .build();
         schedule.processReservation(reservation);
-        assertEquals(result, schedule.getScheduleSlots());
+        assertEquals(result, schedule.getAvailableScheduleSlots());
 
         result.clear();
         result.add(ScheduleSlot.builder()
@@ -399,6 +399,6 @@ public class ScheduleTest {
                 .amount(1)
                 .build();
         schedule.processReservation(reservation);
-        assertEquals(result, schedule.getScheduleSlots());
+        assertEquals(result, schedule.getAvailableScheduleSlots());
     }
 }
