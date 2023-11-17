@@ -11,7 +11,7 @@ import javax.persistence.Entity;
 public class ParameterBooleanSettings extends ParameterSettings {
 
     public ParameterBooleanSettings(ParameterSettings parameterSettings) {
-        super(null,
+        super(parameterSettings.getParameterSettingsId(),
                 parameterSettings.getName(),
                 parameterSettings.getDataType(),
                 parameterSettings.getIsRequired(),
