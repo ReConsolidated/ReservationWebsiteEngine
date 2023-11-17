@@ -17,7 +17,7 @@ public class ParameterStringSettings extends ParameterSettings {
 
     public ParameterStringSettings(ParameterSettings parameterSettings, Boolean limitValues,
                                    List<String> possibleValues) {
-        super(null,
+        super(parameterSettings.getParameterSettingsId(),
                 parameterSettings.getName(),
                 parameterSettings.getDataType(),
                 parameterSettings.getIsRequired(),

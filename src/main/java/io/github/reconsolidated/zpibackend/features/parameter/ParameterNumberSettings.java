@@ -15,7 +15,7 @@ public class ParameterNumberSettings extends ParameterSettings {
 
     public ParameterNumberSettings(ParameterSettings parameterSettings, String units, Integer maxValue,
                                    Integer minValue) {
-        super(null,
+        super(parameterSettings.getParameterSettingsId(),
                 parameterSettings.getName(),
                 parameterSettings.getDataType(),
                 parameterSettings.getIsRequired(),
