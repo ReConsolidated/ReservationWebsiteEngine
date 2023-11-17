@@ -4,7 +4,6 @@ import io.github.reconsolidated.zpibackend.utils.BooleanListToStringConverter;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,39 +22,39 @@ public class ScheduleSlot {
     private Long scheduleSlotId;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
-    private Integer amount;
+    private Integer currAmount;
     @Convert(converter = BooleanListToStringConverter.class)
     private List<Boolean> itemsAvailability;
     private ReservationType type = ReservationType.NONE;
 
-    public ScheduleSlot(LocalDateTime startDateTime, LocalDateTime endDateTime, Integer amount) {
+    public ScheduleSlot(LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initialAmount) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
-        this.amount = amount;
-        this.itemsAvailability = new ArrayList<>(amount);
-        for (int i = 0; i < amount; i++) {
+        this.currAmount = initialAmount;
+        this.itemsAvailability = new ArrayList<>(initialAmount);
+        for (int i = 0; i < initialAmount; i++) {
             itemsAvailability.add(true);
         }
     }
 
-    public ScheduleSlot(LocalDateTime startDateTime, LocalDateTime endDateTime, Integer amount, ReservationType type) {
+    public ScheduleSlot(LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initAmount, ReservationType type) {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.type = type;
-        this.amount = amount;
-        this.itemsAvailability = new ArrayList<>(amount);
-        for (int i = 0; i < amount; i++) {
+        this.currAmount = initAmount;
+        this.itemsAvailability = new ArrayList<>(initAmount);
+        for (int i = 0; i < initAmount; i++) {
             itemsAvailability.add(true);
         }
     }
 
     public String toString() {
-        return startDateTime.toString() + "-" + endDateTime.toString() + ": " + this.amount;
+        return startDateTime.toString() + "-" + endDateTime.toString() + ": " + this.currAmount;
     }
 
     public ScheduleSlot[] split(LocalDateTime splitBy) {
         if (!startDateTime.isBefore(splitBy) || !endDateTime.isAfter(splitBy)) {
-            throw new IllegalArgumentException("Cannot split Schedule slot by time outside the slot!\nSlot: "
+            throw new IllegalArgumentException("Cannot split Schedule slot by time outside the slot time range!\nSlot: "
                     + this.toString() + ", splitBy: " + splitBy);
         }
         ScheduleSlot first = new ScheduleSlot(startDateTime, splitBy, itemsAvailability.size());
@@ -64,8 +63,8 @@ public class ScheduleSlot {
             first.getItemsAvailability().set(i, itemsAvailability.get(i));
             second.getItemsAvailability().set(i, itemsAvailability.get(i));
         }
-        first.setAmount(amount);
-        second.setAmount(amount);
+        first.setCurrAmount(currAmount);
+        second.setCurrAmount(currAmount);
 
         return new ScheduleSlot[]{first, second};
     }
@@ -77,7 +76,7 @@ public class ScheduleSlot {
     public ArrayList<Integer> getAvailableItemsIndexes(){
         ArrayList<Integer> indexes = new ArrayList<>();
         for(int i = 0; i < itemsAvailability.size(); i++) {
-            if(itemsAvailability.get(1)) {
+            if(itemsAvailability.get(i)) {
                 indexes.add(i);
             }
         }
@@ -95,20 +94,11 @@ public class ScheduleSlot {
     public boolean equalsTimeFitAmount(ScheduleSlot scheduleSlot) {
         return startDateTime.equals(scheduleSlot.startDateTime) &&
                 endDateTime.equals(scheduleSlot.endDateTime) &&
-                amount >= scheduleSlot.amount;
+                currAmount >= scheduleSlot.currAmount;
     }
 
     public boolean isIncluded(ScheduleSlot slot) {
         return !startDateTime.isAfter(slot.startDateTime) && !endDateTime.isBefore(slot.endDateTime);
-    }
-
-    public ScheduleSlot marge(ScheduleSlot scheduleSlot) {
-        if (scheduleSlot.startDateTime.equals(startDateTime) && scheduleSlot.endDateTime.equals(endDateTime)) {
-            amount += scheduleSlot.amount;
-            return this;
-        } else {
-            throw new IllegalArgumentException();
-        }
     }
 
     public boolean startsEarlierThan(ScheduleSlot slot) {
@@ -123,7 +113,6 @@ public class ScheduleSlot {
         return startDateTime.isBefore(slots.endDateTime) && endDateTime.isAfter(slots.startDateTime);
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -132,7 +121,7 @@ public class ScheduleSlot {
         if (!(o instanceof ScheduleSlot that)) {
             return false;
         }
-        if (!amount.equals(that.amount)) {
+        if (!currAmount.equals(that.currAmount)) {
             return false;
         }
         if (!itemsAvailability.equals(that.itemsAvailability)) {

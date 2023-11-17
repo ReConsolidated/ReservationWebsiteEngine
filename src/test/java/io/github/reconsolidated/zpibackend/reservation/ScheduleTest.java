@@ -348,7 +348,7 @@ public class ScheduleTest {
         result.add(ScheduleSlot.builder()
                 .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 0))
                 .endDateTime(LocalDateTime.of(2023, 1, 1, 13, 0))
-                .amount(1)
+                .currAmount(1)
                 .itemsAvailability(Arrays.asList(false, true))
                 .build());
         result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 13, 0),
@@ -369,7 +369,7 @@ public class ScheduleTest {
         result.add(ScheduleSlot.builder()
                 .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 0))
                 .endDateTime(LocalDateTime.of(2023, 1, 1, 13, 0))
-                .amount(1)
+                .currAmount(1)
                 .itemsAvailability(Arrays.asList(false, true))
                 .build());
 
@@ -387,7 +387,7 @@ public class ScheduleTest {
         result.add(ScheduleSlot.builder()
                 .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 0))
                 .endDateTime(LocalDateTime.of(2023, 1, 1, 12, 45))
-                .amount(1)
+                .currAmount(1)
                 .itemsAvailability(Arrays.asList(false, true))
                 .build());
 
@@ -401,4 +401,55 @@ public class ScheduleTest {
         schedule.processReservation(reservation);
         assertEquals(result, schedule.getAvailableScheduleSlots());
     }
+
+    @Test
+    public void testSuggest(){
+
+        CoreConfig core = CoreConfig.builder()
+                .flexibility(true)
+                .granularity(true)
+                .build();
+
+        StoreConfig storeConfig = StoreConfig.builder()
+                .core(core)
+                .build();
+
+        Store store = Store.builder()
+                .storeConfig(storeConfig)
+                .build();
+
+        Item item = Item.builder()
+                .store(store)
+                .amount(2)
+                .build();
+
+        Schedule schedule = new Schedule(1L, item);
+        //empty schedule -> no suggestions
+        ScheduleSlot testSlot = new ScheduleSlot(
+                LocalDateTime.of(2023, 1, 1, 12, 0),
+                LocalDateTime.of(2023, 1, 1, 13, 0),
+                2);
+
+        ArrayList<ScheduleSlot> suggestions = schedule.suggest(testSlot);
+
+        ArrayList<ScheduleSlot> expected = new ArrayList<>();
+
+        assertEquals(expected, suggestions);
+
+        ScheduleSlot dayBeforeSlot = new ScheduleSlot(
+                LocalDateTime.of(2022, 12, 31, 12, 0),
+                LocalDateTime.of(2022, 12, 31, 13, 0),
+                2);
+        ScheduleSlot dayAfterSlot = new ScheduleSlot(
+                LocalDateTime.of(2023, 1, 2, 11, 0),
+                LocalDateTime.of(2023, 1, 2, 13, 0),
+                2);
+        ScheduleSlot weekAfterSlot = new ScheduleSlot(
+                LocalDateTime.of(2023, 1, 8, 12, 0),
+                LocalDateTime.of(2023, 1, 8, 14, 0),
+                2);
+
+
+    }
+
 }

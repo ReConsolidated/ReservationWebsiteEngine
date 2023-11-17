@@ -78,7 +78,7 @@ public class ReservationService {
                 if (item.getAmount() < request.getAmount()) {
                     throw new IllegalArgumentException();
                 }
-                item.setAmount(item.getAmount() - requestSlot.getAmount());
+                item.setAmount(item.getAmount() - requestSlot.getCurrAmount());
                 Reservation reservation = Reservation.builder()
                         .user(appUser)
                         .item(item)
