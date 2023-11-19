@@ -2,7 +2,6 @@ package io.github.reconsolidated.zpibackend.features.reservation;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.authentication.currentUser.CurrentUser;
-import io.github.reconsolidated.zpibackend.features.store.dtos.CreateStoreDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
