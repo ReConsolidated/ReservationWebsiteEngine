@@ -157,13 +157,13 @@ public class Schedule {
             for (ScheduleSlot currSlot : toVerify) {
                 //remove object
                 subItemIndexes.removeIf(index -> !currSlot.getAvailableItemsIndexes().contains(index));
-                //gap in slots on amount is too small
+                //gap between slots or amount is too small
                 if (currSlot.getStartDateTime().isAfter(prevSlotEndTime) ||
                         subItemIndexes.size() < scheduleSlot.getCurrAmount()) {
                     return false;
                 }
                 //whole schedule slot is covered by slots in schedule
-                if (currSlot.getEndDateTime().isAfter(scheduleSlot.getEndDateTime())) {
+                if (!currSlot.getEndDateTime().isBefore(scheduleSlot.getEndDateTime())) {
                     return true;
                 }
             }
@@ -260,27 +260,24 @@ public class Schedule {
         ArrayList<ScheduleSlot> suggestions = new ArrayList<>(
                 getLongestSlotsWithAmount(originalSlot.getCurrAmount(), fittingDaySlots));
 
-        ScheduleSlot dayBeforeSlot = ScheduleSlot.builder()
-                .currAmount(originalSlot.getCurrAmount())
-                .startDateTime(originalSlot.getStartDateTime().minusDays(1))
-                .endDateTime(originalSlot.getEndDateTime().minusDays(1))
-                .build();
+        ScheduleSlot dayBeforeSlot = new ScheduleSlot(
+                originalSlot.getStartDateTime().minusDays(1),
+                originalSlot.getEndDateTime().minusDays(1),
+                originalSlot.getCurrAmount());
         if(verify(false, dayBeforeSlot)) {
             suggestions.add(dayBeforeSlot);
         }
-        ScheduleSlot dayAfterSlot = ScheduleSlot.builder()
-                .currAmount(originalSlot.getCurrAmount())
-                .startDateTime(originalSlot.getStartDateTime().plusDays(1))
-                .endDateTime(originalSlot.getEndDateTime().plusDays(1))
-                .build();
+        ScheduleSlot dayAfterSlot = new ScheduleSlot(
+                originalSlot.getStartDateTime().plusDays(1),
+                originalSlot.getEndDateTime().plusDays(1),
+                originalSlot.getCurrAmount());
         if(verify(false, dayAfterSlot)) {
             suggestions.add(dayAfterSlot);
         }
-        ScheduleSlot weekAfterSlot = ScheduleSlot.builder()
-                .currAmount(originalSlot.getCurrAmount())
-                .startDateTime(originalSlot.getStartDateTime().plusDays(7))
-                .endDateTime(originalSlot.getEndDateTime().plusDays(7))
-                .build();
+        ScheduleSlot weekAfterSlot = new ScheduleSlot(
+                originalSlot.getStartDateTime().plusDays(7),
+                originalSlot.getEndDateTime().plusDays(7),
+                originalSlot.getCurrAmount());
         if(verify(false, weekAfterSlot)) {
             suggestions.add(weekAfterSlot);
         }
@@ -307,36 +304,38 @@ public class Schedule {
                 //index of current first slot in continuous group of slots
                 int startIndex = continuousSlots.indexOf(slot);
                 //list of items that are continuously available
-                ArrayList<Integer> subItemIndexes= slot.getAvailableItemsIndexes();
+                ArrayList<Integer> subItemIndexes = slot.getAvailableItemsIndexes();
                 //flag for optimization
                 // if is true we don't have to check later slots because they are used in the longest possible slot
                 boolean coverAllSlots = true;
                 for (int i = startIndex + 1; i < continuousSlots.size(); i ++) {
 
                     ScheduleSlot slotToCheck = continuousSlots.get(i);
-                    boolean insufficientAmount = false;
+                    ArrayList<Integer> subItemIndexesTmp = new ArrayList<>(subItemIndexes);
                     //checking availability of each sub item
                     for (int j = 0; j < slotToCheck.getItemsAvailability().size(); j++) {
-                        if (subItemIndexes.contains(j) && !slotToCheck.getItemsAvailability().get(j)) {
-                            if (subItemIndexes.size() - 1 >= amount) {
-                                subItemIndexes.remove(Integer.valueOf(j));
-                            } else {
-                                //slot doesn't have enough continuous sub items, so we'll have to end slot before it
-                                insufficientAmount = true;
-                                coverAllSlots = false;
-                                break;
-                            }
+                        if (subItemIndexesTmp.contains(j) && !slotToCheck.getItemsAvailability().get(j)) {
+                            subItemIndexesTmp.remove(Integer.valueOf(j));
                         }
                     }
                     //ending slot
-                    if (insufficientAmount) {
+                    if (subItemIndexesTmp.size() < amount) {
                         longestSlot.setEndDateTime(continuousSlots.get(i - 1).getEndDateTime());
+                        longestSlot.setItemsAvailability(scheduleSlots.get(0).getItemsAvailability().size(), subItemIndexes);
+                        longestSlot.setCurrAmount(subItemIndexes.size());
                         longestSlots.add(longestSlot);
+                        coverAllSlots = false;
                         break;
+                    } else {
+                        subItemIndexes = subItemIndexesTmp;
                     }
                 }
                 //optimization if we have the longest possible slot containing all left slots in group
                 if(coverAllSlots) {
+                    longestSlot.setEndDateTime(continuousSlots.get(continuousSlots.size() - 1).getEndDateTime());
+                    longestSlot.setItemsAvailability(scheduleSlots.get(0).getItemsAvailability().size(), subItemIndexes);
+                    longestSlot.setCurrAmount(subItemIndexes.size());
+                    longestSlots.add(longestSlot);
                     break;
                 }
             }
@@ -362,6 +361,7 @@ public class Schedule {
             }
             prev = slot;
         }
+        continuousSlots.add(currList);
         return continuousSlots;
     }
 }

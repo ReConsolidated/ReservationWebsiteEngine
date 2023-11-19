@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -440,16 +441,90 @@ public class ScheduleTest {
                 LocalDateTime.of(2022, 12, 31, 12, 0),
                 LocalDateTime.of(2022, 12, 31, 13, 0),
                 2);
-        ScheduleSlot dayAfterSlot = new ScheduleSlot(
+        ScheduleSlot dayAfterSlotSchedule = new ScheduleSlot(
                 LocalDateTime.of(2023, 1, 2, 11, 0),
                 LocalDateTime.of(2023, 1, 2, 13, 0),
                 2);
-        ScheduleSlot weekAfterSlot = new ScheduleSlot(
+        ScheduleSlot dayAfterSlot = new ScheduleSlot(
+                LocalDateTime.of(2023, 1, 2, 12, 0),
+                LocalDateTime.of(2023, 1, 2, 13, 0),
+                2);
+        ScheduleSlot weekAfterSlotSchedule = new ScheduleSlot(
                 LocalDateTime.of(2023, 1, 8, 12, 0),
                 LocalDateTime.of(2023, 1, 8, 14, 0),
                 2);
+        ScheduleSlot weekAfterSlot = new ScheduleSlot(
+                LocalDateTime.of(2023, 1, 8, 12, 0),
+                LocalDateTime.of(2023, 1, 8, 13, 0),
+                2);
+        ScheduleSlot daySlot1 = ScheduleSlot.builder()
+                .startDateTime(LocalDateTime.of(2023, 1, 1, 10, 0))
+                .endDateTime(LocalDateTime.of(2023, 1, 1, 11, 30))
+                .currAmount(3)
+                .itemsAvailability(List.of(true, true, true, false))
+                .build();
+        ScheduleSlot daySlot2 = ScheduleSlot.builder()
+                .startDateTime(LocalDateTime.of(2023, 1, 1, 11, 30))
+                .endDateTime(LocalDateTime.of(2023, 1, 1, 12, 30))
+                .currAmount(2)
+                .itemsAvailability(List.of(false, true, true, false))
+                .build();
+        ScheduleSlot daySlotMerged = ScheduleSlot.builder()
+                .startDateTime(LocalDateTime.of(2023, 1, 1, 10, 0))
+                .endDateTime(LocalDateTime.of(2023, 1, 1, 12, 30))
+                .currAmount(2)
+                .itemsAvailability(List.of(false, true, true, false))
+                .build();
+        schedule.addSlot(dayBeforeSlot);
+        schedule.addSlot(daySlot1);
+        schedule.addSlot(daySlot2);
+        schedule.addSlot(dayAfterSlotSchedule);
+        schedule.addSlot(weekAfterSlotSchedule);
+
+        expected.clear();
+        expected.add(daySlotMerged);
+        expected.add(dayBeforeSlot);
+        expected.add(dayAfterSlot);
+        expected.add(weekAfterSlot);
+
+        suggestions = schedule.suggest(testSlot);
+
+        assertEquals(expected, suggestions);
+
+        //splitting slots with enough amount because of sub item indexes
+        schedule = new Schedule(1L, item);
+
+        ScheduleSlot daySlot3 = ScheduleSlot.builder()
+                .startDateTime(LocalDateTime.of(2023, 1, 1, 10, 0))
+                .endDateTime(LocalDateTime.of(2023, 1, 1, 11, 30))
+                .currAmount(3)
+                .itemsAvailability(List.of(true, true, true, false))
+                .build();
+        ScheduleSlot daySlot4 = ScheduleSlot.builder()
+                .startDateTime(LocalDateTime.of(2023, 1, 1, 11, 30))
+                .endDateTime(LocalDateTime.of(2023, 1, 1, 12, 30))
+                .currAmount(2)
+                .itemsAvailability(List.of(true, false, false, true))
+                .build();
+        ScheduleSlot daySlot5 = ScheduleSlot.builder()
+                .startDateTime(LocalDateTime.of(2023, 1, 1, 15, 30))
+                .endDateTime(LocalDateTime.of(2023, 1, 1, 16, 30))
+                .currAmount(1)
+                .itemsAvailability(List.of(false, false, false, true))
+                .build();
 
 
+        schedule.addSlot(daySlot3);
+        schedule.addSlot(daySlot4);
+        schedule.addSlot(daySlot5);
+
+        expected.clear();
+        expected.add(daySlot3);
+        expected.add(daySlot4);
+
+        suggestions = schedule.suggest(testSlot);
+
+        assertEquals(expected, suggestions);
     }
 
 }

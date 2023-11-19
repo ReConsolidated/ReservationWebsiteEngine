@@ -83,6 +83,15 @@ public class ScheduleSlot {
         return indexes;
     }
 
+    public void setItemsAvailability(int initAmount, ArrayList<Integer> availableItemsIndexes) {
+
+        List<Boolean> itemAvailability = new ArrayList<>(initAmount);
+        for(int i = 0; i < initAmount; i++) {
+            itemAvailability.add(availableItemsIndexes.contains(i));
+        }
+        this.itemsAvailability = itemAvailability;
+    }
+
     /**
      This method check if passed scheduleSlot is continuation of this slot
      [this.end == slot.start]
