@@ -431,7 +431,7 @@ public class ScheduleTest {
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 2);
 
-        ArrayList<ScheduleSlot> suggestions = schedule.suggest(testSlot);
+        List<ScheduleSlot> suggestions = schedule.suggest(testSlot);
 
         ArrayList<ScheduleSlot> expected = new ArrayList<>();
 

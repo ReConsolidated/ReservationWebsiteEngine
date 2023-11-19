@@ -259,7 +259,7 @@ public class Schedule {
      - if free slot in same time but day after
      - if free slot in same time but week after
      */
-    public ArrayList<ScheduleSlot> suggest(ScheduleSlot originalSlot) {
+    public List<ScheduleSlot> suggest(ScheduleSlot originalSlot) {
 
         List<ScheduleSlot> fittingDaySlots = availableScheduleSlots.stream()
                 .filter(slot ->
@@ -298,59 +298,67 @@ public class Schedule {
     /**
      Returns list of the longest possible slots that can be reserved with given amount
      */
-    private ArrayList<ScheduleSlot> getLongestSlotsWithAmount(int amount, List<ScheduleSlot> scheduleSlots) {
+    private List<ScheduleSlot> getLongestSlotsWithAmount(int amount, List<ScheduleSlot> scheduleSlots) {
         //result list of longest found slots that have sufficient amount
         ArrayList<ScheduleSlot> longestSlots = new ArrayList<>();
         //getting rid of slots with to low amount to optimize search
         List<ScheduleSlot> slotsToCheck = scheduleSlots.stream().filter(slot -> slot.getCurrAmount() >= amount).toList();
         //slot can't have a gap inside, so we only have to search through continuous groups of slots
-        ArrayList<ArrayList<ScheduleSlot>> continuousSlotsLists = getContinuousSlotsLists(slotsToCheck);
+        List<ArrayList<ScheduleSlot>> continuousSlotsLists = getContinuousSlotsLists(slotsToCheck);
 
         //for each continuous group of slots
         for (ArrayList<ScheduleSlot> continuousSlots : continuousSlotsLists) {
-            //each slot can be a start of the longest possible slot
-            for (ScheduleSlot slot : continuousSlots) {
-                ScheduleSlot longestSlot = ScheduleSlot.builder()
-                        .startDateTime(slot.getStartDateTime())
-                        .currAmount(slot.getCurrAmount())
-                        .build();
-                //index of current first slot in continuous group of slots
-                int startIndex = continuousSlots.indexOf(slot);
-                //list of items that are continuously available
-                ArrayList<Integer> subItemIndexes = slot.getAvailableItemsIndexes();
-                //flag for optimization
-                // if is true we don't have to check later slots because they are used in the longest possible slot
-                boolean coverAllSlots = true;
-                for (int i = startIndex + 1; i < continuousSlots.size(); i++) {
+            longestSlots.addAll(getLongestSlotsWithAmountFromContinuousSlots(amount, continuousSlots));
+        }
+        return longestSlots;
+    }
 
-                    ScheduleSlot slotToCheck = continuousSlots.get(i);
-                    ArrayList<Integer> subItemIndexesTmp = new ArrayList<>(subItemIndexes);
-                    //checking availability of each sub item
-                    for (int j = 0; j < slotToCheck.getItemsAvailability().size(); j++) {
-                        if (subItemIndexesTmp.contains(j) && !slotToCheck.getItemsAvailability().get(j)) {
-                            subItemIndexesTmp.remove(Integer.valueOf(j));
-                        }
-                    }
-                    //ending slot
-                    if (subItemIndexesTmp.size() < amount) {
-                        longestSlot.setEndDateTime(continuousSlots.get(i - 1).getEndDateTime());
-                        longestSlot.setItemsAvailability(scheduleSlots.get(0).getItemsAvailability().size(), subItemIndexes);
-                        longestSlot.setCurrAmount(subItemIndexes.size());
-                        longestSlots.add(longestSlot);
-                        coverAllSlots = false;
-                        break;
-                    } else {
-                        subItemIndexes = subItemIndexesTmp;
+    private List<ScheduleSlot> getLongestSlotsWithAmountFromContinuousSlots(int amount, List<ScheduleSlot> continuousSlots) {
+
+        ArrayList<ScheduleSlot> longestSlots = new ArrayList<>();
+
+        //each slot can be a start of the longest possible slot
+        for (ScheduleSlot slot : continuousSlots) {
+            ScheduleSlot longestSlot = ScheduleSlot.builder()
+                    .startDateTime(slot.getStartDateTime())
+                    .currAmount(slot.getCurrAmount())
+                    .build();
+            //index of current first slot in continuous group of slots
+            int startIndex = continuousSlots.indexOf(slot);
+            //list of items that are continuously available
+            ArrayList<Integer> subItemIndexes = slot.getAvailableItemsIndexes();
+            //flag for optimization
+            // if is true we don't have to check later slots because they are used in the longest possible slot
+            boolean coverAllSlots = true;
+            for (int i = startIndex + 1; i < continuousSlots.size(); i++) {
+
+                ScheduleSlot slotToCheck = continuousSlots.get(i);
+                ArrayList<Integer> subItemIndexesTmp = new ArrayList<>(subItemIndexes);
+                //checking availability of each sub item
+                for (int j = 0; j < slotToCheck.getItemsAvailability().size(); j++) {
+                    if (subItemIndexesTmp.contains(j) && !slotToCheck.getItemsAvailability().get(j)) {
+                        subItemIndexesTmp.remove(Integer.valueOf(j));
                     }
                 }
-                //optimization if we have the longest possible slot containing all left slots in group
-                if (coverAllSlots) {
-                    longestSlot.setEndDateTime(continuousSlots.get(continuousSlots.size() - 1).getEndDateTime());
-                    longestSlot.setItemsAvailability(scheduleSlots.get(0).getItemsAvailability().size(), subItemIndexes);
+                //ending slot
+                if (subItemIndexesTmp.size() < amount) {
+                    longestSlot.setEndDateTime(continuousSlots.get(i - 1).getEndDateTime());
+                    longestSlot.setItemsAvailability(item.getAmount(), subItemIndexes);
                     longestSlot.setCurrAmount(subItemIndexes.size());
                     longestSlots.add(longestSlot);
+                    coverAllSlots = false;
                     break;
+                } else {
+                    subItemIndexes = subItemIndexesTmp;
                 }
+            }
+            //optimization if we have the longest possible slot containing all left slots in group
+            if (coverAllSlots) {
+                longestSlot.setEndDateTime(continuousSlots.get(continuousSlots.size() - 1).getEndDateTime());
+                longestSlot.setItemsAvailability(item.getAmount(), subItemIndexes);
+                longestSlot.setCurrAmount(subItemIndexes.size());
+                longestSlots.add(longestSlot);
+                break;
             }
         }
         return longestSlots;
@@ -359,7 +367,7 @@ public class Schedule {
     /**
      Groups schedule slots from passed schedule slots list in groups that covers continuous time periods
      */
-    private ArrayList<ArrayList<ScheduleSlot>> getContinuousSlotsLists(List<ScheduleSlot> scheduleSlots) {
+    private List<ArrayList<ScheduleSlot>> getContinuousSlotsLists(List<ScheduleSlot> scheduleSlots) {
         if (scheduleSlots.isEmpty()) {
             return new ArrayList<>();
         }

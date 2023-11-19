@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -108,7 +109,7 @@ public class ReservationService {
                     .endDate(request.getEndDate())
                     .build();
         } else {
-            ArrayList<ScheduleSlot> suggestions = schedule.suggest(requestSlot);
+            List<ScheduleSlot> suggestions = schedule.suggest(requestSlot);
             if (suggestions.isEmpty()) {
                 return CheckAvailabilityResponseFailure.builder()
                         .itemId(item.getItemId())
