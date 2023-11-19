@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckAvailabilityResponseFailure implements CheckAvailabilityResponse{
+public class CheckAvailabilityResponseFailure implements CheckAvailabilityResponse {
 
     private static final int RESPONSE_CODE = 204;
     private Long itemId;

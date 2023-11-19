@@ -73,10 +73,10 @@ public class ScheduleSlot {
         return startDateTime.equals(scheduleSlot.startDateTime) && endDateTime.equals(scheduleSlot.endDateTime);
     }
 
-    public ArrayList<Integer> getAvailableItemsIndexes(){
+    public ArrayList<Integer> getAvailableItemsIndexes() {
         ArrayList<Integer> indexes = new ArrayList<>();
-        for(int i = 0; i < itemsAvailability.size(); i++) {
-            if(itemsAvailability.get(i)) {
+        for (int i = 0; i < itemsAvailability.size(); i++) {
+            if (itemsAvailability.get(i)) {
                 indexes.add(i);
             }
         }
@@ -86,7 +86,7 @@ public class ScheduleSlot {
     public void setItemsAvailability(int initAmount, ArrayList<Integer> availableItemsIndexes) {
 
         List<Boolean> itemAvailability = new ArrayList<>(initAmount);
-        for(int i = 0; i < initAmount; i++) {
+        for (int i = 0; i < initAmount; i++) {
             itemAvailability.add(availableItemsIndexes.contains(i));
         }
         this.itemsAvailability = itemAvailability;

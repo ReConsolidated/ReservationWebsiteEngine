@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckAvailabilityResponseSuggestion implements CheckAvailabilityResponse{
+public class CheckAvailabilityResponseSuggestion implements CheckAvailabilityResponse {
 
     private static final int RESPONSE_CODE = 203;
     private Long itemId;

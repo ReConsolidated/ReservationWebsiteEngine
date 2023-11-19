@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckAvailabilityResponseSuccess implements CheckAvailabilityResponse{
+public class CheckAvailabilityResponseSuccess implements CheckAvailabilityResponse {
 
     private static final int RESPONSE_CODE = 200;
     private Long itemId;

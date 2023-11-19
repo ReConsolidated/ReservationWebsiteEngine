@@ -22,6 +22,8 @@ public class Schedule {
     @OneToMany
     private List<ScheduleSlot> availableScheduleSlots = new ArrayList<>(); //it must be sorted, and not overlapping
 
+    private static final int WEEKDAYS = 7;
+
     public Schedule(Long scheduleId, Item item) {
 
         this.scheduleId = scheduleId;
@@ -249,7 +251,7 @@ public class Schedule {
         return availableItems;
     }
 
-    public ArrayList<ScheduleSlot> suggest(ScheduleSlot originalSlot){
+    public ArrayList<ScheduleSlot> suggest(ScheduleSlot originalSlot) {
 
         List<ScheduleSlot> fittingDaySlots = availableScheduleSlots.stream()
                 .filter(slot ->
@@ -264,21 +266,21 @@ public class Schedule {
                 originalSlot.getStartDateTime().minusDays(1),
                 originalSlot.getEndDateTime().minusDays(1),
                 originalSlot.getCurrAmount());
-        if(verify(false, dayBeforeSlot)) {
+        if (verify(false, dayBeforeSlot)) {
             suggestions.add(dayBeforeSlot);
         }
         ScheduleSlot dayAfterSlot = new ScheduleSlot(
                 originalSlot.getStartDateTime().plusDays(1),
                 originalSlot.getEndDateTime().plusDays(1),
                 originalSlot.getCurrAmount());
-        if(verify(false, dayAfterSlot)) {
+        if (verify(false, dayAfterSlot)) {
             suggestions.add(dayAfterSlot);
         }
         ScheduleSlot weekAfterSlot = new ScheduleSlot(
-                originalSlot.getStartDateTime().plusDays(7),
-                originalSlot.getEndDateTime().plusDays(7),
+                originalSlot.getStartDateTime().plusDays(WEEKDAYS),
+                originalSlot.getEndDateTime().plusDays(WEEKDAYS),
                 originalSlot.getCurrAmount());
-        if(verify(false, weekAfterSlot)) {
+        if (verify(false, weekAfterSlot)) {
             suggestions.add(weekAfterSlot);
         }
 
@@ -294,9 +296,9 @@ public class Schedule {
         ArrayList<ArrayList<ScheduleSlot>> continuousSlotsLists = getContinuousSlotsLists(slotsToCheck);
 
         //for each continuous group of slots
-        for(ArrayList<ScheduleSlot> continuousSlots : continuousSlotsLists) {
+        for (ArrayList<ScheduleSlot> continuousSlots : continuousSlotsLists) {
             //each slot can be a start of the longest possible slot
-            for(ScheduleSlot slot : continuousSlots) {
+            for (ScheduleSlot slot : continuousSlots) {
                 ScheduleSlot longestSlot = ScheduleSlot.builder()
                         .startDateTime(slot.getStartDateTime())
                         .currAmount(slot.getCurrAmount())
@@ -308,7 +310,7 @@ public class Schedule {
                 //flag for optimization
                 // if is true we don't have to check later slots because they are used in the longest possible slot
                 boolean coverAllSlots = true;
-                for (int i = startIndex + 1; i < continuousSlots.size(); i ++) {
+                for (int i = startIndex + 1; i < continuousSlots.size(); i++) {
 
                     ScheduleSlot slotToCheck = continuousSlots.get(i);
                     ArrayList<Integer> subItemIndexesTmp = new ArrayList<>(subItemIndexes);
@@ -331,7 +333,7 @@ public class Schedule {
                     }
                 }
                 //optimization if we have the longest possible slot containing all left slots in group
-                if(coverAllSlots) {
+                if (coverAllSlots) {
                     longestSlot.setEndDateTime(continuousSlots.get(continuousSlots.size() - 1).getEndDateTime());
                     longestSlot.setItemsAvailability(scheduleSlots.get(0).getItemsAvailability().size(), subItemIndexes);
                     longestSlot.setCurrAmount(subItemIndexes.size());
@@ -344,14 +346,14 @@ public class Schedule {
     }
 
     private ArrayList<ArrayList<ScheduleSlot>> getContinuousSlotsLists(List<ScheduleSlot> scheduleSlots) {
-        if(scheduleSlots.isEmpty()) {
+        if (scheduleSlots.isEmpty()) {
             return new ArrayList<>();
         }
         ArrayList<ArrayList<ScheduleSlot>> continuousSlots = new ArrayList<>();
         ArrayList<ScheduleSlot> currList = new ArrayList<>();
         ScheduleSlot prev = scheduleSlots.get(0);
 
-        for(ScheduleSlot slot: scheduleSlots) {
+        for (ScheduleSlot slot: scheduleSlots) {
             if (prev.isContinuousWith(slot) || prev.equalsTime(slot)) {
                 currList.add(slot);
             } else {

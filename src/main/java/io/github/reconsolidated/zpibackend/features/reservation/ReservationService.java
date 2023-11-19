@@ -74,7 +74,7 @@ public class ReservationService {
                         .build();
                 return reservationRepository.save(reservation);
             } else {
-                //simple reservations idk if it will be useful
+                //simple reservations IDK if it will be useful
                 if (item.getAmount() < request.getAmount()) {
                     throw new IllegalArgumentException();
                 }
@@ -100,7 +100,7 @@ public class ReservationService {
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
         ScheduleSlot requestSlot = new ScheduleSlot(request.getStartDate(), request.getEndDate(), request.getAmount());
-        if(schedule.verify(core.getGranularity(), requestSlot)) {
+        if (schedule.verify(core.getGranularity(), requestSlot)) {
             return CheckAvailabilityResponseSuccess.builder()
                     .itemId(request.getItemId())
                     .amount(request.getAmount())
@@ -109,7 +109,7 @@ public class ReservationService {
                     .build();
         } else {
             ArrayList<ScheduleSlot> suggestions = schedule.suggest(requestSlot);
-            if(suggestions.isEmpty()) {
+            if (suggestions.isEmpty()) {
                 return CheckAvailabilityResponseFailure.builder()
                         .itemId(item.getItemId())
                         .amount(request.getAmount())
