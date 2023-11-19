@@ -19,7 +19,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    @PostMapping
+    @PostMapping("/check")
     public ResponseEntity<?> reFetchSchedule(@CurrentUser AppUser currentUser, @RequestBody CheckAvailabilityRequest request) {
 
         CheckAvailabilityResponse response = reservationService.checkAvailability(request);
