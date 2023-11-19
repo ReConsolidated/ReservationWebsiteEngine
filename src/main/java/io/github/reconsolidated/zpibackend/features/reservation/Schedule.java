@@ -251,6 +251,14 @@ public class Schedule {
         return availableItems;
     }
 
+    /**
+     Returns list of slots that are suggested based on given slot.
+     Suggestions can be categorised into:
+     - the longest possible slots on the same day and with same amount as original slot
+     - if free slot in same time but day before
+     - if free slot in same time but day after
+     - if free slot in same time but week after
+     */
     public ArrayList<ScheduleSlot> suggest(ScheduleSlot originalSlot) {
 
         List<ScheduleSlot> fittingDaySlots = availableScheduleSlots.stream()
@@ -287,6 +295,9 @@ public class Schedule {
         return suggestions;
     }
 
+    /**
+     Returns list of the longest possible slots that can be reserved with given amount
+     */
     private ArrayList<ScheduleSlot> getLongestSlotsWithAmount(int amount, List<ScheduleSlot> scheduleSlots) {
         //result list of longest found slots that have sufficient amount
         ArrayList<ScheduleSlot> longestSlots = new ArrayList<>();
@@ -345,6 +356,9 @@ public class Schedule {
         return longestSlots;
     }
 
+    /**
+     Groups schedule slots from passed schedule slots list in groups that covers continuous time periods
+     */
     private ArrayList<ArrayList<ScheduleSlot>> getContinuousSlotsLists(List<ScheduleSlot> scheduleSlots) {
         if (scheduleSlots.isEmpty()) {
             return new ArrayList<>();

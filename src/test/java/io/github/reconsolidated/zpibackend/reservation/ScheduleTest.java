@@ -437,6 +437,7 @@ public class ScheduleTest {
 
         assertEquals(expected, suggestions);
 
+        //all types of suggestions
         ScheduleSlot dayBeforeSlot = new ScheduleSlot(
                 LocalDateTime.of(2022, 12, 31, 12, 0),
                 LocalDateTime.of(2022, 12, 31, 13, 0),
@@ -491,7 +492,7 @@ public class ScheduleTest {
 
         assertEquals(expected, suggestions);
 
-        //splitting slots with enough amount because of sub item indexes
+        //splitting slots with enough amount because of different sub item indexes
         schedule = new Schedule(1L, item);
 
         ScheduleSlot daySlot3 = ScheduleSlot.builder()
@@ -512,7 +513,6 @@ public class ScheduleTest {
                 .currAmount(1)
                 .itemsAvailability(List.of(false, false, false, true))
                 .build();
-
 
         schedule.addSlot(daySlot3);
         schedule.addSlot(daySlot4);
