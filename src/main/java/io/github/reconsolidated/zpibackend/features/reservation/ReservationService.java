@@ -92,4 +92,33 @@ public class ReservationService {
             }
         }
     }
+
+    public void deleteReservation(AppUser appUser, Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
+        Item item = reservation.getItem();
+        Schedule schedule = item.getSchedule();
+        CoreConfig core = item.getStore().getStoreConfig().getCore();
+
+        if (core.getFlexibility()) {
+            schedule.processReservationRemoval(reservation);
+        } else {
+            if (core.getPeriodicity() || core.getSpecificReservation()) {
+                ArrayList<SubItem> toReserve = new ArrayList<>();
+                for (SubItem subItem : item.getSubItems()) {
+                    for (Long subItemId: reservation.getSubItemIdList()) {
+                        if (subItem.getSubItemId().equals(subItemId)) {
+                            toReserve.add(subItem);
+                        }
+                    }
+                }
+                for (SubItem subItem : toReserve) {
+                    subItem.setAmount(subItem.getAmount() + reservation.getAmount());
+                }
+            } else {
+                item.setAmount(item.getAmount() + reservation.getAmount());
+            }
+        }
+
+        reservationRepository.delete(reservation);
+    }
 }

@@ -249,4 +249,8 @@ public class Schedule {
         }
         return availableItems;
     }
+
+    public void processReservationRemoval(Reservation reservation) {
+
+    }
 }
