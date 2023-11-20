@@ -22,17 +22,17 @@ public class AppUserServiceTest {
         assertThat(appUserService.getUser(user.getId()).getKeycloakId()).isEqualTo(keycloakId);
     }
 
-    @Test
-    @Transactional
-    public void testSetImageUrl() {
-        final String imageUrl = "a.pl";
-        final String keycloakId = "unique_id";
-        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
-
-        appUserService.setImageUrl(user, imageUrl);
-
-        assertThat(appUserService.getUser(user.getId()).getImageUrl()).isEqualTo(imageUrl);
-    }
+//    @Test
+//    @Transactional
+//    public void testSetImageUrl() {
+//        final String imageUrl = "a.pl";
+//        final String keycloakId = "unique_id";
+//        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
+//
+//        appUserService.setImageUrl(user, imageUrl);
+//
+//        assertThat(appUserService.getUser(user.getId()).getImageUrl()).isEqualTo(imageUrl);
+//    }
 
     @Test
     @Transactional

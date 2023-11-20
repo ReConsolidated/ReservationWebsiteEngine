@@ -12,17 +12,15 @@ public class StoreConfigMapper {
     private final AppUserService appUserService;
 
     public StoreConfigDto toDto(StoreConfig storeConfig) {
-        OwnerDto ownerDto = new OwnerDto(
-                storeConfig.getOwner(),
-                appUserService.getUser(storeConfig.getOwner().getAppUserId())
-        );
+        OwnerDto ownerDto = new OwnerDto(storeConfig.getOwner());
         return new StoreConfigDto(
                 storeConfig.getStoreConfigId(),
                 ownerDto,
                 storeConfig.getCore(),
                 storeConfig.getMainPage(),
                 storeConfig.getDetailsPage(),
-                storeConfig.getCustomAttributesSpec()
+                storeConfig.getCustomAttributesSpec(),
+                storeConfig.getAuthConfig()
         );
     }
 }

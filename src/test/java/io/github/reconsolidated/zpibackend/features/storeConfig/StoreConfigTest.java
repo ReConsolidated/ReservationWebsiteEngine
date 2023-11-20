@@ -2,11 +2,15 @@ package io.github.reconsolidated.zpibackend.features.storeConfig;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUserService;
+import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.OwnerDto;
+import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigDto;
 import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigsListDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,7 +27,7 @@ public class StoreConfigTest {
     public void testCreateStoreConfig() {
         final String keycloakId = "unique_id";
         AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
-
+        OwnerDto ownerDto = new OwnerDto(Owner.builder().storeName("name").build());
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -31,11 +35,14 @@ public class StoreConfigTest {
                 .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
-        StoreConfig storeConfig = StoreConfig.builder()
-                .core(coreConfig)
-                .mainPage(mainPageConfig)
-                .detailsPage(detailsPageConfig)
-                .build();
+        StoreConfigDto storeConfig = new StoreConfigDto(
+                null,
+                ownerDto,
+                coreConfig,
+                mainPageConfig,
+                detailsPageConfig,
+                new ArrayList<>(),
+                null);
 
         StoreConfig createdConfig = storeConfigService.createStoreConfig(user, storeConfig);
         assertThat(createdConfig.getStoreConfigId()).isNotNull();
@@ -48,7 +55,7 @@ public class StoreConfigTest {
     public void testCreateStoreConfig_fail_when_id_given() {
         final String keycloakId = "unique_id";
         AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
-
+        OwnerDto ownerDto = new OwnerDto(Owner.builder().storeName("name").build());
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -56,12 +63,14 @@ public class StoreConfigTest {
                 .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
-        StoreConfig storeConfig = StoreConfig.builder()
-                .storeConfigId(1L)
-                .core(coreConfig)
-                .mainPage(mainPageConfig)
-                .detailsPage(detailsPageConfig)
-                .build();
+        StoreConfigDto storeConfig = new StoreConfigDto(
+                1L,
+                ownerDto,
+                coreConfig,
+                mainPageConfig,
+                detailsPageConfig,
+                new ArrayList<>(),
+                null);
 
         assertThrows(IllegalArgumentException.class, () -> storeConfigService.createStoreConfig(user, storeConfig));
     }
@@ -71,7 +80,7 @@ public class StoreConfigTest {
     public void testFetchStoreConfigs() {
         final String keycloakId = "unique_id";
         AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
-
+        OwnerDto ownerDto = new OwnerDto(Owner.builder().storeName("name").build());
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -79,11 +88,14 @@ public class StoreConfigTest {
                 .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
-        StoreConfig storeConfig = StoreConfig.builder()
-                .core(coreConfig)
-                .mainPage(mainPageConfig)
-                .detailsPage(detailsPageConfig)
-                .build();
+        StoreConfigDto storeConfig = new StoreConfigDto(
+                null,
+                ownerDto,
+                coreConfig,
+                mainPageConfig,
+                detailsPageConfig,
+                new ArrayList<>(),
+                null);
 
         Long storeId = storeConfigService.createStoreConfig(user, storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
@@ -98,7 +110,7 @@ public class StoreConfigTest {
     public void testUpdateStoreConfig() {
         final String keycloakId = "unique_id";
         AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
-
+        OwnerDto ownerDto = new OwnerDto(Owner.builder().storeName("name").build());
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -106,11 +118,14 @@ public class StoreConfigTest {
                 .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
-        StoreConfig storeConfig = StoreConfig.builder()
-                .core(coreConfig)
-                .mainPage(mainPageConfig)
-                .detailsPage(detailsPageConfig)
-                .build();
+        StoreConfigDto storeConfig = new StoreConfigDto(
+                null,
+                ownerDto,
+                coreConfig,
+                mainPageConfig,
+                detailsPageConfig,
+                new ArrayList<>(),
+                null);
 
         Long storeId = storeConfigService.createStoreConfig(user, storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
@@ -136,7 +151,7 @@ public class StoreConfigTest {
     public void testUpdateStoreConfig_fail_different_core_config() {
         final String keycloakId = "unique_id";
         AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
-
+        OwnerDto ownerDto = new OwnerDto(Owner.builder().storeName("name").build());
         CoreConfig coreConfig = CoreConfig.builder()
                 .flexibility(false)
                 .uniqueness(false)
@@ -144,11 +159,14 @@ public class StoreConfigTest {
                 .build();
         MainPageConfig mainPageConfig = MainPageConfig.builder().build();
         DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
-        StoreConfig storeConfig = StoreConfig.builder()
-                .core(coreConfig)
-                .mainPage(mainPageConfig)
-                .detailsPage(detailsPageConfig)
-                .build();
+        StoreConfigDto storeConfig = new StoreConfigDto(
+                null,
+                ownerDto,
+                coreConfig,
+                mainPageConfig,
+                detailsPageConfig,
+                new ArrayList<>(),
+                null);
 
         Long storeId = storeConfigService.createStoreConfig(user, storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();

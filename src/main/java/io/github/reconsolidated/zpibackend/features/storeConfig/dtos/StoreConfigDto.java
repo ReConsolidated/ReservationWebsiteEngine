@@ -1,9 +1,7 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig.dtos;
 
 import io.github.reconsolidated.zpibackend.features.parameter.ParameterSettings;
-import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
-import io.github.reconsolidated.zpibackend.features.storeConfig.DetailsPageConfig;
-import io.github.reconsolidated.zpibackend.features.storeConfig.MainPageConfig;
+import io.github.reconsolidated.zpibackend.features.storeConfig.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,5 +16,6 @@ public class StoreConfigDto {
     private MainPageConfig mainPage;
     private DetailsPageConfig detailsPage;
     private List<ParameterSettings> customAttributesSpec;
+    private AuthenticationConfig authConfig;
 
 }

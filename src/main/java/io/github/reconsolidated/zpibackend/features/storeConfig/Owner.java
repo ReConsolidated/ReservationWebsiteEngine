@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,4 +20,10 @@ public class Owner {
     @GeneratedValue(generator = "owner_generator")
     private Long ownerId;
     private Long appUserId;
+    private String email = "";
+    private String imageUrl = "";
+    private String phoneNumber = "";
+    private String color = "";
+    @JsonProperty("name")
+    private String storeName = "";
 }

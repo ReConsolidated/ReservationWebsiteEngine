@@ -15,12 +15,24 @@ public class OwnerDto {
     private final String email;
     private final String color;
 
-    public OwnerDto(Owner owner, AppUser appUser) {
+    public OwnerDto(Owner owner) {
         this.ownerId = owner.getOwnerId();
-        this.name = appUser.getFirstName() + " " + appUser.getLastName();
-        this.logoSrc = appUser.getImageUrl();
-        this.phone = appUser.getPhoneNumber();
-        this.email = appUser.getEmail();
-        this.color = appUser.getColor();
+        this.name = owner.getStoreName();
+        this.logoSrc = owner.getImageUrl();
+        this.phone = owner.getPhoneNumber();
+        this.email = owner.getEmail();
+        this.color = owner.getColor();
+    }
+
+    public Owner toOwner(Long ownerUserId) {
+        return Owner.builder()
+                .ownerId(ownerId)
+                .appUserId(ownerUserId)
+                .storeName(name.replaceAll("[ /]", "_"))
+                .imageUrl(logoSrc)
+                .phoneNumber(phone)
+                .email(email)
+                .color(color)
+                .build();
     }
 }

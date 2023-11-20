@@ -27,16 +27,16 @@ public class AppUserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/image_url")
-    public ResponseEntity<AppUser> setImageUrl(@CurrentUser AppUser user, @RequestParam String imageUrl) {
-        appUserService.setImageUrl(user, imageUrl);
-        return ResponseEntity.ok(user);
-    }
-
-    @PostMapping("/color")
-    public ResponseEntity<AppUser> setColor(@CurrentUser AppUser user, @RequestParam String color) {
-        appUserService.setColor(user, color);
-        return ResponseEntity.ok(user);
-    }
+//    @PostMapping("/image_url")
+//    public ResponseEntity<AppUser> setImageUrl(@CurrentUser AppUser user, @RequestParam String imageUrl) {
+//        appUserService.setImageUrl(user, imageUrl);
+//        return ResponseEntity.ok(user);
+//    }
+//
+//    @PostMapping("/color")
+//    public ResponseEntity<AppUser> setColor(@CurrentUser AppUser user, @RequestParam String color) {
+//        appUserService.setColor(user, color);
+//        return ResponseEntity.ok(user);
+//    }
 
 }
