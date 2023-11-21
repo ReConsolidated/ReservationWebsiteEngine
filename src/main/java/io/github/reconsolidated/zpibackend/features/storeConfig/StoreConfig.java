@@ -40,4 +40,8 @@ public class StoreConfig {
         this.customAttributesSpec = customAttributesSpec;
         this.name = owner.getStoreName().replaceAll("[ /]", "_");
     }
+
+    public StoreSummary getStoreSummary() {
+        return new StoreSummary(name, owner.getStoreName());
+    }
 }

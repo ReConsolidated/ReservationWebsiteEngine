@@ -51,6 +51,11 @@ public class StoreConfigService {
         return new StoreConfigsListDto(configList.stream().map(storeConfigMapper::toDto).toList());
     }
 
+    public List<StoreSummary> listStoreConfigsSummary(AppUser currentUser) {
+        List<StoreConfig> configList = storeConfigRepository.findByOwner_AppUserId(currentUser.getId());
+        return configList.stream().map(StoreConfig::getStoreSummary).toList();
+    }
+
     public void updateStoreConfig(AppUser currentUser, StoreConfig newStoreConfig) {
         if (newStoreConfig.getStoreConfigId() == null) {
             throw new IllegalArgumentException("Updated Store Config Id cannot be null.");

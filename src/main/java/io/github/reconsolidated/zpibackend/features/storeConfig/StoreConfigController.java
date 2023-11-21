@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/store-configs", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -24,6 +26,11 @@ public class StoreConfigController {
     }
 
     @GetMapping
+    public ResponseEntity<List<StoreSummary>> listConfigsSummary(@CurrentUser AppUser currentUser) {
+        return ResponseEntity.ok(storeConfigService.listStoreConfigsSummary(currentUser));
+    }
+
+    @GetMapping("/details")
     public ResponseEntity<StoreConfigsListDto> listConfigs(@CurrentUser AppUser currentUser) {
         return ResponseEntity.ok(storeConfigService.listStoreConfigs(currentUser));
     }

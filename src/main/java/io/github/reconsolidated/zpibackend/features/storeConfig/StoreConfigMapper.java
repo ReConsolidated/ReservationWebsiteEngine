@@ -23,4 +23,8 @@ public class StoreConfigMapper {
                 storeConfig.getAuthConfig()
         );
     }
+
+    public StoreSummary storeSummary(StoreConfig storeConfig) {
+        return storeConfig.getStoreSummary();
+    }
 }

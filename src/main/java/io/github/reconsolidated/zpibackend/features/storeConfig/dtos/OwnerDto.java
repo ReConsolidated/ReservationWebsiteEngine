@@ -32,7 +32,7 @@ public class OwnerDto {
         return Owner.builder()
                 .ownerId(ownerId)
                 .appUserId(ownerUserId)
-                .storeName(name.replaceAll("[ /]", "_"))
+                .storeName(name)
                 .imageUrl(logoSrc)
                 .phoneNumber(phone)
                 .email(email)
