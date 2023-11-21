@@ -115,4 +115,16 @@ public class StoreConfigService {
         StoreConfig config = getStoreConfig(currentUser, storeConfigName);
         return config.getDetailsPage();
     }
+
+    public StoreConfig updateColor(AppUser currentUser, String storeConfigName, String color) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigName);
+        config.getOwner().setColor(color);
+        return config;
+    }
+
+    public StoreConfig updateImageUrl(AppUser currentUser, String storeConfigName, String imageUrl) {
+        StoreConfig config = getStoreConfig(currentUser, storeConfigName);
+        config.getOwner().setImageUrl(imageUrl);
+        return config;
+    }
 }

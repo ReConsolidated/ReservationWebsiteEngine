@@ -77,8 +77,22 @@ public class StoreConfigController {
         return ResponseEntity.ok(config);
     }
 
+    @PostMapping("{storeConfigName}/image_url")
+    public ResponseEntity<StoreConfig> setImageUrl(@CurrentUser AppUser user,
+                                             @PathVariable String storeConfigName,
+                                             @RequestParam String imageUrl) {
+        return ResponseEntity.ok(storeConfigService.updateImageUrl(user, storeConfigName, imageUrl));
+    }
+
+    @PostMapping("{storeConfigName}/color")
+    public ResponseEntity<StoreConfig> setColor(@CurrentUser AppUser user,
+                                          @PathVariable String storeConfigName,
+                                          @RequestParam String color) {
+        return ResponseEntity.ok(storeConfigService.updateColor(user, storeConfigName, color));
+    }
+
     @GetMapping("/nameCheck")
-    public ResponseEntity<Boolean> checkName(@RequestBody String name) {
+    public ResponseEntity<Boolean> checkName(@RequestParam String name) {
         return ResponseEntity.ok(storeConfigService.isNameUnique(name));
     }
 }
