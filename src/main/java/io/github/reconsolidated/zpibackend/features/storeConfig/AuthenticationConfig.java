@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 public class AuthenticationConfig {
 
     @Id
+    @GeneratedValue(generator = "auth_config_generator")
     private Long id;
     @ElementCollection
     private List<String> requiredPersonalData = new ArrayList<>();

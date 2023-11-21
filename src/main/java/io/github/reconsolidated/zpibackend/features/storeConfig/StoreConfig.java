@@ -26,7 +26,7 @@ public class StoreConfig {
     private DetailsPageConfig detailsPage;
     @OneToMany(cascade = CascadeType.ALL)
     private List<ParameterSettings> customAttributesSpec;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private AuthenticationConfig authConfig;
     private String name;
 
