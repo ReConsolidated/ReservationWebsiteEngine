@@ -22,7 +22,7 @@ public class StoreConfigService {
         }
         Owner owner = storeConfigDto.getOwner().toOwner(currentUser.getId());
 
-        if(!isNameUnique(owner.getStoreName())) {
+        if (!isNameUnique(owner.getStoreName())) {
             throw new IllegalArgumentException("Store name must be unique! Name: " + owner.getStoreName() +
                     " is not unique.");
         }
