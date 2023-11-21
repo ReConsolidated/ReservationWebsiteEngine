@@ -188,4 +188,32 @@ public class StoreConfigTest {
         assertThrows(IllegalArgumentException.class, () -> storeConfigService.updateStoreConfig(user, storeConfig2));
     }
 
+    @Test
+    @Transactional
+    public void testSetImageUrl() {
+        final String imageUrl = "a.pl";
+        final String keycloakId = "unique_id";
+        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
+        OwnerDto ownerDto = new OwnerDto(Owner.builder().storeName("name").build());
+        CoreConfig coreConfig = CoreConfig.builder()
+                .flexibility(false)
+                .uniqueness(false)
+                .simultaneous(true)
+                .build();
+        MainPageConfig mainPageConfig = MainPageConfig.builder().build();
+        DetailsPageConfig detailsPageConfig = DetailsPageConfig.builder().build();
+        StoreConfigDto storeConfig = new StoreConfigDto(
+                null,
+                ownerDto,
+                coreConfig,
+                mainPageConfig,
+                detailsPageConfig,
+                new ArrayList<>(),
+                null);
+        storeConfigService.createStoreConfig(user, storeConfig);
+
+        storeConfigService.updateImageUrl(user, "name", imageUrl);
+
+        assertThat(storeConfigService.getStoreConfig(user, "name").getOwner().getImageUrl()).isEqualTo(imageUrl);
+    }
 }
