@@ -30,8 +30,8 @@ public class ItemDto {
     private Integer amount;
     private Integer availableAmount;
     private Double mark;
-    private Integer earliestStartHour = 0;
-    private Integer latestEndHour = 24;
+    private Integer earliestStartHour = 10;
+    private Integer latestEndHour = 16;
 
     public ItemDto(Item item) {
         this.id = item.getItemId();
