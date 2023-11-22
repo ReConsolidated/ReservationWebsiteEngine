@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/store-configs", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -18,63 +20,86 @@ public class StoreConfigController {
     private final StoreConfigService storeConfigService;
     private final AppUserService appUserService;
     @PostMapping
-    public ResponseEntity<Long> createStoreConfig(@CurrentUser AppUser currentUser, @RequestBody StoreConfig storeConfig) {
+    public ResponseEntity<Long> createStoreConfig(@CurrentUser AppUser currentUser, @RequestBody StoreConfigDto storeConfig) {
         StoreConfig result = storeConfigService.createStoreConfig(currentUser, storeConfig);
         return ResponseEntity.ok(result.getStoreConfigId());
     }
 
     @GetMapping
+    public ResponseEntity<List<StoreSummary>> listConfigsSummary(@CurrentUser AppUser currentUser) {
+        return ResponseEntity.ok(storeConfigService.listStoreConfigsSummary(currentUser));
+    }
+
+    @GetMapping("/details")
     public ResponseEntity<StoreConfigsListDto> listConfigs(@CurrentUser AppUser currentUser) {
         return ResponseEntity.ok(storeConfigService.listStoreConfigs(currentUser));
     }
 
-    @GetMapping("/{storeConfigId}/owner")
-    public ResponseEntity<OwnerDto> getOwner(@CurrentUser AppUser currentUser, @PathVariable Long storeConfigId) {
-        Owner owner = storeConfigService.getStoreConfig(currentUser, storeConfigId).getOwner();
+    @GetMapping("/{storeConfigName}/owner")
+    public ResponseEntity<OwnerDto> getOwner(@CurrentUser AppUser currentUser, @PathVariable String storeConfigName) {
+        Owner owner = storeConfigService.getStoreConfig(currentUser, storeConfigName).getOwner();
         AppUser appUser = appUserService.getUser(owner.getAppUserId());
-        return ResponseEntity.ok(new OwnerDto(owner, appUser));
+        return ResponseEntity.ok(new OwnerDto(owner));
     }
 
-    @GetMapping("/{storeConfigId}")
-    public ResponseEntity<StoreConfigDto> getStoreConfigDto(@CurrentUser AppUser currentUser, @PathVariable Long storeConfigId) {
-        StoreConfigDto config = storeConfigService.getStoreConfigDto(currentUser, storeConfigId);
+    @GetMapping("/{storeConfigName}")
+    public ResponseEntity<StoreConfigDto> getStoreConfigDto(@CurrentUser AppUser currentUser, @PathVariable String storeConfigName) {
+        StoreConfigDto config = storeConfigService.getStoreConfigDto(currentUser, storeConfigName);
         return ResponseEntity.ok(config);
     }
 
-    @PutMapping("/{storeConfigId}")
+    @PutMapping("/{storeConfigName}")
     public ResponseEntity<?> updateStoreConfig(@CurrentUser AppUser currentUser, @RequestBody StoreConfig storeConfig) {
         storeConfigService.updateStoreConfig(currentUser, storeConfig);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{storeConfigId}/mainPageConfig")
+    @PutMapping("/{storeConfigName}/mainPageConfig")
     public ResponseEntity<StoreConfig> updateMainPageConfig(@CurrentUser AppUser currentUser,
-                                                  @PathVariable Long storeConfigId,
+                                                  @PathVariable String storeConfigName,
                                                   @RequestBody MainPageConfig mainPageConfig) {
-        StoreConfig config = storeConfigService.updateMainPageConfig(currentUser, storeConfigId, mainPageConfig);
+        StoreConfig config = storeConfigService.updateMainPageConfig(currentUser, storeConfigName, mainPageConfig);
         return ResponseEntity.ok(config);
     }
 
-    @GetMapping("/{storeConfigId}/mainPageConfig")
+    @GetMapping("/{storeConfigName}/mainPageConfig")
     public ResponseEntity<MainPageConfig> getMainPageConfig(@CurrentUser AppUser currentUser,
-                                                            @PathVariable Long storeConfigId) {
-        MainPageConfig config = storeConfigService.getMainPageConfig(currentUser, storeConfigId);
+                                                            @PathVariable String storeConfigName) {
+        MainPageConfig config = storeConfigService.getMainPageConfig(currentUser, storeConfigName);
         return ResponseEntity.ok(config);
     }
 
-    @PutMapping("/{storeConfigId}/detailsPageConfig")
+    @PutMapping("/{storeConfigName}/detailsPageConfig")
     public ResponseEntity<StoreConfig> updateDetailsPageConfig(@CurrentUser AppUser currentUser,
-                                                            @PathVariable Long storeConfigId,
+                                                            @PathVariable String storeConfigName,
                                                             @RequestBody DetailsPageConfig detailsPageConfig) {
-        StoreConfig config = storeConfigService.updateDetailsPageConfig(currentUser, storeConfigId, detailsPageConfig);
+        StoreConfig config = storeConfigService.updateDetailsPageConfig(currentUser, storeConfigName, detailsPageConfig);
         return ResponseEntity.ok(config);
     }
 
-    @GetMapping("/{storeConfigId}/detailsPageConfig")
+    @GetMapping("/{storeConfigName}/detailsPageConfig")
     public ResponseEntity<DetailsPageConfig> getDetailsPageConfig(@CurrentUser AppUser currentUser,
-                                                            @PathVariable Long storeConfigId) {
-        DetailsPageConfig config = storeConfigService.getDetailsPageConfig(currentUser, storeConfigId);
+                                                            @PathVariable String storeConfigName) {
+        DetailsPageConfig config = storeConfigService.getDetailsPageConfig(currentUser, storeConfigName);
         return ResponseEntity.ok(config);
     }
 
+    @PostMapping("{storeConfigName}/image_url")
+    public ResponseEntity<StoreConfig> setImageUrl(@CurrentUser AppUser user,
+                                             @PathVariable String storeConfigName,
+                                             @RequestParam String imageUrl) {
+        return ResponseEntity.ok(storeConfigService.updateImageUrl(user, storeConfigName, imageUrl));
+    }
+
+    @PostMapping("{storeConfigName}/color")
+    public ResponseEntity<StoreConfig> setColor(@CurrentUser AppUser user,
+                                          @PathVariable String storeConfigName,
+                                          @RequestParam String color) {
+        return ResponseEntity.ok(storeConfigService.updateColor(user, storeConfigName, color));
+    }
+
+    @GetMapping("/nameCheck")
+    public ResponseEntity<Boolean> checkName(@RequestParam String name) {
+        return ResponseEntity.ok(storeConfigService.isNameUnique(name));
+    }
 }

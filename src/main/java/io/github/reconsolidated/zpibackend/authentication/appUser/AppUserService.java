@@ -55,18 +55,8 @@ public class AppUserService {
     public AppUser getUser(Long appUserId) {
         return appUserRepository.findById(appUserId).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
-
-    public void setImageUrl(AppUser user, String imageUrl) {
-        user.setImageUrl(imageUrl);
-        appUserRepository.save(user);
-    }
-
     public void deleteUser(AppUser user) {
         appUserRepository.delete(user);
     }
 
-    public void setColor(AppUser user, String color) {
-        user.setColor(color);
-        appUserRepository.save(user);
-    }
 }
