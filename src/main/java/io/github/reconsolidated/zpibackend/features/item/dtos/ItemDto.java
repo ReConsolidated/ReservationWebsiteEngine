@@ -30,8 +30,8 @@ public class ItemDto {
     private Integer capacity;
     private Long availableAmount;
     private Double mark;
-    private LocalDateTime earliestStart;
-    private LocalDateTime latestEnd;
+    private Integer earliestStartHour = 0;
+    private Integer latestEndHour = 24;
 
     public ItemDto(Item item) {
         this.id = item.getItemId();
@@ -48,24 +48,12 @@ public class ItemDto {
         this.availabilities = item.getSchedule().getAvailabilities();
 
         for (ScheduleSlot slot : item.getSchedule().getAvailableScheduleSlots()) {
-            if (earliestStart == null ||
-                    isEarlier(slot.getStartDateTime(), earliestStart)) {
-                earliestStart = slot.getStartDateTime();
+            if (earliestStartHour < slot.getStartDateTime().getHour()) {
+                earliestStartHour = slot.getStartDateTime().getHour();
             }
-            if (latestEnd == null ||
-                    isEarlier(latestEnd, slot.getEndDateTime())) {
-                latestEnd = slot.getEndDateTime();
+            if (latestEndHour < slot.getEndDateTime().getHour()) {
+                latestEndHour = slot.getEndDateTime().getHour();
             }
         }
-    }
-
-    private boolean isEarlier(LocalDateTime one, LocalDateTime other) {
-        if (one.getHour() < other.getHour()) {
-            return true;
-        }
-        if (one.getHour() > other.getHour()) {
-            return false;
-        }
-        return one.getMinute() < other.getMinute();
     }
 }
