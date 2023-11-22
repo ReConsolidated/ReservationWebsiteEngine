@@ -49,7 +49,13 @@ public class ScheduleSlot {
     }
 
     public String toString() {
-        return startDateTime.toString() + "-" + endDateTime.toString() + ": " + this.currAmount;
+        StringBuilder stringBuilder = new StringBuilder("[");
+        for (Boolean itemAvail: itemsAvailability) {
+            stringBuilder.append(itemAvail.toString());
+            stringBuilder.append(" ");
+        }
+        stringBuilder.append("]");
+        return startDateTime.toString() + "-" + endDateTime.toString() + ": " + this.currAmount + stringBuilder.toString();
     }
 
     public ScheduleSlot[] split(LocalDateTime splitBy) {
