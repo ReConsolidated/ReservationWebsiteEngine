@@ -41,8 +41,8 @@ public class ItemDto {
         this.description = item.getDescription();
         this.image = item.getImage();
         this.customAttributeList = item.getCustomAttributeList();
-        this.capacity = item.getAmount();
-        this.availableAmount = Long.valueOf(item.getAmount());
+        this.amount = item.getAmount();
+        this.availableAmount = item.getAmount();
         this.mark = 3.0;
         this.subItems = item.getSubItems();
         this.availabilities = item.getSchedule().getAvailabilities();

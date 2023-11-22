@@ -124,4 +124,8 @@ public class ReservationService {
             }
         }
     }
+
+    public List<Reservation> getReservations(Long currentUserId) {
+        return reservationRepository.findByUser_Id(currentUserId);
+    }
 }
