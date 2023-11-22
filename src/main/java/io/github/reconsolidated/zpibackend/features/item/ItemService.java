@@ -18,6 +18,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ParameterRepository parameterRepository;
     private final StoreService storeService;
+    private final ItemMapper itemMapper;
 
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow();
@@ -48,7 +49,7 @@ public class ItemService {
 
     public ItemStatus getItemStatus(Long itemId) {
         Item item = getItem(itemId);
-        return new ItemStatus();
+        return itemMapper.getItemStatus(item);
     }
 
     public ItemDto updateItem(AppUser currentUser, Long itemId, ItemDto itemDto) {
