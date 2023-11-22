@@ -27,8 +27,8 @@ public class ItemDto {
     private List<Parameter> customAttributeList;
     private List<SubItem> subItems;
     private List<Availability> availabilities;
-    private Integer capacity;
-    private Long availableAmount;
+    private Integer amount;
+    private Integer availableAmount;
     private Double mark;
     private Integer earliestStartHour = 0;
     private Integer latestEndHour = 24;
