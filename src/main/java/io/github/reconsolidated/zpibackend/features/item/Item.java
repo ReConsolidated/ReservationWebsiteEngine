@@ -45,7 +45,7 @@ public class Item {
         this.subtitle = itemDto.getSubtitle();
         this.description = itemDto.getDescription();
         this.image = itemDto.getImage();
-        this.amount = itemDto.getCapacity();
+        this.amount = itemDto.getAmount();
         this.customAttributeList = itemDto.getCustomAttributeList();
     }
 
