@@ -28,8 +28,8 @@ public class Store {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Item> items;
 
-    public Store(String storeName, StoreConfig storeConfig) {
-        this.storeName = storeName;
+    public Store(StoreConfig storeConfig) {
+        this.storeName = storeConfig.getName();
         this.storeConfig = storeConfig;
         this.ownerAppUserId = storeConfig.getOwner().getAppUserId();
         this.items = new ArrayList<>();

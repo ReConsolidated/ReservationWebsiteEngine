@@ -22,20 +22,20 @@ public class ItemService {
         return itemRepository.findById(itemId).orElseThrow();
     }
 
-    public ItemListDto getItems(AppUser currentUser, Long storeId) {
-        Store store = storeService.getStore(currentUser, storeId);
+    public ItemListDto getItems(AppUser currentUser, String storeName) {
+        Store store = storeService.getStore(storeName);
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
         return new ItemListDto(itemRepository
-                .findAllByStore_Id(storeId)
+                .findAllByStore_Id(store.getId())
                 .stream()
                 .map(ItemDto::new)
                 .collect(Collectors.toList()));
     }
 
-    public Item createItem(AppUser currentUser, Long storeId, ItemDto itemDto) {
-        Store store = storeService.getStore(currentUser, storeId);
+    public Item createItem(AppUser currentUser, String storeName, ItemDto itemDto) {
+        Store store = storeService.getStore(storeName);
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }

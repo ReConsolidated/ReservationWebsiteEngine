@@ -10,23 +10,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @AllArgsConstructor
-@RequestMapping(value = "/stores/{storeId}/items", produces = MediaType.APPLICATION_JSON_VALUE)
-@Validated
+@RequestMapping(value = "/stores/{storeName}/items", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ItemController {
     private final ItemService itemService;
     @GetMapping
     public ResponseEntity<ItemListDto> listItems(@CurrentUser AppUser currentUser,
-                                                 @PathVariable Long storeId) {
-        return ResponseEntity.ok(itemService.getItems(currentUser, storeId));
+                                                 @PathVariable String storeName) {
+        return ResponseEntity.ok(itemService.getItems(currentUser, storeName));
     }
 
     @PostMapping
     public ResponseEntity<Long> createItem(@CurrentUser AppUser currentUser,
-                                           @PathVariable Long storeId,
+                                           @PathVariable String storeName,
                                            @RequestBody ItemDto item) {
-        Item result = itemService.createItem(currentUser, storeId, item);
+        Item result = itemService.createItem(currentUser, storeName, item);
         return ResponseEntity.ok(result.getItemId());
     }
 

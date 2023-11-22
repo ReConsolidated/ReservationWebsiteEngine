@@ -21,9 +21,9 @@ public class StoreController {
         return ResponseEntity.ok(storeService.createStore(currentUser, dto));
     }
 
-    @GetMapping("/{storeId}")
-    public ResponseEntity<?> getStore(@CurrentUser AppUser currentUser, @RequestParam Long storeId) {
-        return ResponseEntity.ok(storeService.getStore(currentUser, storeId));
+    @GetMapping("/{storeName}")
+    public ResponseEntity<?> getStore(@CurrentUser AppUser currentUser, @PathVariable String storeName) {
+        return ResponseEntity.ok(storeService.getStore(storeName));
     }
 
     @GetMapping
