@@ -4,7 +4,6 @@ import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.authentication.currentUser.CurrentUser;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemListDto;
-import io.github.reconsolidated.zpibackend.features.item.dtos.ItemStatus;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -62,12 +61,6 @@ public class ItemController {
     public ResponseEntity<?> deactivateItem(@CurrentUser AppUser currentUser,
                                             @PathVariable Long itemId) {
         return ResponseEntity.ok(itemService.deactivateItem(currentUser, itemId));
-    }
-
-    @GetMapping("/{itemId}/status")
-    public ResponseEntity<ItemStatus> getItemStatus(@CurrentUser AppUser currentUser,
-                                                    @PathVariable Long itemId) {
-        return ResponseEntity.ok(itemService.getItemStatus(itemId));
     }
 
 }

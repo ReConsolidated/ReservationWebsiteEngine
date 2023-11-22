@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.reservation;
 
+import io.github.reconsolidated.zpibackend.features.availability.Availability;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
 import lombok.*;
@@ -7,6 +8,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -30,6 +32,15 @@ public class Schedule {
         this.item = item;
         this.availableScheduleSlots = new ArrayList<>();
 
+    }
+
+    public List<Availability> getAvailabilities() {
+        return availableScheduleSlots.stream().map((slot) ->
+                new Availability(
+                        slot.getStartDateTime(),
+                        slot.getEndDateTime(),
+                        slot.getType().toString()
+                )).collect(Collectors.toList());
     }
 
     public void addSlot(ScheduleSlot scheduleSlot) {
