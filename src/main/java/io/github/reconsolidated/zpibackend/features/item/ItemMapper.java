@@ -7,6 +7,8 @@ import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 @AllArgsConstructor
 public class ItemMapper {
@@ -20,14 +22,24 @@ public class ItemMapper {
         itemStatus.setAvailableAmount(Long.valueOf(item.getAmount()));
         for (ScheduleSlot slot : schedule.getAvailableScheduleSlots()) {
             if (itemStatus.getEarliestStart() == null ||
-                    slot.getStartDateTime().isBefore(itemStatus.getEarliestStart())) {
+                    isEarlier(slot.getStartDateTime(), itemStatus.getEarliestStart())) {
                 itemStatus.setEarliestStart(slot.getStartDateTime());
             }
             if (itemStatus.getLatestEnd() == null ||
-                    slot.getEndDateTime().isAfter(itemStatus.getLatestEnd())) {
+                    isEarlier(itemStatus.getLatestEnd(), slot.getEndDateTime())) {
                 itemStatus.setLatestEnd(slot.getEndDateTime());
             }
         }
         return itemStatus;
+    }
+
+    private boolean isEarlier(LocalDateTime one, LocalDateTime other) {
+        if (one.getHour() < other.getHour()) {
+            return true;
+        }
+        if (one.getHour() > other.getHour()) {
+            return false;
+        }
+        return one.getMinute() < other.getMinute();
     }
 }
