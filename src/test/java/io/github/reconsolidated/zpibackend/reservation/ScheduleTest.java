@@ -436,28 +436,28 @@ public class ScheduleTest {
         ArrayList<ScheduleSlot> expected = new ArrayList<>();
 
         assertEquals(expected, suggestions);
-
+        item.setAmount(4);
         //all types of suggestions
         ScheduleSlot dayBeforeSlot = new ScheduleSlot(
                 LocalDateTime.of(2022, 12, 31, 12, 0),
                 LocalDateTime.of(2022, 12, 31, 13, 0),
-                2);
+                4);
         ScheduleSlot dayAfterSlotSchedule = new ScheduleSlot(
                 LocalDateTime.of(2023, 1, 2, 11, 0),
                 LocalDateTime.of(2023, 1, 2, 13, 0),
-                2);
+                4);
         ScheduleSlot dayAfterSlot = new ScheduleSlot(
                 LocalDateTime.of(2023, 1, 2, 12, 0),
                 LocalDateTime.of(2023, 1, 2, 13, 0),
-                2);
+                4);
         ScheduleSlot weekAfterSlotSchedule = new ScheduleSlot(
                 LocalDateTime.of(2023, 1, 8, 12, 0),
                 LocalDateTime.of(2023, 1, 8, 14, 0),
-                2);
+                4);
         ScheduleSlot weekAfterSlot = new ScheduleSlot(
                 LocalDateTime.of(2023, 1, 8, 12, 0),
                 LocalDateTime.of(2023, 1, 8, 13, 0),
-                2);
+                4);
         ScheduleSlot daySlot1 = ScheduleSlot.builder()
                 .startDateTime(LocalDateTime.of(2023, 1, 1, 10, 0))
                 .endDateTime(LocalDateTime.of(2023, 1, 1, 11, 30))

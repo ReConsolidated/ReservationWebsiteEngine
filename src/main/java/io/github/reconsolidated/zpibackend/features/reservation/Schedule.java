@@ -273,21 +273,21 @@ public class Schedule {
         ScheduleSlot dayBeforeSlot = new ScheduleSlot(
                 originalSlot.getStartDateTime().minusDays(1),
                 originalSlot.getEndDateTime().minusDays(1),
-                originalSlot.getCurrAmount());
+                item.getAmount());
         if (verify(false, dayBeforeSlot)) {
             suggestions.add(dayBeforeSlot);
         }
         ScheduleSlot dayAfterSlot = new ScheduleSlot(
                 originalSlot.getStartDateTime().plusDays(1),
                 originalSlot.getEndDateTime().plusDays(1),
-                originalSlot.getCurrAmount());
+                item.getAmount());
         if (verify(false, dayAfterSlot)) {
             suggestions.add(dayAfterSlot);
         }
         ScheduleSlot weekAfterSlot = new ScheduleSlot(
                 originalSlot.getStartDateTime().plusDays(WEEKDAYS),
                 originalSlot.getEndDateTime().plusDays(WEEKDAYS),
-                originalSlot.getCurrAmount());
+                item.getAmount());
         if (verify(false, weekAfterSlot)) {
             suggestions.add(weekAfterSlot);
         }
@@ -335,7 +335,7 @@ public class Schedule {
                 ScheduleSlot slotToCheck = continuousSlots.get(i);
                 ArrayList<Integer> subItemIndexesTmp = new ArrayList<>(subItemIndexes);
                 //checking availability of each sub item
-                for (int j = 0; j < slotToCheck.getItemsAvailability().size(); j++) {
+                for (int j = 0; j < item.getAmount(); j++) {
                     if (subItemIndexesTmp.contains(j) && !slotToCheck.getItemsAvailability().get(j)) {
                         subItemIndexesTmp.remove(Integer.valueOf(j));
                     }
