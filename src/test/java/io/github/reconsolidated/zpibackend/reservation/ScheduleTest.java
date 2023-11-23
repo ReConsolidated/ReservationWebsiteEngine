@@ -400,7 +400,24 @@ public class ScheduleTest {
                 .amount(1)
                 .build();
         schedule.processReservation(reservation);
-        assertEquals(result, schedule.getAvailableScheduleSlots());
+        assertTrue(result.equals(schedule.getAvailableScheduleSlots()));
+
+        result.clear();
+        result.add(ScheduleSlot.builder()
+                .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 0))
+                .endDateTime(LocalDateTime.of(2023, 1, 1, 12, 45))
+                .currAmount(1)
+                .itemsAvailability(Arrays.asList(false, true))
+                .build());
+        result.add(ScheduleSlot.builder()
+                .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 45))
+                .endDateTime(LocalDateTime.of(2023, 1, 1, 13, 0))
+                .currAmount(1)
+                .itemsAvailability(Arrays.asList(false, true))
+                .build());
+        schedule.processReservationRemoval(reservation);
+        assertTrue(result.equals(schedule.getAvailableScheduleSlots()));
+
     }
 
     @Test
