@@ -48,7 +48,7 @@ public class ItemDto {
         this.availabilities = item.getSchedule().getAvailabilities();
 
         for (ScheduleSlot slot : item.getSchedule().getAvailableScheduleSlots()) {
-            if (earliestStartHour < slot.getStartDateTime().getHour()) {
+            if (earliestStartHour > slot.getStartDateTime().getHour()) {
                 earliestStartHour = slot.getStartDateTime().getHour();
             }
             if (latestEndHour < slot.getEndDateTime().getHour()) {
