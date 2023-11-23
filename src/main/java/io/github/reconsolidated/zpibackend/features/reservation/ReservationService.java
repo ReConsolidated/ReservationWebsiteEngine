@@ -132,7 +132,7 @@ public class ReservationService {
     }
 
     public List<Reservation> getStoreReservations(AppUser currentUser, String storeName) {
-        if(!currentUser.getId().equals(storeService.getStore(storeName).getOwnerAppUserId())) {
+        if (!currentUser.getId().equals(storeService.getStore(storeName).getOwnerAppUserId())) {
             throw new IllegalArgumentException("Only owner can get all reservations");
         }
         return reservationRepository.findByItemStoreStoreName(storeName);

@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +18,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemDto {
+
+    private static final double AVERAGE = 3.0;
+    private static final int LATEST_HOUR = 23;
+
     private Long id;
     private Boolean active;
     private String title;
@@ -31,7 +34,7 @@ public class ItemDto {
     private Integer amount;
     private Integer availableAmount = amount;
     private Double mark;
-    private Integer earliestStartHour = 23;
+    private Integer earliestStartHour = LATEST_HOUR;
     private Integer latestEndHour = 0;
 
     public ItemDto(Item item) {
@@ -44,7 +47,7 @@ public class ItemDto {
         this.customAttributeList = item.getCustomAttributeList();
         this.amount = item.getAmount();
         this.availableAmount = item.getAmount();
-        this.mark = 3.0;
+        this.mark = AVERAGE;
         this.subItems = item.getSubItems();
         this.availabilities = item.getSchedule().getAvailabilities();
 

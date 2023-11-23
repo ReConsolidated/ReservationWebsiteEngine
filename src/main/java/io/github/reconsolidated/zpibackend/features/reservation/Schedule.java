@@ -40,7 +40,7 @@ public class Schedule {
 
         this.item = item;
         this.availableScheduleSlots = new ArrayList<>();
-        for(Availability availability: availabilities) {
+        for (Availability availability: availabilities) {
             addSlot(new ScheduleSlot(availability.getStartDateTime(), availability.getEndDateTime(), item.getAmount()));
         }
 
