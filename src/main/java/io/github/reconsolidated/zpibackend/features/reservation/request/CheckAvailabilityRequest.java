@@ -1,4 +1,4 @@
-package io.github.reconsolidated.zpibackend.features.reservation;
+package io.github.reconsolidated.zpibackend.features.reservation.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

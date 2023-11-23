@@ -1,5 +1,6 @@
-package io.github.reconsolidated.zpibackend.features.reservation;
+package io.github.reconsolidated.zpibackend.features.reservation.response;
 
+import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
 import lombok.*;
 
 import java.time.LocalDateTime;

@@ -1,6 +1,8 @@
 package io.github.reconsolidated.zpibackend.features.item;
 
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
+import io.github.reconsolidated.zpibackend.features.item.dtos.SubItemDto;
+import io.github.reconsolidated.zpibackend.features.item.dtos.SubItemListDto;
 import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
@@ -8,6 +10,7 @@ import io.github.reconsolidated.zpibackend.features.store.Store;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -54,6 +57,14 @@ public class Item {
         this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
         this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
         this.subItems = itemDto.getSubItems();
+    }
+
+    public SubItemListDto getSubItemsListDto(){
+        ArrayList<SubItemDto> subItemsDto = new ArrayList<>();
+        for (SubItem subItem : subItems) {
+            subItemsDto.add(subItem.toSubItemDto());
+        }
+        return new SubItemListDto(subItemsDto);
     }
 
 }

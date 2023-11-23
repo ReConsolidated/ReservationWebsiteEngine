@@ -4,7 +4,12 @@ import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.item.ItemService;
 import io.github.reconsolidated.zpibackend.features.item.SubItem;
-import io.github.reconsolidated.zpibackend.features.reservation.dtos.ReservationDto;
+import io.github.reconsolidated.zpibackend.features.reservation.request.CheckAvailabilityRequest;
+import io.github.reconsolidated.zpibackend.features.reservation.request.ReservationRequest;
+import io.github.reconsolidated.zpibackend.features.reservation.response.CheckAvailabilityResponse;
+import io.github.reconsolidated.zpibackend.features.reservation.response.CheckAvailabilityResponseFailure;
+import io.github.reconsolidated.zpibackend.features.reservation.response.CheckAvailabilityResponseSuccess;
+import io.github.reconsolidated.zpibackend.features.reservation.response.CheckAvailabilityResponseSuggestion;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
 
@@ -23,16 +28,16 @@ public class ReservationService {
     private StoreService storeService;
     private ItemService itemService;
 
-    public Reservation reserveItem(AppUser appUser, ReservationDto request) {
+    public Reservation reserveItem(AppUser appUser, ReservationRequest request) {
         Item item = itemService.getItem(request.getItemId());
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
-        ScheduleSlot requestSlot = new ScheduleSlot(request.getStartDateTime(), request.getEndDateTime(),
-                request.getAmount());
 
         if (core.getFlexibility()) {
             //reservations with schedule
+            ScheduleSlot requestSlot = new ScheduleSlot(request.getStartDateTime(), request.getEndDateTime(),
+                    request.getAmount());
             if (!schedule.verify(core.getGranularity(), requestSlot)) {
                 throw new IllegalArgumentException();
             }
