@@ -4,7 +4,6 @@ import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemListDto;
 import io.github.reconsolidated.zpibackend.features.parameter.ParameterRepository;
-import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import lombok.AllArgsConstructor;
@@ -41,7 +40,6 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         Item item = new Item(store, itemDto);
-        Schedule schedule = new Schedule(item, itemDto.getAvailabilities());
         item = itemRepository.save(item);
         parameterRepository.saveAll(item.getCustomAttributeList());
         return item;
@@ -53,8 +51,10 @@ public class ItemService {
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
-        Item newItem = new Item(store, itemDto);
-        return new ItemDto(itemRepository.save(newItem));
+        item = new Item(store, itemDto);
+        item.setItemId(itemId);
+        itemRepository.save(item);
+        return itemDto;
     }
 
     public ItemDto activateItem(AppUser currentUser, Long itemId) {

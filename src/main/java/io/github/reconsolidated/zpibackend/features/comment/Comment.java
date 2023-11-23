@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.features.comment;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import lombok.AllArgsConstructor;
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
 public class Comment {
 
     @Id
-    @JsonDeserialize(as = Long.class)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne

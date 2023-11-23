@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.features.item;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
@@ -20,7 +19,6 @@ import java.util.List;
 public class Item {
 
     @Id
-    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "item_generator")
     private Long itemId;
     @ManyToOne

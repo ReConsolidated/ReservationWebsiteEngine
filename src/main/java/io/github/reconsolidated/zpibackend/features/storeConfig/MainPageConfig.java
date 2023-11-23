@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -16,7 +15,6 @@ import javax.persistence.Id;
 public class MainPageConfig {
 
     @Id
-    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "main_page_config_generator")
     private Long mainPageConfigId;
     private String welcomeTextLine1;

@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.authentication.appUser;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -14,7 +13,6 @@ import java.util.Objects;
 @Entity
 public class AppUser {
     @Id
-    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "app_users")
     private Long id;
     private String keycloakId;

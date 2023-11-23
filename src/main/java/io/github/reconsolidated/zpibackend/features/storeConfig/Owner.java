@@ -17,7 +17,6 @@ import javax.persistence.Id;
 public class Owner {
 
     @Id
-    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "owner_generator")
     private Long ownerId;
     private Long appUserId;

@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +13,6 @@ import java.util.Objects;
 @Builder
 public class CoreConfig {
     @Id
-    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "core_config_generator")
     private Long coreConfigId;
     private Boolean flexibility = false;
