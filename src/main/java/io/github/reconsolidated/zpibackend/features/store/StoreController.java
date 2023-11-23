@@ -16,10 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class StoreController {
     private final StoreService storeService;
 
-    @PostMapping
-    public ResponseEntity<?> createStore(@CurrentUser AppUser currentUser, @RequestBody CreateStoreDto dto) {
-        return ResponseEntity.ok(storeService.createStore(currentUser, dto));
-    }
 
     @GetMapping("/{storeName}")
     public ResponseEntity<?> getStore(@CurrentUser AppUser currentUser, @PathVariable String storeName) {

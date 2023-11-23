@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.reservation;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.reconsolidated.zpibackend.features.availability.Availability;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class Schedule {
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "schedule_generator")
     private Long scheduleId;
     @OneToOne
@@ -31,6 +33,16 @@ public class Schedule {
         this.scheduleId = scheduleId;
         this.item = item;
         this.availableScheduleSlots = new ArrayList<>();
+
+    }
+
+    public Schedule(Item item, List<Availability> availabilities) {
+
+        this.item = item;
+        this.availableScheduleSlots = new ArrayList<>();
+        for(Availability availability: availabilities) {
+            addSlot(new ScheduleSlot(availability.getStartDateTime(), availability.getEndDateTime(), item.getAmount()));
+        }
 
     }
 

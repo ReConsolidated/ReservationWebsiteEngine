@@ -15,6 +15,7 @@ import javax.persistence.*;
 @JsonDeserialize(using = ParameterSettingsDeserializer.class)
 public class ParameterSettings {
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "parameter_settings_generator")
     protected Long parameterSettingsId;
     protected String name;

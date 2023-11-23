@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,11 +25,11 @@ public class ItemDto {
     private String subtitle;
     private String description;
     private String image;
-    private List<Parameter> customAttributeList;
-    private List<SubItem> subItems;
-    private List<Availability> availabilities;
+    private List<Parameter> customAttributeList = new ArrayList<>();
+    private List<SubItem> subItems = new ArrayList<>();
+    private List<Availability> availabilities = new ArrayList<>();
     private Integer amount;
-    private Integer availableAmount;
+    private Integer availableAmount = amount;
     private Double mark;
     private Integer earliestStartHour = 23;
     private Integer latestEndHour = 0;

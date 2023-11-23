@@ -27,7 +27,7 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getResponseCode()));
     }
 
-    @GetMapping
+    @GetMapping("/user")
     public ResponseEntity<List<Reservation>> userReservations(@CurrentUser AppUser currentUser,
                                                               @PathVariable String storeName) {
         return ResponseEntity.ok(reservationService.getUserReservations(currentUser.getId(), storeName));

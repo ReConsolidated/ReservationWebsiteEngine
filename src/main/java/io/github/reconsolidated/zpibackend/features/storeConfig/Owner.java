@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.persistence.Id;
 public class Owner {
 
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "owner_generator")
     private Long ownerId;
     private Long appUserId;

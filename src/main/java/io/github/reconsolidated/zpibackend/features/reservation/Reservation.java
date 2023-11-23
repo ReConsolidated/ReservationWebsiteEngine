@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.reservation;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import lombok.*;
@@ -17,6 +18,7 @@ import java.util.List;
 public class Reservation {
 
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "reservation_generator")
     private Long reservationId;
     @ManyToOne

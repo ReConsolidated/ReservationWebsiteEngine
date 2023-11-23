@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.store;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.storeConfig.StoreConfig;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 public class Store {
 
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "store_generator")
     private Long id;
     private Long ownerAppUserId;

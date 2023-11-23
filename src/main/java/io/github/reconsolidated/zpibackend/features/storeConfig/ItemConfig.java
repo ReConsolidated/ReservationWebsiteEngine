@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 @AllArgsConstructor
 public class ItemConfig {
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "item_config_generator")
     private Long itemConfigId;
     private Boolean itemTitle;

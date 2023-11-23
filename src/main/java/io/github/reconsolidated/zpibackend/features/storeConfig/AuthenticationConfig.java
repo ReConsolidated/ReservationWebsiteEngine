@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.List;
 public class AuthenticationConfig {
 
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "auth_config_generator")
     private Long id;
     @ElementCollection

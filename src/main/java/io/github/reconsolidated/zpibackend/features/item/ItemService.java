@@ -4,6 +4,8 @@ import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemListDto;
 import io.github.reconsolidated.zpibackend.features.parameter.ParameterRepository;
+import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
+import io.github.reconsolidated.zpibackend.features.reservation.ScheduleRepository;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final ParameterRepository parameterRepository;
+    private final ScheduleRepository scheduleRepository;
     private final StoreService storeService;
 
     public Item getItem(Long itemId) {
@@ -40,6 +43,7 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         Item item = new Item(store, itemDto);
+        Schedule schedule = new Schedule(item, itemDto.getAvailabilities());
         item = itemRepository.save(item);
         parameterRepository.saveAll(item.getCustomAttributeList());
         return item;

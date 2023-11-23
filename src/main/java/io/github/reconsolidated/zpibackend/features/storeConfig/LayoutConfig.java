@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.reconsolidated.zpibackend.features.parameter.ParameterSettings;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import javax.persistence.OneToMany;
 @AllArgsConstructor
 public class LayoutConfig {
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "layout_config_generator")
     private Long layoutConfigId;
     private String companyName;

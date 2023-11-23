@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.reservation;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.reconsolidated.zpibackend.utils.BooleanListToStringConverter;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class ScheduleSlot {
 
     private static final int HASHCODE_CONSTANT = 31;
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "schedule_slot_generator")
     private Long scheduleSlotId;
     private LocalDateTime startDateTime;

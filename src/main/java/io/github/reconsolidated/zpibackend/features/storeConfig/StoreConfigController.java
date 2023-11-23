@@ -3,6 +3,8 @@ package io.github.reconsolidated.zpibackend.features.storeConfig;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUserService;
 import io.github.reconsolidated.zpibackend.authentication.currentUser.CurrentUser;
+import io.github.reconsolidated.zpibackend.features.store.StoreService;
+import io.github.reconsolidated.zpibackend.features.store.dtos.CreateStoreDto;
 import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.OwnerDto;
 import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigDto;
 import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigsListDto;
@@ -17,11 +19,14 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping(value = "/store-configs", produces = MediaType.APPLICATION_JSON_VALUE)
 public class StoreConfigController {
+
     private final StoreConfigService storeConfigService;
+    private final StoreService storeService;
     private final AppUserService appUserService;
     @PostMapping
     public ResponseEntity<Long> createStoreConfig(@CurrentUser AppUser currentUser, @RequestBody StoreConfigDto storeConfig) {
         StoreConfig result = storeConfigService.createStoreConfig(currentUser, storeConfig);
+        storeService.createStore(currentUser, new CreateStoreDto(result.getStoreConfigId(), result.getName()));
         return ResponseEntity.ok(result.getStoreConfigId());
     }
 

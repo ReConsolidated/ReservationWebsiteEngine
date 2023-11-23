@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigDto;
 import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigsListDto;
 import lombok.AllArgsConstructor;

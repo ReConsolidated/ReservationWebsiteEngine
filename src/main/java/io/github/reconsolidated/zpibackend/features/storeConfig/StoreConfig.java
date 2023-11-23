@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.reconsolidated.zpibackend.features.parameter.ParameterSettings;
 import lombok.*;
 
@@ -14,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class StoreConfig {
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "store_config_generator")
     private Long storeConfigId;
     @OneToOne(cascade = CascadeType.ALL)

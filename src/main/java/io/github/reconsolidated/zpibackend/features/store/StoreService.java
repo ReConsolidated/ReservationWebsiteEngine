@@ -17,7 +17,6 @@ import java.util.Objects;
 public class StoreService {
     private final StoreRepository storeRepository;
     private final StoreConfigService storeConfigService;
-    private final ReservationService reservationService;
 
 
     public Store getStore(AppUser currentUser, Long storeId) {
@@ -37,12 +36,5 @@ public class StoreService {
 
     public List<Store> listStores(AppUser currentUser) {
         return storeRepository.findAllByOwnerAppUserId(currentUser.getId());
-    }
-
-    public List<Reservation> getStoreReservations(AppUser currentUser, String name) {
-        if(!Objects.equals(getStore(name).getOwnerAppUserId(), currentUser.getId())) {
-            throw new IllegalArgumentException("Only owner can see all reservations!");
-        }
-        return reservationService.getStoreReservations(currentUser, name);
     }
 }

@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.item;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
@@ -19,6 +20,7 @@ import java.util.List;
 public class Item {
 
     @Id
+    @JsonDeserialize(as = Long.class)
     @GeneratedValue(generator = "item_generator")
     private Long itemId;
     @ManyToOne
@@ -28,14 +30,14 @@ public class Item {
     private String subtitle;
     private String description;
     private String image;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Schedule schedule;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Parameter> customAttributeList;
     private Integer amount;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<SubItem> subItems;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Reservation> reservations;
 
     public Item(Store store, ItemDto itemDto) {
@@ -47,6 +49,7 @@ public class Item {
         this.image = itemDto.getImage();
         this.amount = itemDto.getAmount();
         this.customAttributeList = itemDto.getCustomAttributeList();
+        this.schedule = new Schedule(this, itemDto.getAvailabilities());
     }
 
 }
