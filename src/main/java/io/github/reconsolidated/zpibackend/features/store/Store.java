@@ -23,7 +23,7 @@ public class Store {
     private Long id;
     private Long ownerAppUserId;
     private String storeName;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private StoreConfig storeConfig;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Item> items;

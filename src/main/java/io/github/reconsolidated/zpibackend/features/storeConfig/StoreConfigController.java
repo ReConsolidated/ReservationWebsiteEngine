@@ -48,13 +48,16 @@ public class StoreConfigController {
     }
 
     @GetMapping("/{storeConfigName}")
-    public ResponseEntity<StoreConfigDto> getStoreConfigDto(@CurrentUser AppUser currentUser, @PathVariable String storeConfigName) {
+    public ResponseEntity<StoreConfigDto> getStoreConfigDto(@CurrentUser AppUser currentUser,
+                                                            @PathVariable String storeConfigName) {
         StoreConfigDto config = storeConfigService.getStoreConfigDto(currentUser, storeConfigName);
         return ResponseEntity.ok(config);
     }
 
     @PutMapping("/{storeConfigName}")
-    public ResponseEntity<?> updateStoreConfig(@CurrentUser AppUser currentUser, @RequestBody StoreConfig storeConfig) {
+    public ResponseEntity<?> updateStoreConfig(@CurrentUser AppUser currentUser,
+                                               @RequestBody StoreConfig storeConfig,
+                                               @PathVariable String storeConfigName) {
         storeConfigService.updateStoreConfig(currentUser, storeConfig);
         return ResponseEntity.ok().build();
     }
