@@ -35,7 +35,7 @@ public class ParameterSettingsDeserializer extends JsonDeserializer<ParameterSet
                     while (iterator.hasNext()) {
                         possibleValues.add(iterator.next().asText());
                     }
-                    base.setDataType(ParameterType.LIST);
+                    base.setDataType(ParameterType.STRING);
                 }
                 return new  ParameterStringSettings(base, limitValues, possibleValues);
             }

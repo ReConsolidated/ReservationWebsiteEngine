@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Validated
 @RestController
 @AllArgsConstructor
@@ -17,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class ItemController {
     private final ItemService itemService;
     @GetMapping
-    public ResponseEntity<ItemListDto> listItems(@CurrentUser AppUser currentUser,
-                                                 @PathVariable String storeName) {
+    public ResponseEntity<List<ItemDto>> listItems(@CurrentUser AppUser currentUser,
+                                                   @PathVariable String storeName) {
         return ResponseEntity.ok(itemService.getItems(currentUser, storeName));
     }
 
@@ -32,6 +34,7 @@ public class ItemController {
 
     @PutMapping("/{itemId}")
     public ResponseEntity<?> updateItem(@CurrentUser AppUser currentUser,
+                                        @PathVariable String storeName,
                                         @PathVariable Long itemId,
                                         @RequestBody ItemDto itemDto) {
 
@@ -40,12 +43,14 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ResponseEntity<Item> getItem(@CurrentUser AppUser currentUser,
+                                        @PathVariable String storeName,
                                         @PathVariable Long itemId) {
         return ResponseEntity.ok(itemService.getItem(itemId));
     }
 
     @DeleteMapping("/{itemId}")
     public ResponseEntity<?> deleteItem(@CurrentUser AppUser currentUser,
+                                        @PathVariable String storeName,
                                         @PathVariable Long itemId) {
         itemService.deleteItem(currentUser, itemId);
         return ResponseEntity.ok().build();
@@ -53,12 +58,14 @@ public class ItemController {
 
     @PostMapping("/{itemId}/activate")
     public ResponseEntity<?> activateItem(@CurrentUser AppUser currentUser,
+                                          @PathVariable String storeName,
                                           @PathVariable Long itemId) {
         return ResponseEntity.ok(itemService.activateItem(currentUser, itemId));
     }
 
     @PostMapping("/{itemId}/deactivate")
     public ResponseEntity<?> deactivateItem(@CurrentUser AppUser currentUser,
+                                            @PathVariable String storeName,
                                             @PathVariable Long itemId) {
         return ResponseEntity.ok(itemService.deactivateItem(currentUser, itemId));
     }
