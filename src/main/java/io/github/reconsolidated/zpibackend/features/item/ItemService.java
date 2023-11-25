@@ -23,10 +23,6 @@ public class ItemService {
 
     public List<ItemDto> getItems(AppUser currentUser, String storeName) {
         Store store = storeService.getStore(storeName);
-        if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
-            throw new RuntimeException("You are not the owner of this store");
-        }
-
         return itemRepository.findAllByStore_Id(store.getId()).stream().map(ItemDto::new).toList();
     }
 
@@ -37,7 +33,7 @@ public class ItemService {
         }
         Item item = new Item(store, itemDto);
         item = itemRepository.save(item);
-        parameterRepository.saveAll(item.getCustomAttributeList());
+
         return item;
     }
 
