@@ -7,6 +7,7 @@ import io.github.reconsolidated.zpibackend.features.reservation.ReservationType;
 import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
 import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
 import io.github.reconsolidated.zpibackend.features.store.Store;
+import io.github.reconsolidated.zpibackend.features.storeConfig.AuthenticationConfig;
 import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
 import io.github.reconsolidated.zpibackend.features.storeConfig.StoreConfig;
 import org.junit.jupiter.api.Test;
@@ -41,15 +42,16 @@ public class ScheduleTest {
                 .flexibility(true)
                 .granularity(true)
                 .build();
-
+        AuthenticationConfig authentication = AuthenticationConfig.builder()
+                .confirmationRequire(false)
+                .build();
         StoreConfig storeConfig = StoreConfig.builder()
                 .core(core)
+                .authConfig(authentication)
                 .build();
-
         Store store = Store.builder()
                 .storeConfig(storeConfig)
                 .build();
-
         Item item = Item.builder()
                 .store(store)
                 .build();

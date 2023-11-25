@@ -3,6 +3,7 @@ package io.github.reconsolidated.zpibackend.features.reservation;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.authentication.currentUser.CurrentUser;
 import io.github.reconsolidated.zpibackend.features.reservation.request.CheckAvailabilityRequest;
+import io.github.reconsolidated.zpibackend.features.reservation.request.ReservationRequest;
 import io.github.reconsolidated.zpibackend.features.reservation.response.CheckAvailabilityResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,14 @@ public class ReservationController {
         CheckAvailabilityResponse response = reservationService.checkAvailability(request);
 
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getResponseCode()));
+    }
+
+    @PostMapping("/reserve")
+    public ResponseEntity<?> reserve(@CurrentUser AppUser currentUser,
+                                     @PathVariable String storeName,
+                                     @RequestBody ReservationRequest request) {
+
+        return ResponseEntity.ok(reservationService.reserveItem(currentUser, request));
     }
 
     @DeleteMapping("/{reservationId}")
