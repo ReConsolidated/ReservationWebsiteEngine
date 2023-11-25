@@ -24,10 +24,7 @@ public class ItemDto {
 
     private Long id;
     private Boolean active;
-    private String title;
-    private String subtitle;
-    private String description;
-    private String image;
+    private ItemAttributesDto attributesDto;
     private List<Parameter> customAttributeList = new ArrayList<>();
     private List<SubItem> subItems = new ArrayList<>();
     private List<Availability> availabilities = new ArrayList<>();
@@ -40,10 +37,11 @@ public class ItemDto {
     public ItemDto(Item item) {
         this.id = item.getItemId();
         this.active = item.getActive();
-        this.title = item.getTitle();
-        this.subtitle = item.getSubtitle();
-        this.description = item.getDescription();
-        this.image = item.getImage();
+        this.attributesDto = new ItemAttributesDto(
+                item.getTitle(),
+                item.getSubtitle(),
+                item.getDescription(),
+                item.getImage());
         this.customAttributeList = item.getCustomAttributeList();
         this.amount = item.getAmount();
         this.availableAmount = item.getAmount();

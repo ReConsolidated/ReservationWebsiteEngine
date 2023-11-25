@@ -41,10 +41,10 @@ public class Item {
     public Item(Store store, ItemDto itemDto) {
         this.store = store;
         this.active = itemDto.getActive();
-        this.title = itemDto.getTitle();
-        this.subtitle = itemDto.getSubtitle();
-        this.description = itemDto.getDescription();
-        this.image = itemDto.getImage();
+        this.title = itemDto.getAttributesDto().getTitle();
+        this.subtitle = itemDto.getAttributesDto().getSubtitle();
+        this.description = itemDto.getAttributesDto().getDescription();
+        this.image = itemDto.getAttributesDto().getImage();
         this.amount = itemDto.getAmount();
         this.customAttributeList = itemDto.getCustomAttributeList();
         this.schedule = new Schedule(this, itemDto.getAvailabilities());
