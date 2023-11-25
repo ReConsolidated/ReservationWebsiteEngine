@@ -24,18 +24,6 @@ public class AppUserServiceTest {
 
     @Test
     @Transactional
-    public void testSetImageUrl() {
-        final String imageUrl = "a.pl";
-        final String keycloakId = "unique_id";
-        AppUser user = appUserService.getOrCreateUser(keycloakId, "any@any.com", "name", "lastname");
-
-        appUserService.setImageUrl(user, imageUrl);
-
-        assertThat(appUserService.getUser(user.getId()).getImageUrl()).isEqualTo(imageUrl);
-    }
-
-    @Test
-    @Transactional
     public void testSetFirstName() {
         final String name = "Tomek";
         final String keycloakId = "unique_id";

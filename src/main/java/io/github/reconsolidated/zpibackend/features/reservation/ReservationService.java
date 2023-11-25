@@ -4,6 +4,7 @@ import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.item.ItemService;
 import io.github.reconsolidated.zpibackend.features.item.SubItem;
+import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 public class ReservationService {
 
     private ReservationRepository reservationRepository;
+    private StoreService storeService;
     private ItemService itemService;
 
     public Reservation reserveItem(AppUser appUser, ReservationDTo request) {
@@ -125,32 +127,14 @@ public class ReservationService {
         }
     }
 
-    public void deleteReservation(AppUser appUser, Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
-        Item item = reservation.getItem();
-        Schedule schedule = item.getSchedule();
-        CoreConfig core = item.getStore().getStoreConfig().getCore();
+    public List<Reservation> getUserReservations(Long currentUserId, String storeName) {
+        return reservationRepository.findByUser_IdAndItemStoreStoreName(currentUserId, storeName);
+    }
 
-        if (core.getFlexibility()) {
-            schedule.processReservationRemoval(reservation);
-        } else {
-            if (core.getPeriodicity() || core.getSpecificReservation()) {
-                ArrayList<SubItem> toReserve = new ArrayList<>();
-                for (SubItem subItem : item.getSubItems()) {
-                    for (Long subItemId: reservation.getSubItemIdList()) {
-                        if (subItem.getSubItemId().equals(subItemId)) {
-                            toReserve.add(subItem);
-                        }
-                    }
-                }
-                for (SubItem subItem : toReserve) {
-                    subItem.setAmount(subItem.getAmount() + reservation.getAmount());
-                }
-            } else {
-                item.setAmount(item.getAmount() + reservation.getAmount());
-            }
+    public List<Reservation> getStoreReservations(AppUser currentUser, String storeName) {
+        if (!currentUser.getId().equals(storeService.getStore(storeName).getOwnerAppUserId())) {
+            throw new IllegalArgumentException("Only owner can get all reservations");
         }
-
-        reservationRepository.delete(reservation);
+        return reservationRepository.findByItemStoreStoreName(storeName);
     }
 }

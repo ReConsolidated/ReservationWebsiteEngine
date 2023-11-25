@@ -2,15 +2,13 @@ package io.github.reconsolidated.zpibackend.features.item;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
-import io.github.reconsolidated.zpibackend.features.item.dtos.ItemListDto;
-import io.github.reconsolidated.zpibackend.features.item.dtos.ItemStatus;
 import io.github.reconsolidated.zpibackend.features.parameter.ParameterRepository;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -23,20 +21,17 @@ public class ItemService {
         return itemRepository.findById(itemId).orElseThrow();
     }
 
-    public ItemListDto getItems(AppUser currentUser, Long storeId) {
-        Store store = storeService.getStore(currentUser, storeId);
+    public List<ItemDto> getItems(AppUser currentUser, String storeName) {
+        Store store = storeService.getStore(storeName);
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
-        return new ItemListDto(itemRepository
-                .findAllByStore_Id(storeId)
-                .stream()
-                .map((item) -> new ItemDto(item, getItemStatus(item.getItemId())))
-                .collect(Collectors.toList()));
+
+        return itemRepository.findAllByStore_Id(store.getId()).stream().map(ItemDto::new).toList();
     }
 
-    public Item createItem(AppUser currentUser, Long storeId, ItemDto itemDto) {
-        Store store = storeService.getStore(currentUser, storeId);
+    public Item createItem(AppUser currentUser, String storeName, ItemDto itemDto) {
+        Store store = storeService.getStore(storeName);
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
@@ -46,19 +41,16 @@ public class ItemService {
         return item;
     }
 
-    public ItemStatus getItemStatus(Long itemId) {
-        Item item = getItem(itemId);
-        return new ItemStatus();
-    }
-
     public ItemDto updateItem(AppUser currentUser, Long itemId, ItemDto itemDto) {
         Item item = getItem(itemId);
         Store store = item.getStore();
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
-        Item newItem = new Item(store, itemDto);
-        return new ItemDto(itemRepository.save(newItem), getItemStatus(item.getItemId()));
+        item = new Item(store, itemDto);
+        item.setItemId(itemId);
+        itemRepository.save(item);
+        return itemDto;
     }
 
     public ItemDto activateItem(AppUser currentUser, Long itemId) {
@@ -68,7 +60,7 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         item.setActive(true);
-        return new ItemDto(itemRepository.save(item), getItemStatus(item.getItemId()));
+        return new ItemDto(itemRepository.save(item));
     }
 
     public ItemDto deactivateItem(AppUser currentUser, Long itemId) {
@@ -78,7 +70,7 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         item.setActive(false);
-        return new ItemDto(itemRepository.save(item), getItemStatus(item.getItemId()));
+        return new ItemDto(itemRepository.save(item));
     }
 
     public void deleteItem(AppUser currentUser, Long itemId) {

@@ -3,10 +3,7 @@ package io.github.reconsolidated.zpibackend.features.item;
 import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 @Getter
@@ -21,7 +18,7 @@ public class SubItem {
     private Long subItemId;
     private String title;
     private String subtitle;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private ScheduleSlot slot;
     private Integer amount;
 

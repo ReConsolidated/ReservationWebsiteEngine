@@ -1,15 +1,14 @@
 package io.github.reconsolidated.zpibackend.features.availability;
 
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import java.time.LocalDateTime;
 
-@Entity
-@NoArgsConstructor
+@Getter
+@AllArgsConstructor
 public class Availability {
-    @Id
-    @GeneratedValue
-    private Long id;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
+    private String type;
 }
