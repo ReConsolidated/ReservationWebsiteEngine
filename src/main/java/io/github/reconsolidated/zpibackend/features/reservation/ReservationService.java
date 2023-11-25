@@ -22,7 +22,7 @@ public class ReservationService {
     private StoreService storeService;
     private ItemService itemService;
 
-    public Reservation reserveItem(AppUser appUser, ReservationDTo request) {
+    public Reservation reserveItem(AppUser appUser, ReservationDto request) {
         Item item = itemService.getItem(request.getItemId());
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();

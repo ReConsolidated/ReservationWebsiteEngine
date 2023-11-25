@@ -2,11 +2,14 @@ package io.github.reconsolidated.zpibackend.features.store;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.authentication.currentUser.CurrentUser;
+import io.github.reconsolidated.zpibackend.features.store.dtos.StoreNameDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -22,7 +25,7 @@ public class StoreController {
     }
 
     @GetMapping
-    public ResponseEntity<?> listStores(@CurrentUser AppUser currentUser) {
-        return ResponseEntity.ok(storeService.listStores(currentUser));
+    public ResponseEntity<List<StoreNameDto>> listStores(@CurrentUser AppUser currentUser) {
+        return ResponseEntity.ok(storeService.listStores(currentUser).stream().map(StoreNameDto::new).toList());
     }
 }
