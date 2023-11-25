@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.reservation;
 
+import io.github.reconsolidated.zpibackend.features.availability.Availability;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
 import lombok.*;
@@ -7,6 +8,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -30,6 +32,25 @@ public class Schedule {
         this.item = item;
         this.availableScheduleSlots = new ArrayList<>();
 
+    }
+
+    public Schedule(Item item, List<Availability> availabilities) {
+
+        this.item = item;
+        this.availableScheduleSlots = new ArrayList<>();
+        for (Availability availability: availabilities) {
+            addSlot(new ScheduleSlot(availability.getStartDateTime(), availability.getEndDateTime(), item.getAmount()));
+        }
+
+    }
+
+    public List<Availability> getAvailabilities() {
+        return availableScheduleSlots.stream().map((slot) ->
+                new Availability(
+                        slot.getStartDateTime(),
+                        slot.getEndDateTime(),
+                        slot.getType().toString()
+                )).collect(Collectors.toList());
     }
 
     public void addSlot(ScheduleSlot scheduleSlot) {
@@ -273,21 +294,21 @@ public class Schedule {
         ScheduleSlot dayBeforeSlot = new ScheduleSlot(
                 originalSlot.getStartDateTime().minusDays(1),
                 originalSlot.getEndDateTime().minusDays(1),
-                originalSlot.getCurrAmount());
+                item.getAmount());
         if (verify(false, dayBeforeSlot)) {
             suggestions.add(dayBeforeSlot);
         }
         ScheduleSlot dayAfterSlot = new ScheduleSlot(
                 originalSlot.getStartDateTime().plusDays(1),
                 originalSlot.getEndDateTime().plusDays(1),
-                originalSlot.getCurrAmount());
+                item.getAmount());
         if (verify(false, dayAfterSlot)) {
             suggestions.add(dayAfterSlot);
         }
         ScheduleSlot weekAfterSlot = new ScheduleSlot(
                 originalSlot.getStartDateTime().plusDays(WEEKDAYS),
                 originalSlot.getEndDateTime().plusDays(WEEKDAYS),
-                originalSlot.getCurrAmount());
+                item.getAmount());
         if (verify(false, weekAfterSlot)) {
             suggestions.add(weekAfterSlot);
         }
@@ -335,7 +356,7 @@ public class Schedule {
                 ScheduleSlot slotToCheck = continuousSlots.get(i);
                 ArrayList<Integer> subItemIndexesTmp = new ArrayList<>(subItemIndexes);
                 //checking availability of each sub item
-                for (int j = 0; j < slotToCheck.getItemsAvailability().size(); j++) {
+                for (int j = 0; j < item.getAmount(); j++) {
                     if (subItemIndexesTmp.contains(j) && !slotToCheck.getItemsAvailability().get(j)) {
                         subItemIndexesTmp.remove(Integer.valueOf(j));
                     }

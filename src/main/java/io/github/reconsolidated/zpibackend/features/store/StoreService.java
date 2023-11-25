@@ -20,9 +20,14 @@ public class StoreService {
         return storeRepository.findById(storeId).orElseThrow();
     }
 
+    public Store getStore(String storeName) {
+        return storeRepository.findByStoreConfigName(storeName).orElseThrow();
+
+    }
+
     public Store createStore(AppUser currentUser, CreateStoreDto dto) {
         StoreConfig storeConfig = storeConfigService.getStoreConfig(currentUser, dto.getStoreConfigId());
-        Store store = new Store(dto.getStoreName(), storeConfig);
+        Store store = new Store(storeConfig);
         return storeRepository.save(store);
     }
 

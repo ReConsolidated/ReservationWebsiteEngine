@@ -4,6 +4,7 @@ import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.item.ItemService;
 import io.github.reconsolidated.zpibackend.features.item.SubItem;
+import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 public class ReservationService {
 
     private ReservationRepository reservationRepository;
+    private StoreService storeService;
     private ItemService itemService;
 
     public Reservation reserveItem(AppUser appUser, ReservationDTo request) {
@@ -123,6 +125,17 @@ public class ReservationService {
                         .build();
             }
         }
+    }
+
+    public List<Reservation> getUserReservations(Long currentUserId, String storeName) {
+        return reservationRepository.findByUser_IdAndItemStoreStoreName(currentUserId, storeName);
+    }
+
+    public List<Reservation> getStoreReservations(AppUser currentUser, String storeName) {
+        if (!currentUser.getId().equals(storeService.getStore(storeName).getOwnerAppUserId())) {
+            throw new IllegalArgumentException("Only owner can get all reservations");
+        }
+        return reservationRepository.findByItemStoreStoreName(storeName);
     }
 
     public void deleteReservation(AppUser appUser, Long reservationId) {
