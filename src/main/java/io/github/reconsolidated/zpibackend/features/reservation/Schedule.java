@@ -34,6 +34,16 @@ public class Schedule {
 
     }
 
+    public Schedule(Item item, List<Availability> availabilities) {
+
+        this.item = item;
+        this.availableScheduleSlots = new ArrayList<>();
+        for (Availability availability: availabilities) {
+            addSlot(new ScheduleSlot(availability.getStartDateTime(), availability.getEndDateTime(), item.getAmount()));
+        }
+
+    }
+
     public List<Availability> getAvailabilities() {
         return availableScheduleSlots.stream().map((slot) ->
                 new Availability(
