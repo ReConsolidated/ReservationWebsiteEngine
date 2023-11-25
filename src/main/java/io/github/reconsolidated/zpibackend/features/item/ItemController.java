@@ -55,14 +55,14 @@ public class ItemController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{itemId}/activate")
+    @PutMapping("/{itemId}/activate")
     public ResponseEntity<?> activateItem(@CurrentUser AppUser currentUser,
                                           @PathVariable String storeName,
                                           @PathVariable Long itemId) {
         return ResponseEntity.ok(itemService.activateItem(currentUser, itemId));
     }
 
-    @PostMapping("/{itemId}/deactivate")
+    @PutMapping("/{itemId}/deactivate")
     public ResponseEntity<?> deactivateItem(@CurrentUser AppUser currentUser,
                                             @PathVariable String storeName,
                                             @PathVariable Long itemId) {

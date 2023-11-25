@@ -21,7 +21,7 @@ public class Schedule {
     private Long scheduleId;
     @OneToOne
     private Item item;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<ScheduleSlot> availableScheduleSlots = new ArrayList<>(); //it must be sorted, and not overlapping
 
     private static final int WEEKDAYS = 7;

@@ -4,6 +4,7 @@ import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.item.ItemService;
 import io.github.reconsolidated.zpibackend.features.item.SubItem;
+import io.github.reconsolidated.zpibackend.features.reservation.dtos.ReservationDTo;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
 

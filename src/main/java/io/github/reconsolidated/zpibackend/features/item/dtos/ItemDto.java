@@ -24,9 +24,10 @@ public class ItemDto {
 
     private Long id;
     private Boolean active;
-    private ItemAttributesDto attributesDto;
+    private ItemAttributesDto attributes;
     private List<Parameter> customAttributeList = new ArrayList<>();
     private List<SubItem> subItems = new ArrayList<>();
+    private ScheduleDto schedule;
     private List<Availability> availabilities = new ArrayList<>();
     private Integer amount;
     private Integer availableAmount = amount;
@@ -37,7 +38,7 @@ public class ItemDto {
     public ItemDto(Item item) {
         this.id = item.getItemId();
         this.active = item.getActive();
-        this.attributesDto = new ItemAttributesDto(
+        this.attributes = new ItemAttributesDto(
                 item.getTitle(),
                 item.getSubtitle(),
                 item.getDescription(),
@@ -48,6 +49,7 @@ public class ItemDto {
         this.mark = AVERAGE;
         this.subItems = item.getSubItems();
         this.availabilities = item.getSchedule().getAvailabilities();
+        this.schedule = new ScheduleDto(item.getInitialSchedule().getAvailabilities());
 
         for (ScheduleSlot slot : item.getSchedule().getAvailableScheduleSlots()) {
             if (earliestStartHour > slot.getStartDateTime().getHour()) {

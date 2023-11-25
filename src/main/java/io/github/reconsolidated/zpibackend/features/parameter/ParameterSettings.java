@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class ParameterSettings {
     @Id
     @GeneratedValue(generator = "parameter_settings_generator")
-    protected Long parameterSettingsId;
+    protected Long id;
     protected String name;
     protected ParameterType dataType;
     protected Boolean isRequired;

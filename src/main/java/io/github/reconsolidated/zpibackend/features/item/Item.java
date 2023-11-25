@@ -4,6 +4,7 @@ import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
+import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import lombok.*;
 
@@ -29,6 +30,8 @@ public class Item {
     private String description;
     private String image;
     @OneToOne(cascade = CascadeType.ALL)
+    private Schedule initialSchedule;
+    @OneToOne(cascade = CascadeType.ALL)
     private Schedule schedule;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Parameter> customAttributeList;
@@ -41,13 +44,14 @@ public class Item {
     public Item(Store store, ItemDto itemDto) {
         this.store = store;
         this.active = itemDto.getActive();
-        this.title = itemDto.getAttributesDto().getTitle();
-        this.subtitle = itemDto.getAttributesDto().getSubtitle();
-        this.description = itemDto.getAttributesDto().getDescription();
-        this.image = itemDto.getAttributesDto().getImage();
+        this.title = itemDto.getAttributes().getTitle();
+        this.subtitle = itemDto.getAttributes().getSubtitle();
+        this.description = itemDto.getAttributes().getDescription();
+        this.image = itemDto.getAttributes().getImage();
         this.amount = itemDto.getAmount();
         this.customAttributeList = itemDto.getCustomAttributeList();
-        this.schedule = new Schedule(this, itemDto.getAvailabilities());
+        this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+        this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
     }
 
 }
