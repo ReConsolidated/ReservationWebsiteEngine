@@ -6,10 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -20,9 +17,13 @@ public class ReservationController {
 
     @PostMapping("/check")
     public ResponseEntity<?> reFetchSchedule(@CurrentUser AppUser currentUser, @RequestBody CheckAvailabilityRequest request) {
-
         CheckAvailabilityResponse response = reservationService.checkAvailability(request);
-
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getResponseCode()));
+    }
+
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<?> deleteReservation(@CurrentUser AppUser currentUser, @PathVariable Long reservationId) {
+        reservationService.deleteReservation(currentUser, reservationId);
+        return ResponseEntity.ok().build();
     }
 }
