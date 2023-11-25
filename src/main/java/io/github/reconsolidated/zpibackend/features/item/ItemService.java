@@ -19,6 +19,10 @@ public class ItemService {
         return itemRepository.findById(itemId).orElseThrow();
     }
 
+    public ItemDto getItemDto(Long itemId) {
+        return new ItemDto(itemRepository.findById(itemId).orElseThrow());
+    }
+
     public List<ItemDto> getItems(AppUser currentUser, String storeName) {
         Store store = storeService.getStore(storeName);
         return itemRepository.findAllByStore_Id(store.getId()).stream().map(ItemDto::new).toList();

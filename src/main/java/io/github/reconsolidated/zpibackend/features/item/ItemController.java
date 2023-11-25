@@ -42,10 +42,10 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Item> getItem(@CurrentUser AppUser currentUser,
+    public ResponseEntity<ItemDto> getItem(@CurrentUser AppUser currentUser,
                                         @PathVariable String storeName,
                                         @PathVariable Long itemId) {
-        return ResponseEntity.ok(itemService.getItem(itemId));
+        return ResponseEntity.ok(itemService.getItemDto(itemId));
     }
 
     @DeleteMapping("/{itemId}")
