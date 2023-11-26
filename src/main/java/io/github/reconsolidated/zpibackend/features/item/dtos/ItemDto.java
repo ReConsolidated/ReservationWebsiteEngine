@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,11 +27,16 @@ public class ItemDto {
     private Long id;
     private Boolean active;
     private ItemAttributesDto attributesDto;
+    @NotNull
     private List<Parameter> customAttributeList = new ArrayList<>();
+    @NotNull
     private List<SubItem> subItems = new ArrayList<>();
+    @NotNull
     private List<Availability> availabilities = new ArrayList<>();
+    @NotNull
     private Integer amount;
     private Integer availableAmount = amount;
+    @NotNull
     private Double mark;
     private Integer earliestStartHour = LATEST_HOUR;
     private Integer latestEndHour = 0;
