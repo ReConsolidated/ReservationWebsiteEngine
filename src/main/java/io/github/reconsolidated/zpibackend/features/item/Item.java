@@ -31,6 +31,8 @@ public class Item {
     private String image;
     @OneToOne(cascade = CascadeType.ALL)
     private Schedule schedule;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Schedule initialSchedule;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Parameter> customAttributeList;
     private Integer amount = 1;
@@ -50,6 +52,7 @@ public class Item {
         itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
         this.customAttributeList = itemDto.getCustomAttributeList();
         this.schedule = new Schedule(this, itemDto.getAvailabilities());
+        this.initialSchedule = new Schedule(this, itemDto.getAvailabilities());
     }
 
 }
