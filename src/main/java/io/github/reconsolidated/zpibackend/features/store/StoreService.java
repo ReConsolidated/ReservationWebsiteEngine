@@ -32,6 +32,9 @@ public class StoreService {
     }
 
     public List<Store> listStores(AppUser currentUser) {
+        if (currentUser == null) {
+            return storeRepository.findAll();
+        }
         return storeRepository.findAllByOwnerAppUserId(currentUser.getId());
     }
 }

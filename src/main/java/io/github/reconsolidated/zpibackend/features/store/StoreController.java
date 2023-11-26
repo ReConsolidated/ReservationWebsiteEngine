@@ -20,7 +20,7 @@ public class StoreController {
 
 
     @GetMapping("/{storeName}")
-    public ResponseEntity<?> getStore(@CurrentUser AppUser currentUser, @PathVariable String storeName) {
+    public ResponseEntity<?> getStore(@PathVariable String storeName) {
         return ResponseEntity.ok(storeService.getStore(storeName));
     }
 

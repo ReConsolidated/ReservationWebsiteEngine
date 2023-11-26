@@ -26,6 +26,7 @@ public class Item {
     private Boolean active;
     private String title;
     private String subtitle;
+    @Column(length = 1000)
     private String description;
     private String image;
     @OneToOne(cascade = CascadeType.ALL)

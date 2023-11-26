@@ -27,6 +27,12 @@ public class ReservationController {
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getResponseCode()));
     }
 
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<?> deleteReservation(@CurrentUser AppUser currentUser, @PathVariable Long reservationId) {
+        reservationService.deleteReservation(currentUser, reservationId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/user")
     public ResponseEntity<List<Reservation>> userReservations(@CurrentUser AppUser currentUser,
                                                               @PathVariable String storeName) {
