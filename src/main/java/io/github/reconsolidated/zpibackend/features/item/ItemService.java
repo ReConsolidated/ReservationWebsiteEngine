@@ -2,7 +2,6 @@ package io.github.reconsolidated.zpibackend.features.item;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
-import io.github.reconsolidated.zpibackend.features.parameter.ParameterRepository;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import lombok.AllArgsConstructor;
@@ -14,19 +13,18 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
-    private final ParameterRepository parameterRepository;
     private final StoreService storeService;
 
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow();
     }
 
+    public ItemDto getItemDto(Long itemId) {
+        return new ItemDto(itemRepository.findById(itemId).orElseThrow());
+    }
+
     public List<ItemDto> getItems(AppUser currentUser, String storeName) {
         Store store = storeService.getStore(storeName);
-        if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
-            throw new RuntimeException("You are not the owner of this store");
-        }
-
         return itemRepository.findAllByStore_Id(store.getId()).stream().map(ItemDto::new).toList();
     }
 
@@ -37,7 +35,7 @@ public class ItemService {
         }
         Item item = new Item(store, itemDto);
         item = itemRepository.save(item);
-        parameterRepository.saveAll(item.getCustomAttributeList());
+
         return item;
     }
 

@@ -49,7 +49,7 @@ public class Schedule {
                 new Availability(
                         slot.getStartDateTime(),
                         slot.getEndDateTime(),
-                        slot.getType().toString()
+                        slot.getType()
                 )).collect(Collectors.toList());
     }
 

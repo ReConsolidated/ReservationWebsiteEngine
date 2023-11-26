@@ -24,6 +24,6 @@ public class AuthenticationConfig {
     private Long id;
     @ElementCollection
     private List<String> requiredPersonalData = new ArrayList<>();
-    private Boolean confirmationRequire;
-    private Boolean isPrivate;
+    private Boolean confirmationRequire = false;
+    private Boolean isPrivate = false;
 }

@@ -31,10 +31,11 @@ public class ItemDto {
     private List<Parameter> customAttributeList = new ArrayList<>();
     @NotNull
     private List<SubItem> subItems = new ArrayList<>();
+    private ScheduleDto schedule;
     @NotNull
     private List<Availability> availabilities = new ArrayList<>();
     @NotNull
-    private Integer amount;
+    private Integer amount = 1;
     private Integer availableAmount = amount;
     @NotNull
     private Double mark;
@@ -55,6 +56,7 @@ public class ItemDto {
         this.mark = AVERAGE;
         this.subItems = item.getSubItems();
         this.availabilities = item.getSchedule().getAvailabilities();
+        this.schedule = new ScheduleDto(item.getInitialSchedule().getAvailabilities());
 
         for (ScheduleSlot slot : item.getSchedule().getAvailableScheduleSlots()) {
             if (earliestStartHour > slot.getStartDateTime().getHour()) {

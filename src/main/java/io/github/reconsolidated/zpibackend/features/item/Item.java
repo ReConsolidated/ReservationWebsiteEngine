@@ -31,9 +31,11 @@ public class Item {
     private String image;
     @OneToOne(cascade = CascadeType.ALL)
     private Schedule schedule;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Schedule initialSchedule;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Parameter> customAttributeList;
-    private Integer amount;
+    private Integer amount = 1;
     @OneToMany(cascade = CascadeType.ALL)
     private List<SubItem> subItems;
     @OneToMany(cascade = CascadeType.ALL)
@@ -47,8 +49,10 @@ public class Item {
         this.description = itemDto.getAttributesDto().getDescription();
         this.image = itemDto.getAttributesDto().getImage();
         this.amount = itemDto.getAmount();
+        itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
         this.customAttributeList = itemDto.getCustomAttributeList();
         this.schedule = new Schedule(this, itemDto.getAvailabilities());
+        this.initialSchedule = new Schedule(this, itemDto.getAvailabilities());
     }
 
 }
