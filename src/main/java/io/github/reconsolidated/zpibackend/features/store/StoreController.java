@@ -25,7 +25,12 @@ public class StoreController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StoreNameDto>> listStores(@CurrentUser AppUser currentUser) {
+    public ResponseEntity<List<StoreNameDto>> listStores() {
+        return ResponseEntity.ok(storeService.listStores().stream().map(StoreNameDto::new).toList());
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<StoreNameDto>> listAllStores(@CurrentUser AppUser currentUser) {
         return ResponseEntity.ok(storeService.listStores(currentUser).stream().map(StoreNameDto::new).toList());
     }
 }

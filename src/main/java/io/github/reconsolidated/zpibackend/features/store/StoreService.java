@@ -7,6 +7,7 @@ import io.github.reconsolidated.zpibackend.features.storeConfig.StoreConfigServi
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -32,9 +33,10 @@ public class StoreService {
     }
 
     public List<Store> listStores(AppUser currentUser) {
-        if (currentUser == null) {
-            return storeRepository.findAll();
-        }
         return storeRepository.findAllByOwnerAppUserId(currentUser.getId());
+    }
+
+    public List<Store> listStores() {
+        return storeRepository.findAll();
     }
 }
