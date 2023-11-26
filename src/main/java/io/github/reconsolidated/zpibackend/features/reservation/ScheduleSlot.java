@@ -48,20 +48,31 @@ public class ScheduleSlot {
         }
     }
 
+    public ScheduleSlot(LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initAmount, List<Long> subItemIdList) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.currAmount = initAmount - subItemIdList.size();
+        this.itemsAvailability = new ArrayList<>(initAmount);
+        for (int i = 0; i < initAmount; i++) {
+            itemsAvailability.add(!subItemIdList.contains((long) i));
+        }
+    }
+
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder("[");
         for (Boolean itemAvail: itemsAvailability) {
             stringBuilder.append(itemAvail.toString());
             stringBuilder.append(" ");
         }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         stringBuilder.append("]");
-        return startDateTime.toString() + "-" + endDateTime.toString() + ": " + this.currAmount + stringBuilder.toString();
+        return startDateTime.toString() + "-" + endDateTime.toString() + ": " + this.currAmount + stringBuilder;
     }
 
     public ScheduleSlot[] split(LocalDateTime splitBy) {
         if (!startDateTime.isBefore(splitBy) || !endDateTime.isAfter(splitBy)) {
             throw new IllegalArgumentException("Cannot split Schedule slot by time outside the slot time range!\nSlot: "
-                    + this.toString() + ", splitBy: " + splitBy);
+                    + this + ", splitBy: " + splitBy);
         }
         ScheduleSlot first = new ScheduleSlot(startDateTime, splitBy, itemsAvailability.size());
         ScheduleSlot second = new ScheduleSlot(splitBy, endDateTime, itemsAvailability.size());

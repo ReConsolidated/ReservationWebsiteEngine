@@ -361,6 +361,7 @@ public class ScheduleTest {
                 .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 0))
                 .endDateTime(LocalDateTime.of(2023, 1, 1, 13, 0))
                 .amount(1)
+                .subItemIdList(new ArrayList<>())
                 .build();
         schedule.processReservation(reservation);
 
@@ -380,6 +381,7 @@ public class ScheduleTest {
                 .startDateTime(LocalDateTime.of(2023, 1, 1, 13, 0))
                 .endDateTime(LocalDateTime.of(2023, 1, 1, 14, 0))
                 .amount(2)
+                .subItemIdList(new ArrayList<>())
                 .build();
         schedule.processReservation(reservation);
         assertEquals(result, schedule.getAvailableScheduleSlots());
@@ -398,6 +400,7 @@ public class ScheduleTest {
                 .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 45))
                 .endDateTime(LocalDateTime.of(2023, 1, 1, 13, 0))
                 .amount(1)
+                .subItemIdList(new ArrayList<>())
                 .build();
         schedule.processReservation(reservation);
         assertEquals(result, schedule.getAvailableScheduleSlots());
@@ -414,7 +417,7 @@ public class ScheduleTest {
                 .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 45))
                 .endDateTime(LocalDateTime.of(2023, 1, 1, 13, 0))
                 .currAmount(1)
-                .itemsAvailability(Arrays.asList(true))
+                .itemsAvailability(Arrays.asList(false, true))
                 .type(ReservationType.NONE)
                 .build());
 
