@@ -51,8 +51,9 @@ public class Item {
         this.amount = itemDto.getAmount();
         itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
         this.customAttributeList = itemDto.getCustomAttributeList();
-        this.schedule = new Schedule(this, itemDto.getAvailabilities());
-        this.initialSchedule = new Schedule(this, itemDto.getAvailabilities());
+        this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+        this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+        this.subItems = itemDto.getSubItems();
     }
 
 }

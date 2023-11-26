@@ -2,6 +2,7 @@ package io.github.reconsolidated.zpibackend.features.item;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
+import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import lombok.AllArgsConstructor;
@@ -41,12 +42,14 @@ public class ItemService {
 
     public ItemDto updateItem(AppUser currentUser, Long itemId, ItemDto itemDto) {
         Item item = getItem(itemId);
+        List<Reservation> reservations = item.getReservations();
         Store store = item.getStore();
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
         item = new Item(store, itemDto);
         item.setItemId(itemId);
+        item.setReservations(reservations);
         itemRepository.save(item);
         return itemDto;
     }
