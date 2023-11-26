@@ -93,6 +93,7 @@ public class ReservationServiceTests {
                 LocalDateTime.of(2023, 1, 1, 14, 0), 2));
 
         item.setSchedule(schedule);
+        item.setInitialSchedule(schedule);
 
         item = itemService.createItem(appUser, "test", new ItemDto(item));
 
@@ -178,6 +179,7 @@ public class ReservationServiceTests {
                 .build();
         Schedule schedule = new Schedule(item, new ArrayList<>());
         item.setSchedule(schedule);
+        item.setInitialSchedule(schedule);
 
         item = itemService.createItem(appUser, "test", new ItemDto(item));
 
