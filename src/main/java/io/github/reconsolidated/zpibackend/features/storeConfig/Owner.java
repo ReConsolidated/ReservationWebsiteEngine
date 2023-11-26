@@ -1,7 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.*;
 
 import javax.persistence.Entity;

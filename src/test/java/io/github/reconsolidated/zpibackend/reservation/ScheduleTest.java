@@ -417,7 +417,7 @@ public class ScheduleTest {
                 .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 45))
                 .endDateTime(LocalDateTime.of(2023, 1, 1, 13, 0))
                 .currAmount(1)
-                .itemsAvailability(Arrays.asList(false, true))
+                .itemsAvailability(Arrays.asList(true, false))
                 .type(ReservationType.NONE)
                 .build());
 
