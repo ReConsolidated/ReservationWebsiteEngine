@@ -38,7 +38,6 @@ public class ReservationService {
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
-
         if (core.getFlexibility()) {
             //reservations with schedule
             FlexibleReservationData reservationData = (FlexibleReservationData) request.getReservationData();
