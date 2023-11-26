@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReservationDTo {
+public class ReservationDto {
 
     private Long id;
     private Long itemId;

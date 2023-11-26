@@ -23,6 +23,7 @@ public class ReservationController {
                                              @RequestBody CheckAvailabilityRequest request) {
 
         CheckAvailabilityResponse response = reservationService.checkAvailability(request);
+
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getResponseCode()));
     }
 
