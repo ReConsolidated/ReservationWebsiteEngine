@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,7 +25,7 @@ public class Reservation {
     @ManyToOne
     private Item item;
     @ElementCollection
-    private List<Long> subItemIdList;
+    private List<Long> subItemIdList = new ArrayList<>();
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     private Integer amount;
@@ -32,8 +33,7 @@ public class Reservation {
     private Boolean confirmed;
 
     public ScheduleSlot getScheduleSlot() {
-
-        return new ScheduleSlot(startDateTime, endDateTime, amount);
+        return new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), subItemIdList);
     }
 
 }

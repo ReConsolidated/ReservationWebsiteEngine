@@ -409,4 +409,26 @@ public class Schedule {
         continuousSlots.add(currList);
         return continuousSlots;
     }
+
+    public void processReservationRemoval(Reservation reservation) {
+        for (ScheduleSlot scheduleSlot : availableScheduleSlots) {
+            if (scheduleSlot.equalsTime(reservation.getScheduleSlot())) {
+                scheduleSlot.setCurrAmount(scheduleSlot.getCurrAmount() + reservation.getAmount());
+                for (int i = 0; i < reservation.getAmount(); i++) {
+                    scheduleSlot.getItemsAvailability().set(reservation.getSubItemIdList().get(i).intValue(), true);
+                }
+                return;
+            }
+        }
+        for (int i = 0; i < reservation.getAmount(); i++) {
+            int index = reservation.getSubItemIdList().get(i).intValue();
+            List<Boolean> itemAvailability = reservation.getScheduleSlot().getItemsAvailability();
+            while (index >= itemAvailability.size()) {
+                itemAvailability.add(true);
+            }
+            itemAvailability.set(index, true);
+            reservation.getScheduleSlot().setItemsAvailability(itemAvailability);
+        }
+        availableScheduleSlots.add(reservation.getScheduleSlot());
+    }
 }

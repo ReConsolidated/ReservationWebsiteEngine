@@ -23,8 +23,13 @@ public class ReservationController {
                                              @RequestBody CheckAvailabilityRequest request) {
 
         CheckAvailabilityResponse response = reservationService.checkAvailability(request);
-
         return new ResponseEntity<>(response, HttpStatus.valueOf(response.getResponseCode()));
+    }
+
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<?> deleteReservation(@CurrentUser AppUser currentUser, @PathVariable Long reservationId) {
+        reservationService.deleteReservation(currentUser, reservationId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/user")
