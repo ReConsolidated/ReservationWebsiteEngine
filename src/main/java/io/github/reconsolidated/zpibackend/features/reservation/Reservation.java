@@ -39,16 +39,27 @@ public class Reservation {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Reservation that)) return false;
-
-        if (!user.equals(that.user)) return false;
-        if (!item.equals(that.item)) return false;
-        if (!Objects.equals(subItemIdList, that.subItemIdList))
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Reservation that)) {
             return false;
-        if (!Objects.equals(startDateTime, that.startDateTime))
+        }
+        if (!user.equals(that.user)) {
             return false;
-        if (!Objects.equals(endDateTime, that.endDateTime)) return false;
+        }
+        if (!item.equals(that.item)) {
+            return false;
+        }
+        if (!Objects.equals(subItemIdList, that.subItemIdList)) {
+            return false;
+        }
+        if (!Objects.equals(startDateTime, that.startDateTime)) {
+            return false;
+        }
+        if (!Objects.equals(endDateTime, that.endDateTime)) {
+            return false;
+        }
         return amount.equals(that.amount);
     }
 

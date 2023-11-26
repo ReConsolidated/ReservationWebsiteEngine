@@ -33,17 +33,17 @@ public class Item {
     private String description;
     private String image;
     @OneToOne(cascade = CascadeType.ALL)
-    private Schedule schedule;
+    private Schedule schedule = new Schedule(this, new ArrayList<>());
     @OneToOne(cascade = CascadeType.ALL)
-    private Schedule initialSchedule;
+    private Schedule initialSchedule = new Schedule(this, new ArrayList<>());
     @OneToMany(cascade = CascadeType.ALL)
     private List<Parameter> customAttributeList;
     private Integer amount = 1;
-    private Integer initialAmount = amount;
+    private Integer initialAmount = 1;
     @OneToMany(cascade = CascadeType.ALL)
     private List<SubItem> subItems;
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Reservation> reservations;
+    private List<Reservation> reservations = new ArrayList<>();
 
     public Item(Store store, ItemDto itemDto) {
         this.store = store;
@@ -59,9 +59,10 @@ public class Item {
         this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
         this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
         this.subItems = itemDto.getSubItems();
+        this.reservations = new ArrayList<>();
     }
 
-    public SubItemListDto getSubItemsListDto(){
+    public SubItemListDto getSubItemsListDto() {
         ArrayList<SubItemDto> subItemsDto = new ArrayList<>();
         for (SubItem subItem : subItems) {
             subItemsDto.add(subItem.toSubItemDto());

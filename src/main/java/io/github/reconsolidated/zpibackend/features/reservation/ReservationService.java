@@ -35,11 +35,11 @@ public class ReservationService {
 
     public Reservation reserveItem(AppUser appUser, ReservationRequest request) {
         Item item = itemService.getItem(request.getItemId());
-        Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
         if (core.getFlexibility()) {
             //reservations with schedule
+            Schedule schedule = item.getSchedule();
             FlexibleReservationData reservationData = (FlexibleReservationData) request.getReservationData();
             ScheduleSlot requestSlot = new ScheduleSlot(reservationData.start(), reservationData.end(),
                     reservationData.amount());
@@ -53,6 +53,7 @@ public class ReservationService {
                     .startDateTime(reservationData.start())
                     .endDateTime(reservationData.end())
                     .amount(reservationData.amount())
+                    .subItemIdList(new ArrayList<>())
                     .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                     .build();
 

@@ -11,6 +11,7 @@ import io.github.reconsolidated.zpibackend.features.reservation.ReservationServi
 import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
 import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
 import io.github.reconsolidated.zpibackend.features.reservation.request.ReservationRequest;
+import io.github.reconsolidated.zpibackend.features.reservation.reservationData.FixedReservationData;
 import io.github.reconsolidated.zpibackend.features.reservation.reservationData.FlexibleReservationData;
 import io.github.reconsolidated.zpibackend.features.reservation.reservationData.ReservationData;
 import io.github.reconsolidated.zpibackend.features.store.Store;
@@ -54,6 +55,7 @@ public class ReservationServiceTests {
                 .periodicity(false)
                 .simultaneous(false)
                 .specificReservation(false)
+                .uniqueness(false)
                 .build();
         AuthenticationConfig authentication = AuthenticationConfig.builder()
                 .confirmationRequire(false)
@@ -126,6 +128,7 @@ public class ReservationServiceTests {
                 .periodicity(true)
                 .simultaneous(false)
                 .specificReservation(false)
+                .uniqueness(false)
                 .build();
         AuthenticationConfig authentication = AuthenticationConfig.builder()
                 .confirmationRequire(false)
@@ -145,52 +148,52 @@ public class ReservationServiceTests {
                 .build();
         AppUser appUser = appUserService.getOrCreateUser("1", "test@test", "FirstName", "LastName");
 
+        LocalDateTime start = LocalDateTime.of(2023, 1, 1, 12, 0);
+        LocalDateTime end = LocalDateTime.of(2023, 1, 1, 14, 0);
+        ScheduleSlot subItemSlot = new ScheduleSlot(start, end, 1);
+
         storeConfig = storeConfigService.createStoreConfig(appUser, new StoreConfigDto(storeConfig));
         storeService.createStore(appUser, new CreateStoreDto(storeConfig.getStoreConfigId(), storeConfig.getName()));
         Store store = storeService.getStore("test");
+        SubItem subItem0 = SubItem.builder()
+                .amount(1)
+                .slot(subItemSlot)
+                .build();
         SubItem subItem1 = SubItem.builder()
-                .amount(2)
+                .amount(1)
+                .slot(subItemSlot)
                 .build();
         SubItem subItem2 = SubItem.builder()
-                .amount(3)
-                .build();
-        SubItem subItem3 = SubItem.builder()
-                .amount(4)
+                .amount(1)
+                .slot(subItemSlot)
                 .build();
 
         Item item = Item.builder()
                 .active(true)
                 .store(store)
-                .amount(2)
-                .subItems(Arrays.asList(subItem1, subItem2, subItem3))
+                .amount(3)
+                .subItems(Arrays.asList(subItem0, subItem1, subItem2))
                 .customAttributeList(new ArrayList<>())
-                .initialAmount(2)
+                .initialAmount(3)
                 .build();
-
-        Schedule schedule = new Schedule(1L, item);
-
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
-                LocalDateTime.of(2023, 1, 1, 14, 0), 2));
-
+        Schedule schedule = new Schedule(item, new ArrayList<>());
         item.setSchedule(schedule);
 
         item = itemService.createItem(appUser, "test", new ItemDto(item));
 
-        LocalDateTime start = LocalDateTime.of(2023, 1, 1, 12, 0);
-        LocalDateTime end = LocalDateTime.of(2023, 1, 1, 14, 0);
-
         Reservation reservation = Reservation.builder()
                 .user(appUser)
                 .item(item)
-                .subItemIdList(Arrays.asList(0L,1L))
+                .subItemIdList(Arrays.asList(subItem1.getSubItemId(), subItem2.getSubItemId()))
                 .startDateTime(start)
                 .endDateTime(end)
-                .amount(2)
+                .amount(1)
                 .message("message")
                 .confirmed(true)
                 .build();
 
-        ReservationData reservationData = new FlexibleReservationData(start, end, 2);
+        ReservationData reservationData = new FixedReservationData(
+                Arrays.asList(subItem1.toSubItemDto(), subItem2.toSubItemDto()), 1);
         ReservationRequest request = new ReservationRequest(store.getStoreName(), item.getItemId(), appUser, reservationData);
 
         Reservation result = reservationService.reserveItem(appUser, request);
