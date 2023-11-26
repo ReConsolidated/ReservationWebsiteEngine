@@ -48,9 +48,8 @@ public class StoreConfigController {
     }
 
     @GetMapping("/{storeConfigName}")
-    public ResponseEntity<StoreConfigDto> getStoreConfigDto(@CurrentUser AppUser currentUser,
-                                                            @PathVariable String storeConfigName) {
-        StoreConfigDto config = storeConfigService.getStoreConfigDto(currentUser, storeConfigName);
+    public ResponseEntity<StoreConfigDto> getStoreConfigDto(@PathVariable String storeConfigName) {
+        StoreConfigDto config = storeConfigService.getStoreConfigDto(storeConfigName);
         return ResponseEntity.ok(config);
     }
 

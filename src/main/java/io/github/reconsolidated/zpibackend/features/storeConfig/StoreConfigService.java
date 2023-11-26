@@ -86,13 +86,8 @@ public class StoreConfigService {
         return storeConfigRepository.findByName(storeConfigName).orElseThrow();
     }
 
-    public StoreConfigDto getStoreConfigDto(AppUser currentUser, String storeConfigName) {
+    public StoreConfigDto getStoreConfigDto(String storeConfigName) {
         StoreConfig config = storeConfigRepository.findByName(storeConfigName).orElseThrow();
-        //TODO implement authentication based on authentication settings
-//        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
-//                || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
-//            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot access it.");
-//        }
         return storeConfigMapper.toDto(config);
     }
 
