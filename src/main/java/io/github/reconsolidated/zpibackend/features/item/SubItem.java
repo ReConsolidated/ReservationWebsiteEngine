@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.item;
 
+import io.github.reconsolidated.zpibackend.features.item.dtos.SubItemDto;
 import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
 import lombok.*;
 
@@ -21,5 +22,9 @@ public class SubItem {
     @OneToOne(cascade = CascadeType.ALL)
     private ScheduleSlot slot;
     private Integer amount;
+
+    public SubItemDto toSubItemDto() {
+        return new SubItemDto(subItemId, title, subtitle);
+    }
 
 }

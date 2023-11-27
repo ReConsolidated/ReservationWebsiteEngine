@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -36,4 +37,40 @@ public class Reservation {
         return new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), subItemIdList);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Reservation that)) {
+            return false;
+        }
+        if (!user.equals(that.user)) {
+            return false;
+        }
+        if (!item.equals(that.item)) {
+            return false;
+        }
+        if (!Objects.equals(subItemIdList, that.subItemIdList)) {
+            return false;
+        }
+        if (!Objects.equals(startDateTime, that.startDateTime)) {
+            return false;
+        }
+        if (!Objects.equals(endDateTime, that.endDateTime)) {
+            return false;
+        }
+        return amount.equals(that.amount);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = user.hashCode();
+        result = 31 * result + item.hashCode();
+        result = 31 * result + (subItemIdList != null ? subItemIdList.hashCode() : 0);
+        result = 31 * result + (startDateTime != null ? startDateTime.hashCode() : 0);
+        result = 31 * result + (endDateTime != null ? endDateTime.hashCode() : 0);
+        result = 31 * result + amount.hashCode();
+        return result;
+    }
 }

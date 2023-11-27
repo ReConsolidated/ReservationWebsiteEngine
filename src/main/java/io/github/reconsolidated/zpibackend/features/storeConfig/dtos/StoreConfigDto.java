@@ -22,4 +22,14 @@ public class StoreConfigDto {
     private List<ParameterSettings> customAttributesSpec;
     private AuthenticationConfig authConfig;
 
+    public StoreConfigDto(StoreConfig storeConfig) {
+        storeConfigId = storeConfig.getStoreConfigId();
+        owner = new OwnerDto(storeConfig.getOwner());
+        core = storeConfig.getCore();
+        mainPage = storeConfig.getMainPage();
+        detailsPage = storeConfig.getDetailsPage();
+        customAttributesSpec = storeConfig.getCustomAttributesSpec();
+        authConfig = storeConfig.getAuthConfig();
+    }
+
 }
