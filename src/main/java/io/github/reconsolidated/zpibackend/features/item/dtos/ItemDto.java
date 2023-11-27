@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,7 @@ public class ItemDto {
 
     private Long id;
     private Boolean active;
-    private ItemAttributesDto attributesDto;
+    private ItemAttributesDto attributes;
     @NotNull
     private List<Parameter> customAttributeList = new ArrayList<>();
     @NotNull
@@ -38,14 +37,14 @@ public class ItemDto {
     private Integer amount = 1;
     private Integer availableAmount = amount;
     @NotNull
-    private Double mark;
+    private Double mark = 0.0;
     private Integer earliestStartHour = LATEST_HOUR;
     private Integer latestEndHour = 0;
 
     public ItemDto(Item item) {
         this.id = item.getItemId();
         this.active = item.getActive();
-        this.attributesDto = new ItemAttributesDto(
+        this.attributes = new ItemAttributesDto(
                 item.getTitle(),
                 item.getSubtitle(),
                 item.getDescription(),

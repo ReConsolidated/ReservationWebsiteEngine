@@ -44,15 +44,16 @@ public class Item {
     public Item(Store store, ItemDto itemDto) {
         this.store = store;
         this.active = itemDto.getActive();
-        this.title = itemDto.getAttributesDto().getTitle();
-        this.subtitle = itemDto.getAttributesDto().getSubtitle();
-        this.description = itemDto.getAttributesDto().getDescription();
-        this.image = itemDto.getAttributesDto().getImage();
+        this.title = itemDto.getAttributes().getTitle();
+        this.subtitle = itemDto.getAttributes().getSubtitle();
+        this.description = itemDto.getAttributes().getDescription();
+        this.image = itemDto.getAttributes().getImage();
         this.amount = itemDto.getAmount();
         itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
         this.customAttributeList = itemDto.getCustomAttributeList();
-        this.schedule = new Schedule(this, itemDto.getAvailabilities());
-        this.initialSchedule = new Schedule(this, itemDto.getAvailabilities());
+        this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+        this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+        this.subItems = itemDto.getSubItems();
     }
 
 }
