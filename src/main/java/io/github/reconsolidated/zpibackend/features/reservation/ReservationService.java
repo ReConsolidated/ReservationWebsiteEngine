@@ -36,7 +36,7 @@ public class ReservationService {
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
         Optional<AppUser> appUserOptional = appUserService.getUserByEmail(reservationDto.getUserEmail());
-        if(appUserOptional.isPresent()) {
+        if (appUserOptional.isPresent()) {
             appUser = appUserOptional.get();
         }
 
