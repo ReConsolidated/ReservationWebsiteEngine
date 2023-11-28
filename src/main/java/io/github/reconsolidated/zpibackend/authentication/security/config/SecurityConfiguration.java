@@ -49,7 +49,7 @@ public class SecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter 
                 .permitAll()
                 .antMatchers("/stores/**")
                 .permitAll()
-                .antMatchers(HttpMethod.GET,"/items/*/comments/**")
+                .antMatchers(HttpMethod.GET, "/items/*/comments/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()

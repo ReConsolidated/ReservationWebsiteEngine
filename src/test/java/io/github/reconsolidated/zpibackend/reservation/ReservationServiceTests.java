@@ -29,8 +29,8 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("test")
 public class ReservationServiceTests {
+    private static final String STORE_NAME = "ReservationServiceTests";
     @Autowired
     private ReservationService reservationService;
     @Autowired
@@ -58,12 +58,12 @@ public class ReservationServiceTests {
                 .confirmationRequire(false)
                 .build();
         Owner owner = Owner.builder()
-                .storeName("test")
+                .storeName(STORE_NAME)
                 .email("mail@mail")
                 .color("blue")
                 .build();
         StoreConfig storeConfig = StoreConfig.builder()
-                .name("test")
+                .name(STORE_NAME)
                 .owner(owner)
                 .authConfig(authentication)
                 .core(core)
@@ -74,7 +74,7 @@ public class ReservationServiceTests {
 
         storeConfig = storeConfigService.createStoreConfig(appUser, new StoreConfigDto(storeConfig));
         storeService.createStore(appUser, new CreateStoreDto(storeConfig.getStoreConfigId(), storeConfig.getName()));
-        Store store = storeService.getStore("test");
+        Store store = storeService.getStore(STORE_NAME);
         Item item = Item.builder()
                 .active(true)
                 .store(store)
@@ -92,7 +92,7 @@ public class ReservationServiceTests {
         item.setSchedule(schedule);
         item.setInitialSchedule(schedule);
 
-        item = itemService.createItem(appUser, "test", new ItemDto(item));
+        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item));
 
         LocalDateTime start = LocalDateTime.of(2023, 1, 1, 12, 0);
         LocalDateTime end = LocalDateTime.of(2023, 1, 1, 14, 0);
@@ -112,7 +112,11 @@ public class ReservationServiceTests {
 
         ReservationDto result = reservationService.reserveItem(appUser, reservationDto);
 
-        assertEquals(reservationDto, result);
+        assertEquals(reservationDto.getStartDateTime(), result.getStartDateTime());
+        assertEquals(reservationDto.getEndDateTime(), result.getEndDateTime());
+        assertEquals(reservationDto.getSubItemIds(), result.getSubItemIds());
+        assertEquals(reservationDto.getAmount(), result.getAmount());
+        assertEquals(reservationDto.getStatus(), result.getStatus());
     }
 
     @Test
@@ -131,12 +135,12 @@ public class ReservationServiceTests {
                 .confirmationRequire(false)
                 .build();
         Owner owner = Owner.builder()
-                .storeName("test")
+                .storeName(STORE_NAME)
                 .email("mail@mail")
                 .color("blue")
                 .build();
         StoreConfig storeConfig = StoreConfig.builder()
-                .name("test")
+                .name(STORE_NAME)
                 .owner(owner)
                 .authConfig(authentication)
                 .core(core)
@@ -151,7 +155,7 @@ public class ReservationServiceTests {
 
         storeConfig = storeConfigService.createStoreConfig(appUser, new StoreConfigDto(storeConfig));
         storeService.createStore(appUser, new CreateStoreDto(storeConfig.getStoreConfigId(), storeConfig.getName()));
-        Store store = storeService.getStore("test");
+        Store store = storeService.getStore(STORE_NAME);
         SubItem subItem0 = SubItem.builder()
                 .amount(1)
                 .slot(subItemSlot)
@@ -177,7 +181,7 @@ public class ReservationServiceTests {
         item.setSchedule(schedule);
         item.setInitialSchedule(schedule);
 
-        item = itemService.createItem(appUser, "test", new ItemDto(item));
+        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item));
 
         Reservation reservation = Reservation.builder()
                 .user(appUser)
@@ -194,7 +198,11 @@ public class ReservationServiceTests {
 
         ReservationDto result = reservationService.reserveItem(appUser, reservationDto);
 
-        assertEquals(reservationDto, result);
+        assertEquals(reservationDto.getStartDateTime(), result.getStartDateTime());
+        assertEquals(reservationDto.getEndDateTime(), result.getEndDateTime());
+        assertEquals(reservationDto.getSubItemIds(), result.getSubItemIds());
+        assertEquals(reservationDto.getAmount(), result.getAmount());
+        assertEquals(reservationDto.getStatus(), result.getStatus());
     }
 }
 

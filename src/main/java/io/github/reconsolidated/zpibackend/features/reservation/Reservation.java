@@ -27,6 +27,8 @@ public class Reservation {
     private Item item;
     @ElementCollection
     private List<Long> subItemIdList = new ArrayList<>();
+    @ElementCollection
+    private List<String> personalData = new ArrayList<>();
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     private Integer amount;
@@ -38,16 +40,20 @@ public class Reservation {
         return new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), subItemIdList);
     }
 
+    public void addPersonalData(int index, String data) {
+        personalData.add(index, data);
+    }
+
     public void setStatus(LocalDateTime now) {
-        if(startDateTime.isBefore(now)) {
+        if (startDateTime.isBefore(now)) {
             if (status == null || status == ReservationStatus.PENDING) {
                 status = ReservationStatus.UNKNOWN;
             }
         } else {
-            if(!confirmed) {
+            if (!confirmed) {
                 status = ReservationStatus.PENDING;
             } else {
-                status =ReservationStatus.CONFIRMED;
+                status = ReservationStatus.CONFIRMED;
             }
         }
     }

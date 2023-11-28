@@ -70,7 +70,7 @@ public class Item {
         return new SubItemListDto(subItemsDto);
     }
 
-    public SubItemDto toSubItemDto(){
+    public SubItemDto toSubItemDto() {
         return new SubItemDto(itemId, title, subtitle);
     }
 

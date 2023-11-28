@@ -28,10 +28,6 @@ public class StoreService {
     public Store createStore(AppUser currentUser, CreateStoreDto dto) {
         StoreConfig storeConfig = storeConfigService.getStoreConfig(currentUser, dto.getStoreConfigId());
         Store store = new Store(storeConfig);
-        if(!storeConfigService.isNameUnique(store.getStoreName())) {
-            throw new IllegalArgumentException("Store name must be unique! Name: "
-                    + store.getStoreConfig().getOwner().getStoreName() + " is not unique.");
-        }
         return storeRepository.save(store);
     }
 

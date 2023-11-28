@@ -22,7 +22,7 @@ public class ReservationDto {
     private Long itemId;
     private List<Long> subItemIds = new ArrayList<>();
     private String userEmail;
-    private Map<String,String> personalData;
+    private Map<String, String> personalData;
     private Boolean confirmed;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime startDateTime;
@@ -32,7 +32,7 @@ public class ReservationDto {
     private String message;
     private ReservationStatus status;
 
-    public ReservationDto(Reservation reservation, Map<String,String> personalData) {
+    public ReservationDto(Reservation reservation, Map<String, String> personalData) {
         this.id = reservation.getReservationId();
         this.itemId = reservation.getItem().getItemId();
         this.subItemIds = reservation.getSubItemIdList();

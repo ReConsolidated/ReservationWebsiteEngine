@@ -1,10 +1,10 @@
 package io.github.reconsolidated.zpibackend.features.reservation;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.authentication.appUser.AppUserService;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.item.ItemService;
 import io.github.reconsolidated.zpibackend.features.item.SubItem;
-import io.github.reconsolidated.zpibackend.features.item.dtos.SubItemDto;
 import io.github.reconsolidated.zpibackend.features.reservation.dtos.ReservationDto;
 import io.github.reconsolidated.zpibackend.features.reservation.dtos.UserReservationDto;
 import io.github.reconsolidated.zpibackend.features.reservation.request.CheckAvailabilityRequest;
@@ -29,10 +29,21 @@ public class ReservationService {
     private ReservationRepository reservationRepository;
     private StoreService storeService;
     private ItemService itemService;
+    private AppUserService appUserService;
 
     public ReservationDto reserveItem(AppUser appUser, ReservationDto reservationDto) {
         Item item = itemService.getItem(reservationDto.getItemId());
         CoreConfig core = item.getStore().getStoreConfig().getCore();
+
+        Optional<AppUser> appUserOptional = appUserService.getUserByEmail(reservationDto.getUserEmail());
+        if(appUserOptional.isPresent()) {
+            appUser = appUserOptional.get();
+        }
+
+        List<String> personalData = new ArrayList<>();
+        for (String data : item.getStore().getStoreConfig().getAuthConfig().getRequiredPersonalData()) {
+            personalData.add(reservationDto.getPersonalData().getOrDefault(data, ""));
+        }
 
         if (core.getFlexibility()) {
             //reservations with schedule
@@ -45,6 +56,7 @@ public class ReservationService {
 
             Reservation reservation = Reservation.builder()
                     .user(appUser)
+                    .personalData(personalData)
                     .item(item)
                     .startDateTime(reservationDto.getStartDateTime())
                     .endDateTime(reservationDto.getEndDateTime())
@@ -52,7 +64,7 @@ public class ReservationService {
                     .subItemIdList(new ArrayList<>())
                     .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                     .build();
-
+            reservation.setStatus(LocalDateTime.now());
             schedule.processReservation(reservation);
 
             return new ReservationDto(reservationRepository.save(reservation), reservationDto.getPersonalData());
@@ -76,6 +88,7 @@ public class ReservationService {
                 }
                 Reservation reservation = Reservation.builder()
                         .user(appUser)
+                        .personalData(personalData)
                         .item(item)
                         .startDateTime(toReserve.get(0).getSlot().getStartDateTime())
                         .endDateTime(toReserve.get(0).getSlot().getEndDateTime())
@@ -83,6 +96,7 @@ public class ReservationService {
                         .amount(reservationDto.getAmount())
                         .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                         .build();
+                reservation.setStatus(LocalDateTime.now());
                 return new ReservationDto(reservationRepository.save(reservation), reservationDto.getPersonalData());
             } else {
                 //simple reservations IDK if it will be useful
@@ -92,6 +106,7 @@ public class ReservationService {
                 item.setAmount(item.getAmount() - reservationDto.getAmount());
                 Reservation reservation = Reservation.builder()
                         .user(appUser)
+                        .personalData(personalData)
                         .item(item)
                         .startDateTime(LocalDateTime.now())
                         .endDateTime(LocalDateTime.now())
@@ -99,6 +114,7 @@ public class ReservationService {
                         .amount(reservationDto.getAmount())
                         .confirmed(false)
                         .build();
+                reservation.setStatus(LocalDateTime.now());
                 return new ReservationDto(reservationRepository.save(reservation), reservationDto.getPersonalData());
             }
         }
@@ -127,7 +143,7 @@ public class ReservationService {
                         .build());
             } else {
                 List<CheckAvailabilityResponse> result = new ArrayList<>();
-                for(int i = 0; i < (Math.min(suggestions.size(), 3)); i++) {
+                for (int i = 0; i < (Math.min(suggestions.size(), 3)); i++) {
                     result.add(new CheckAvailabilityResponseSuggestion(
                             i,
                             item.getItemId(),
