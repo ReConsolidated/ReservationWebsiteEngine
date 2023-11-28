@@ -6,9 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Getter
@@ -23,18 +21,49 @@ public class Reservation {
     private Long reservationId;
     @ManyToOne
     private AppUser user;
+    private String email;
     @ManyToOne
     private Item item;
     @ElementCollection
     private List<Long> subItemIdList = new ArrayList<>();
+    @ElementCollection
+    private List<String> personalData = new ArrayList<>();
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     private Integer amount;
     private String message;
     private Boolean confirmed;
+    private ReservationStatus status;
 
     public ScheduleSlot getScheduleSlot() {
         return new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), subItemIdList);
+    }
+
+    public void addPersonalData(int index, String data) {
+        personalData.add(index, data);
+    }
+
+    public void setStatus(LocalDateTime now) {
+        if (startDateTime.isBefore(now)) {
+            if (status == null || status == ReservationStatus.PENDING) {
+                status = ReservationStatus.UNKNOWN;
+            }
+        } else {
+            if (!confirmed) {
+                status = ReservationStatus.PENDING;
+            } else {
+                status = ReservationStatus.CONFIRMED;
+            }
+        }
+    }
+
+    public Map<String, String> getPersonalDataMap() {
+        Map<String, String> personalDataMap = new HashMap<>();
+        for (int i = 0; i < item.getStore().getStoreConfig().getAuthConfig().getRequiredPersonalData().size(); i++) {
+            personalDataMap.put(item.getStore().getStoreConfig().getAuthConfig().getRequiredPersonalData().get(i),
+                    personalData.get(i));
+        }
+        return personalDataMap;
     }
 
     @Override
