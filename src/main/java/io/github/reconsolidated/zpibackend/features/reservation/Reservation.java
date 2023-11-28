@@ -32,7 +32,6 @@ public class Reservation {
     private Integer amount;
     private String message;
     private Boolean confirmed;
-    private ReservationState state = ReservationState.ACTIVE;
 
     public ScheduleSlot getScheduleSlot() {
         return new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), subItemIdList);

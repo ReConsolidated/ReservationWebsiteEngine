@@ -55,7 +55,6 @@ public class ReservationService {
                     .amount(reservationData.amount())
                     .subItemIdList(new ArrayList<>())
                     .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
-                    .state(ReservationState.ACTIVE)
                     .build();
 
             schedule.processReservation(reservation);
