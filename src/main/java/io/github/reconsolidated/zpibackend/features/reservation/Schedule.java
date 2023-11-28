@@ -27,11 +27,9 @@ public class Schedule {
     private static final int WEEKDAYS = 7;
 
     public Schedule(Long scheduleId, Item item) {
-
         this.scheduleId = scheduleId;
         this.item = item;
         this.availableScheduleSlots = new ArrayList<>();
-
     }
 
     public Schedule(Item item, List<Availability> availabilities) {
