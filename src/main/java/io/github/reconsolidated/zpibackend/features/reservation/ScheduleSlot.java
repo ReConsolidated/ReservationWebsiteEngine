@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.reservation;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.reconsolidated.zpibackend.utils.BooleanListToStringConverter;
 import lombok.*;
 
@@ -20,7 +21,9 @@ public class ScheduleSlot {
     @Id
     @GeneratedValue(generator = "schedule_slot_generator")
     private Long scheduleSlotId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime startDateTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime endDateTime;
     private Integer currAmount;
     @Convert(converter = BooleanListToStringConverter.class)
@@ -110,11 +113,13 @@ public class ScheduleSlot {
     }
 
     /**
-     This method check if passed scheduleSlot is continuation of this slot
-     [this.end == slot.start]
+     This method check if passed scheduleSlot is continuation of this slot within the same day
+     [this.end == slot.start && this.day == slot.day]
      */
     public boolean isContinuousWith(ScheduleSlot scheduleSlot) {
-        return endDateTime.equals(scheduleSlot.startDateTime);
+
+        return startDateTime.getDayOfYear() == scheduleSlot.getStartDateTime().getDayOfYear() &&
+                endDateTime.equals(scheduleSlot.startDateTime);
     }
 
     public boolean equalsTimeFitAmount(ScheduleSlot scheduleSlot) {

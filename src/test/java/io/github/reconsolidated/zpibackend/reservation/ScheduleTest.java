@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.reservation;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.features.availability.Availability;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.features.reservation.ReservationType;
@@ -550,6 +551,71 @@ public class ScheduleTest {
         suggestions = schedule.suggest(testSlot);
 
         assertEquals(expected, suggestions);
+    }
+
+    @Test
+    public void getAvailabilityForSubItemsTest() {
+
+        Schedule schedule = new Schedule();
+
+        List<ScheduleSlot> slots = Arrays.asList(
+          ScheduleSlot.builder()
+                  .startDateTime(LocalDateTime.of(2023,1,1,10,0))
+                  .endDateTime(LocalDateTime.of(2023,1,1,11,0))
+                  .itemsAvailability(Arrays.asList(true, true, true, true))
+                  .type(ReservationType.NONE)
+                  .build(),
+          ScheduleSlot.builder()
+                  .startDateTime(LocalDateTime.of(2023,1,1,11,0))
+                  .endDateTime(LocalDateTime.of(2023,1,1,12,0))
+                  .itemsAvailability(Arrays.asList(true, true, false, true))
+                  .type(ReservationType.NONE)
+                  .build(),
+          ScheduleSlot.builder()
+                  .startDateTime(LocalDateTime.of(2023,1,1,13,0))
+                  .endDateTime(LocalDateTime.of(2023,1,1,14,0))
+                  .itemsAvailability(Arrays.asList(true, false, true, true))
+                  .type(ReservationType.NONE)
+                  .build(),
+          ScheduleSlot.builder()
+                  .startDateTime(LocalDateTime.of(2023,1,1,14,0))
+                  .endDateTime(LocalDateTime.of(2023,1,1,15,0))
+                  .itemsAvailability(Arrays.asList(false, false, true, true))
+                  .type(ReservationType.NONE)
+                  .build(),
+          ScheduleSlot.builder()
+                  .startDateTime(LocalDateTime.of(2023,1,1,16,0))
+                  .endDateTime(LocalDateTime.of(2023,1,1,17,0))
+                  .itemsAvailability(Arrays.asList(true, false, true, false))
+                  .type(ReservationType.NONE)
+                  .build(),
+          ScheduleSlot.builder()
+                  .startDateTime(LocalDateTime.of(2023,1,1,17,0))
+                  .endDateTime(LocalDateTime.of(2023,1,1,18,0))
+                  .itemsAvailability(Arrays.asList(true, false, false, true))
+                  .type(ReservationType.NONE)
+                  .build()
+        );
+        schedule.setAvailableScheduleSlots(slots);
+
+        List<Integer> subItemsId = Arrays.asList(0,3);
+
+        List<Availability> expected = Arrays.asList(
+                new Availability(LocalDateTime.of(2023,1,1,10,0),
+                        LocalDateTime.of(2023,1,1,11,0),
+                    ReservationType.NONE),
+                new Availability(LocalDateTime.of(2023,1,1,11,0),
+                        LocalDateTime.of(2023,1,1,12,0),
+                        ReservationType.NONE),
+                new Availability(LocalDateTime.of(2023,1,1,13,0),
+                        LocalDateTime.of(2023,1,1,14,0),
+                        ReservationType.NONE),
+                new Availability(LocalDateTime.of(2023,1,1,17,0),
+                        LocalDateTime.of(2023,1,1,18,0),
+                        ReservationType.NONE)
+        );
+
+        assertEquals(expected, schedule.getAvailabilitiesForSubItems(subItemsId));
     }
 
 }

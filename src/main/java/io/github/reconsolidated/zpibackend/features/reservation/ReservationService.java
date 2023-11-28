@@ -21,9 +21,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -109,7 +107,7 @@ public class ReservationService {
         }
     }
 
-    public CheckAvailabilityResponse checkAvailability(CheckAvailabilityRequest request) {
+    public List<CheckAvailabilityResponse> checkAvailability(CheckAvailabilityRequest request) {
 
         Item item = itemService.getItem(request.getItemId());
         Schedule schedule = item.getSchedule();
@@ -117,25 +115,29 @@ public class ReservationService {
 
         ScheduleSlot requestSlot = new ScheduleSlot(request.getStartDate(), request.getEndDate(), request.getAmount());
         if (schedule.verify(core.getGranularity(), requestSlot)) {
-            return CheckAvailabilityResponseSuccess.builder()
+            return Collections.singletonList(CheckAvailabilityResponseSuccess.builder()
                     .itemId(request.getItemId())
                     .amount(request.getAmount())
                     .startDate(request.getStartDate())
                     .endDate(request.getEndDate())
-                    .build();
+                    .build());
         } else {
             List<ScheduleSlot> suggestions = schedule.suggest(requestSlot);
             if (suggestions.isEmpty()) {
-                return CheckAvailabilityResponseFailure.builder()
+                return Collections.singletonList(CheckAvailabilityResponseFailure.builder()
                         .itemId(item.getItemId())
                         .amount(request.getAmount())
-                        .build();
+                        .build());
             } else {
-                return CheckAvailabilityResponseSuggestion.builder()
-                        .itemId(item.getItemId())
-                        .amount(request.getAmount())
-                        .schedule(suggestions)
-                        .build();
+                List<CheckAvailabilityResponse> result = new ArrayList<>();
+                for(int i =0; i < suggestions.size(); i++) {
+                    result.add(new CheckAvailabilityResponseSuggestion(
+                            i,
+                            item.getItemId(),
+                            suggestions.get(i),
+                            item.getSchedule().getAvailabilitiesForSubItems(suggestions.get(i).getAvailableItemsIndexes())));
+                }
+                return result;
             }
         }
     }

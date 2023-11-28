@@ -25,9 +25,9 @@ public class ReservationController {
                                              @PathVariable String storeName,
                                              @RequestBody CheckAvailabilityRequest request) {
 
-        CheckAvailabilityResponse response = reservationService.checkAvailability(request);
+        List<CheckAvailabilityResponse> response = reservationService.checkAvailability(request);
 
-        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getResponseCode()));
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.get(0).getResponseCode()));
     }
 
     @PostMapping("/reserve")

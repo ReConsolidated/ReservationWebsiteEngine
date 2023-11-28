@@ -1,5 +1,6 @@
 package io.github.reconsolidated.zpibackend.features.reservation.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,9 @@ public class CheckAvailabilityResponseSuccess implements CheckAvailabilityRespon
     private static final int RESPONSE_CODE = 200;
     private Long itemId;
     private Integer amount = 1;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime endDate;
 
     @Override
