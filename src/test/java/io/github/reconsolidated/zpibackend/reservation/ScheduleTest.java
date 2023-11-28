@@ -1,16 +1,16 @@
 package io.github.reconsolidated.zpibackend.reservation;
 
-import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
-import io.github.reconsolidated.zpibackend.features.availability.Availability;
-import io.github.reconsolidated.zpibackend.features.item.Item;
-import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
-import io.github.reconsolidated.zpibackend.features.reservation.ReservationType;
-import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
-import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
-import io.github.reconsolidated.zpibackend.features.store.Store;
-import io.github.reconsolidated.zpibackend.features.storeConfig.AuthenticationConfig;
-import io.github.reconsolidated.zpibackend.features.storeConfig.CoreConfig;
-import io.github.reconsolidated.zpibackend.features.storeConfig.StoreConfig;
+import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.domain.availability.Availability;
+import io.github.reconsolidated.zpibackend.domain.item.Item;
+import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
+import io.github.reconsolidated.zpibackend.domain.reservation.ReservationType;
+import io.github.reconsolidated.zpibackend.domain.reservation.Schedule;
+import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
+import io.github.reconsolidated.zpibackend.domain.store.Store;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.AuthenticationConfig;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.CoreConfig;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

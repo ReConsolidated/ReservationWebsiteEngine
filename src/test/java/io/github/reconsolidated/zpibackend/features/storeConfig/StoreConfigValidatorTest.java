@@ -1,5 +1,8 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
+import io.github.reconsolidated.zpibackend.domain.storeConfig.CoreConfig;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfig;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfigValidator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
