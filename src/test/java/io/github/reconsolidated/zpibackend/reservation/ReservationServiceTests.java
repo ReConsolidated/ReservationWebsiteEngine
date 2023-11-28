@@ -2,14 +2,12 @@ package io.github.reconsolidated.zpibackend.reservation;
 
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUserService;
+import io.github.reconsolidated.zpibackend.features.availability.Availability;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.item.ItemService;
 import io.github.reconsolidated.zpibackend.features.item.SubItem;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
-import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
-import io.github.reconsolidated.zpibackend.features.reservation.ReservationService;
-import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
-import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
+import io.github.reconsolidated.zpibackend.features.reservation.*;
 import io.github.reconsolidated.zpibackend.features.reservation.dtos.ReservationDto;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
@@ -19,12 +17,12 @@ import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfig
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -105,7 +103,7 @@ public class ReservationServiceTests {
                 .confirmed(true)
                 .build();
 
-        ReservationDto reservationDto = new ReservationDto(reservation, null);
+        ReservationDto reservationDto = new ReservationDto(reservation);
 
         ReservationDto result = reservationService.reserveItem(appUser, reservationDto);
 
@@ -171,7 +169,10 @@ public class ReservationServiceTests {
                 .customAttributeList(new ArrayList<>())
                 .initialAmount(3)
                 .build();
-        Schedule schedule = new Schedule(item, new ArrayList<>());
+        Schedule schedule = new Schedule(item, List.of(
+                new Availability(LocalDateTime.of(2023,1,1, 10,0),
+                        LocalDateTime.of(2023,1,1, 15,0),
+                        ReservationType.NONE)));
         item.setSchedule(schedule);
         item.setInitialSchedule(schedule);
 
@@ -188,7 +189,7 @@ public class ReservationServiceTests {
                 .confirmed(true)
                 .build();
 
-        ReservationDto reservationDto = new ReservationDto(reservation, null);
+        ReservationDto reservationDto = new ReservationDto(reservation);
 
         ReservationDto result = reservationService.reserveItem(appUser, reservationDto);
 
