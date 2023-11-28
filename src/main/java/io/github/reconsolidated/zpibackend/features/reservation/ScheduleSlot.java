@@ -117,8 +117,8 @@ public class ScheduleSlot {
      [this.end == slot.start && this.day == slot.day]
      */
     public boolean isContinuousWith(ScheduleSlot scheduleSlot) {
-
-        return startDateTime.getDayOfYear() == scheduleSlot.getStartDateTime().getDayOfYear() &&
+        //plus hour because of not implemented yet timezones
+        return startDateTime.plusHours(1).getDayOfYear() == scheduleSlot.getStartDateTime().plusHours(1).getDayOfYear() &&
                 endDateTime.equals(scheduleSlot.startDateTime);
     }
 
