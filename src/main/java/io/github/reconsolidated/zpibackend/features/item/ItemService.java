@@ -8,6 +8,7 @@ import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -81,7 +82,11 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         if (!item.getReservations().isEmpty()) {
-            throw new RuntimeException("Can't delete item with reservations");
+            for (Reservation reservation : item.getReservations()) {
+                if (reservation.getEndDateTime().isAfter(LocalDateTime.now())) {
+                    throw new RuntimeException("Can't delete item with reservations");
+                }
+            }
         }
         itemRepository.deleteById(itemId);
     }
