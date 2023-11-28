@@ -8,10 +8,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public class StoreNameDto {
     private String storeName;
-    private Long id;
+    private String storeConfigId;
 
     public StoreNameDto(Store store) {
-        this.storeName = store.getStoreName();
-        this.id = store.getId();
+        this.storeName = store.getStoreConfig().getOwner().getStoreName();
+        this.storeConfigId = store.getStoreName();
     }
 }

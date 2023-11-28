@@ -10,10 +10,7 @@ import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.features.reservation.ReservationService;
 import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
 import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
-import io.github.reconsolidated.zpibackend.features.reservation.request.ReservationRequest;
-import io.github.reconsolidated.zpibackend.features.reservation.reservationData.FixedReservationData;
-import io.github.reconsolidated.zpibackend.features.reservation.reservationData.FlexibleReservationData;
-import io.github.reconsolidated.zpibackend.features.reservation.reservationData.ReservationData;
+import io.github.reconsolidated.zpibackend.features.reservation.dtos.ReservationDto;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import io.github.reconsolidated.zpibackend.features.store.StoreService;
 import io.github.reconsolidated.zpibackend.features.store.dtos.CreateStoreDto;
@@ -111,12 +108,11 @@ public class ReservationServiceTests {
                 .confirmed(true)
                 .build();
 
-        ReservationData reservationData = new FlexibleReservationData(start, end, 2);
-        ReservationRequest request = new ReservationRequest(store.getStoreName(), item.getItemId(), appUser, reservationData);
+        ReservationDto reservationDto = new ReservationDto(reservation, null);
 
-        Reservation result = reservationService.reserveItem(appUser, request);
+        ReservationDto result = reservationService.reserveItem(appUser, reservationDto);
 
-        assertEquals(reservation, result);
+        assertEquals(reservationDto, result);
     }
 
     @Test
@@ -194,13 +190,11 @@ public class ReservationServiceTests {
                 .confirmed(true)
                 .build();
 
-        ReservationData reservationData = new FixedReservationData(
-                Arrays.asList(subItem1.toSubItemDto(), subItem2.toSubItemDto()), 1);
-        ReservationRequest request = new ReservationRequest(store.getStoreName(), item.getItemId(), appUser, reservationData);
+        ReservationDto reservationDto = new ReservationDto(reservation, null);
 
-        Reservation result = reservationService.reserveItem(appUser, request);
+        ReservationDto result = reservationService.reserveItem(appUser, reservationDto);
 
-        assertEquals(reservation, result);
+        assertEquals(reservationDto, result);
     }
 }
 
