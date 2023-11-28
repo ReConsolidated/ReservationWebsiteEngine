@@ -52,7 +52,7 @@ public class ReservationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Reservation>> storeReservations(@CurrentUser AppUser currentUser,
+    public ResponseEntity<List<ReservationDto>> storeReservations(@CurrentUser AppUser currentUser,
                                                               @PathVariable String storeName) {
         return ResponseEntity.ok(reservationService.getStoreReservations(currentUser, storeName));
     }

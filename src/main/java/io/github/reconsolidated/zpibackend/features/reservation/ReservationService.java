@@ -56,6 +56,7 @@ public class ReservationService {
 
             Reservation reservation = Reservation.builder()
                     .user(appUser)
+                    .email(reservationDto.getUserEmail())
                     .personalData(personalData)
                     .item(item)
                     .startDateTime(reservationDto.getStartDateTime())
@@ -67,7 +68,7 @@ public class ReservationService {
             reservation.setStatus(LocalDateTime.now());
             schedule.processReservation(reservation);
 
-            return new ReservationDto(reservationRepository.save(reservation), reservationDto.getPersonalData());
+            return new ReservationDto(reservationRepository.save(reservation));
         } else {
             if (core.getPeriodicity() || core.getSpecificReservation()) {
                 //reservations with sub items
@@ -88,6 +89,7 @@ public class ReservationService {
                 }
                 Reservation reservation = Reservation.builder()
                         .user(appUser)
+                        .email(reservationDto.getUserEmail())
                         .personalData(personalData)
                         .item(item)
                         .startDateTime(toReserve.get(0).getSlot().getStartDateTime())
@@ -97,7 +99,7 @@ public class ReservationService {
                         .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                         .build();
                 reservation.setStatus(LocalDateTime.now());
-                return new ReservationDto(reservationRepository.save(reservation), reservationDto.getPersonalData());
+                return new ReservationDto(reservationRepository.save(reservation));
             } else {
                 //simple reservations IDK if it will be useful
                 if (item.getAmount() < reservationDto.getAmount()) {
@@ -106,6 +108,7 @@ public class ReservationService {
                 item.setAmount(item.getAmount() - reservationDto.getAmount());
                 Reservation reservation = Reservation.builder()
                         .user(appUser)
+                        .email(reservationDto.getUserEmail())
                         .personalData(personalData)
                         .item(item)
                         .startDateTime(LocalDateTime.now())
@@ -115,7 +118,7 @@ public class ReservationService {
                         .confirmed(false)
                         .build();
                 reservation.setStatus(LocalDateTime.now());
-                return new ReservationDto(reservationRepository.save(reservation), reservationDto.getPersonalData());
+                return new ReservationDto(reservationRepository.save(reservation));
             }
         }
     }
@@ -164,7 +167,7 @@ public class ReservationService {
         return getUserReservations(currentUserId, storeName)
                 .stream()
                 .map(reservation -> new UserReservationDto(reservation,
-                                itemService.getItem(reservation.getItem().getItemId())
+                                reservation.getItem()
                                         .getSubItemsListDto()
                                         .subItems()
                                         .stream()
@@ -174,11 +177,14 @@ public class ReservationService {
                 ).toList();
     }
 
-    public List<Reservation> getStoreReservations(AppUser currentUser, String storeName) {
+    public List<ReservationDto> getStoreReservations(AppUser currentUser, String storeName) {
         if (!currentUser.getId().equals(storeService.getStore(storeName).getOwnerAppUserId())) {
             throw new IllegalArgumentException("Only owner can get all reservations");
         }
-        return reservationRepository.findByItemStoreStoreName(storeName);
+        return reservationRepository.findByItemStoreStoreName(storeName)
+                .stream()
+                .map(ReservationDto::new)
+                .toList();
     }
 
     public void deleteReservation(AppUser appUser, Long reservationId) {

@@ -1,16 +1,20 @@
 package io.github.reconsolidated.zpibackend.features.item;
 
+import io.github.reconsolidated.zpibackend.features.availability.Availability;
 import io.github.reconsolidated.zpibackend.features.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.features.item.dtos.SubItemDto;
 import io.github.reconsolidated.zpibackend.features.item.dtos.SubItemListDto;
 import io.github.reconsolidated.zpibackend.features.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.features.reservation.Reservation;
+import io.github.reconsolidated.zpibackend.features.reservation.ReservationType;
 import io.github.reconsolidated.zpibackend.features.reservation.Schedule;
+import io.github.reconsolidated.zpibackend.features.reservation.ScheduleSlot;
 import io.github.reconsolidated.zpibackend.features.store.Store;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -56,8 +60,19 @@ public class Item {
         this.initialAmount = itemDto.getAmount();
         itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
         this.customAttributeList = itemDto.getCustomAttributeList();
-        this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
-        this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+        if(store.getStoreConfig().getCore().getFlexibility()) {
+            this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+            this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+        } else {
+            this.schedule = new Schedule(this,
+                    List.of(new Availability(
+                            itemDto.getSchedule().getStartDateTime(),
+                            itemDto.getSchedule().getEndDateTime() == null ?
+                                    itemDto.getSchedule().getStartDateTime() :
+                                    itemDto.getSchedule().getEndDateTime(),
+                            ReservationType.NONE)));
+            this.initialSchedule = this.schedule;
+        }
         this.subItems = itemDto.getSubItems();
         this.reservations = new ArrayList<>();
     }

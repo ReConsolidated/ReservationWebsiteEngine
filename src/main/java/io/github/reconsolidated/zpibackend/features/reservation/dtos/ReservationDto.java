@@ -32,12 +32,12 @@ public class ReservationDto {
     private String message;
     private ReservationStatus status;
 
-    public ReservationDto(Reservation reservation, Map<String, String> personalData) {
+    public ReservationDto(Reservation reservation) {
         this.id = reservation.getReservationId();
         this.itemId = reservation.getItem().getItemId();
         this.subItemIds = reservation.getSubItemIdList();
-        this.userEmail = reservation.getUser().getEmail();
-        this.personalData = personalData;
+        this.userEmail = reservation.getEmail();
+        this.personalData = reservation.getPersonalDataMap();
         this.confirmed = reservation.getConfirmed();
         this.startDateTime = reservation.getStartDateTime();
         this.endDateTime = reservation.getEndDateTime();

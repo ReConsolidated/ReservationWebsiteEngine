@@ -54,9 +54,6 @@ public class ReservationServiceTests {
                 .specificReservation(false)
                 .uniqueness(false)
                 .build();
-        AuthenticationConfig authentication = AuthenticationConfig.builder()
-                .confirmationRequire(false)
-                .build();
         Owner owner = Owner.builder()
                 .storeName(STORE_NAME)
                 .email("mail@mail")
@@ -65,7 +62,7 @@ public class ReservationServiceTests {
         StoreConfig storeConfig = StoreConfig.builder()
                 .name(STORE_NAME)
                 .owner(owner)
-                .authConfig(authentication)
+                .authConfig(new AuthenticationConfig())
                 .core(core)
                 .mainPage(MainPageConfig.builder().build())
                 .detailsPage(DetailsPageConfig.builder().build())
@@ -131,9 +128,6 @@ public class ReservationServiceTests {
                 .specificReservation(false)
                 .uniqueness(false)
                 .build();
-        AuthenticationConfig authentication = AuthenticationConfig.builder()
-                .confirmationRequire(false)
-                .build();
         Owner owner = Owner.builder()
                 .storeName(STORE_NAME)
                 .email("mail@mail")
@@ -142,7 +136,7 @@ public class ReservationServiceTests {
         StoreConfig storeConfig = StoreConfig.builder()
                 .name(STORE_NAME)
                 .owner(owner)
-                .authConfig(authentication)
+                .authConfig(new AuthenticationConfig())
                 .core(core)
                 .mainPage(MainPageConfig.builder().build())
                 .detailsPage(DetailsPageConfig.builder().build())
