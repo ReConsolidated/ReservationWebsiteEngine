@@ -7,6 +7,7 @@ import io.github.reconsolidated.zpibackend.features.reservation.ReservationStatu
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,17 @@ public class UserReservationDto {
     private Boolean confirmed;
     private ReservationStatus status;
 
-    public UserReservationDto(Reservation reservation) {
+    public UserReservationDto(Reservation reservation, List<SubItemDto> subItems) {
+        this.reservationId = reservation.getReservationId();
+        this.item = reservation.getItem().toSubItemDto();
+        this.subItems = subItems;
+        this.confirmed = reservation.getConfirmed();
+        this.startDateTime = reservation.getStartDateTime();
+        this.endDateTime = reservation.getEndDateTime();
+        this.amount = reservation.getAmount();
+        this.message = reservation.getMessage();
+        reservation.setStatus(LocalDateTime.now().atZone(ZoneId.of("UTC")).toLocalDateTime());
+        this.status = reservation.getStatus();
 
     }
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,5 +43,7 @@ public class ReservationDto {
         this.endDateTime = reservation.getEndDateTime();
         this.amount = reservation.getAmount();
         this.message = reservation.getMessage();
+        reservation.setStatus(LocalDateTime.now().atZone(ZoneId.of("UTC")).toLocalDateTime());
+        this.status = reservation.getStatus();
     }
 }

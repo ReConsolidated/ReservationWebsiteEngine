@@ -4,7 +4,9 @@ import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.features.item.Item;
 import io.github.reconsolidated.zpibackend.features.item.ItemService;
 import io.github.reconsolidated.zpibackend.features.item.SubItem;
+import io.github.reconsolidated.zpibackend.features.item.dtos.SubItemDto;
 import io.github.reconsolidated.zpibackend.features.reservation.dtos.ReservationDto;
+import io.github.reconsolidated.zpibackend.features.reservation.dtos.UserReservationDto;
 import io.github.reconsolidated.zpibackend.features.reservation.request.CheckAvailabilityRequest;
 import io.github.reconsolidated.zpibackend.features.reservation.response.CheckAvailabilityResponse;
 import io.github.reconsolidated.zpibackend.features.reservation.response.CheckAvailabilityResponseFailure;
@@ -139,6 +141,21 @@ public class ReservationService {
 
     public List<Reservation> getUserReservations(Long currentUserId, String storeName) {
         return reservationRepository.findByUser_IdAndItemStoreStoreName(currentUserId, storeName);
+    }
+
+    public List<UserReservationDto> getUserReservationsDto(Long currentUserId, String storeName) {
+
+        return getUserReservations(currentUserId, storeName)
+                .stream()
+                .map(reservation -> new UserReservationDto(reservation,
+                                itemService.getItem(reservation.getItem().getItemId())
+                                        .getSubItemsListDto()
+                                        .subItems()
+                                        .stream()
+                                        .filter(subItemDto -> reservation.getSubItemIdList().contains(subItemDto.getId()))
+                                        .toList()
+                    )
+                ).toList();
     }
 
     public List<Reservation> getStoreReservations(AppUser currentUser, String storeName) {

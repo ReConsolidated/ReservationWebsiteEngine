@@ -3,6 +3,7 @@ package io.github.reconsolidated.zpibackend.features.reservation;
 import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.authentication.currentUser.CurrentUser;
 import io.github.reconsolidated.zpibackend.features.reservation.dtos.ReservationDto;
+import io.github.reconsolidated.zpibackend.features.reservation.dtos.UserReservationDto;
 import io.github.reconsolidated.zpibackend.features.reservation.request.CheckAvailabilityRequest;
 import io.github.reconsolidated.zpibackend.features.reservation.response.CheckAvailabilityResponse;
 import lombok.AllArgsConstructor;
@@ -45,9 +46,9 @@ public class ReservationController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<Reservation>> userReservations(@CurrentUser AppUser currentUser,
-                                                              @PathVariable String storeName) {
-        return ResponseEntity.ok(reservationService.getUserReservations(currentUser.getId(), storeName));
+    public ResponseEntity<List<UserReservationDto>> userReservations(@CurrentUser AppUser currentUser,
+                                                                     @PathVariable String storeName) {
+        return ResponseEntity.ok(reservationService.getUserReservationsDto(currentUser.getId(), storeName));
     }
 
     @GetMapping

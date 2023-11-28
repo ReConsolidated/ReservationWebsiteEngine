@@ -32,9 +32,24 @@ public class Reservation {
     private Integer amount;
     private String message;
     private Boolean confirmed;
+    private ReservationStatus status;
 
     public ScheduleSlot getScheduleSlot() {
         return new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), subItemIdList);
+    }
+
+    public void setStatus(LocalDateTime now) {
+        if(startDateTime.isBefore(now)) {
+            if (status == null || status == ReservationStatus.PENDING) {
+                status = ReservationStatus.UNKNOWN;
+            }
+        } else {
+            if(!confirmed) {
+                status = ReservationStatus.PENDING;
+            } else {
+                status =ReservationStatus.CONFIRMED;
+            }
+        }
     }
 
     @Override
