@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Schedule {
+    private static final int OVERNIGHT_DURATION = 1;
     @Id
     @GeneratedValue(generator = "schedule_generator")
     private Long scheduleId;
@@ -110,8 +111,11 @@ public class Schedule {
                     if (daySlot.getType() == ReservationType.MORNING) {
                         availableScheduleSlots.remove(index);
                     }
-                    ScheduleSlot morningSlot = new ScheduleSlot(scheduleSlot.getStartDateTime(),
-                            scheduleSlot.getStartDateTime(), scheduleSlot.getCurrAmount(), ReservationType.MORNING);
+                    ScheduleSlot morningSlot = new ScheduleSlot(
+                            scheduleSlot.getStartDateTime().minusMinutes(OVERNIGHT_DURATION),
+                            scheduleSlot.getStartDateTime(),
+                            scheduleSlot.getCurrAmount(),
+                            ReservationType.MORNING);
                     availableScheduleSlots.add(index, morningSlot);
                 } else {
                     //check whether scheduleSlot is last on its day
@@ -128,8 +132,13 @@ public class Schedule {
                         if (previousOvernightSlot.getType() == ReservationType.OVERNIGHT) {
                             availableScheduleSlots.remove(overnightIndex);
                         }
-                        availableScheduleSlots.add(overnightIndex, new ScheduleSlot(scheduleSlot.getEndDateTime(),
-                                scheduleSlot.getEndDateTime(), scheduleSlot.getCurrAmount(), ReservationType.OVERNIGHT));
+                        availableScheduleSlots.add(
+                                overnightIndex,
+                                new ScheduleSlot(
+                                        scheduleSlot.getEndDateTime(),
+                                        scheduleSlot.getEndDateTime().plusMinutes(OVERNIGHT_DURATION),
+                                        scheduleSlot.getCurrAmount(),
+                                        ReservationType.OVERNIGHT));
                     }
                 }
             } else {
@@ -147,13 +156,13 @@ public class Schedule {
                         index,
                         Arrays.asList(
                             new ScheduleSlot(
-                                    scheduleSlot.getStartDateTime(),
+                                    scheduleSlot.getStartDateTime().minusMinutes(OVERNIGHT_DURATION),
                                     scheduleSlot.getStartDateTime(),
                                     scheduleSlot.getCurrAmount(),
                                     ReservationType.MORNING),
                             new ScheduleSlot(
                                     scheduleSlot.getEndDateTime(),
-                                    scheduleSlot.getEndDateTime(),
+                                    scheduleSlot.getEndDateTime().plusMinutes(OVERNIGHT_DURATION),
                                     scheduleSlot.getCurrAmount(),
                                     ReservationType.OVERNIGHT)));
             }
