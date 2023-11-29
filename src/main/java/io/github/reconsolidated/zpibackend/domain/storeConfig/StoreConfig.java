@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.domain.storeConfig;
 
 import io.github.reconsolidated.zpibackend.domain.parameter.ParameterSettings;
+import io.github.reconsolidated.zpibackend.domain.store.dtos.StoreNameDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -41,7 +42,7 @@ public class StoreConfig {
         this.name = owner.getStoreName().replaceAll("[ /]", "_");
     }
 
-    public StoreSummary getStoreSummary() {
-        return new StoreSummary(name, owner.getStoreName());
+    public StoreNameDto getStoreSummary() {
+        return new StoreNameDto(this);
     }
 }

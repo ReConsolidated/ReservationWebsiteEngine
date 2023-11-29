@@ -71,7 +71,7 @@ public class Schedule {
 
             if (scheduleSlot.startsEarlierThan(availableScheduleSlots.get(i))) {
                 //slot is before next slot, so it is this slot place
-                if (!scheduleSlot.getEndDateTime().isAfter(availableScheduleSlots.get(i).getStartDateTime()) &&
+                if ((!scheduleSlot.getEndDateTime().isAfter(availableScheduleSlots.get(i).getStartDateTime())) &&
                         (i == 0  || !availableScheduleSlots.get(i - 1).getEndDateTime().isAfter(scheduleSlot.getStartDateTime()))) {
                     //slots do not overlap
                     availableScheduleSlots.add(i, scheduleSlot);
@@ -93,11 +93,12 @@ public class Schedule {
         if (core.getGranularity()) {
             scheduleSlot.setType(ReservationType.SLOT);
         } else if (core.getIsAllowOvernight()) {
+            scheduleSlot.setType(ReservationType.CONTINUOUS);
             //slots available on same day as new scheduleSlot
             List<ScheduleSlot> daySlots = availableScheduleSlots.stream()
                     .filter(slot ->
-                            slot.getStartDateTime().getYear() == scheduleSlot.getStartDateTime().getYear() &&
-                            slot.getStartDateTime().getDayOfYear() == scheduleSlot.getStartDateTime().getDayOfYear())
+                            slot.getStartDateTime().plusHours(1).getYear() == scheduleSlot.getStartDateTime().plusHours(1).getYear() &&
+                            slot.getStartDateTime().plusHours(1).getDayOfYear() == scheduleSlot.getStartDateTime().plusHours(1).getDayOfYear())
                     .toList();
             boolean isLastOnDay = true;
             if (!daySlots.isEmpty()) {
@@ -112,16 +113,6 @@ public class Schedule {
                     ScheduleSlot morningSlot = new ScheduleSlot(scheduleSlot.getStartDateTime(),
                             scheduleSlot.getStartDateTime(), scheduleSlot.getCurrAmount(), ReservationType.MORNING);
                     availableScheduleSlots.add(index, morningSlot);
-                    scheduleSlot.setType(ReservationType.CONTINUOUS);
-                } else if (daySlots.size() == 1 && daySlots.get(0).getType() == ReservationType.MORNING) {
-                    scheduleSlot.setType(ReservationType.OVERNIGHT);
-                    int index = availableScheduleSlots.indexOf(daySlots.get(0));
-                    availableScheduleSlots.remove(index);
-                    availableScheduleSlots.addAll(index,
-                            Arrays.asList(new ScheduleSlot(scheduleSlot.getStartDateTime(),
-                                            scheduleSlot.getStartDateTime(), scheduleSlot.getCurrAmount(), ReservationType.MORNING),
-                                    new ScheduleSlot(scheduleSlot.getStartDateTime().plusDays(1),
-                                            scheduleSlot.getStartDateTime().plusDays(1), scheduleSlot.getCurrAmount(), ReservationType.MORNING)));
                 } else {
                     //check whether scheduleSlot is last on its day
                     for (ScheduleSlot slot : daySlots) {
@@ -132,29 +123,39 @@ public class Schedule {
                     }
                     if (isLastOnDay) {
                         //last on a day
-                        scheduleSlot.setType(ReservationType.OVERNIGHT);
-                        ScheduleSlot previouslyLastDaySlot = daySlots.get(daySlots.size() - 1);
-                        previouslyLastDaySlot.setType(ReservationType.CONTINUOUS);
-
-                    } else {
-                        //slot between other slots
-                        scheduleSlot.setType(ReservationType.CONTINUOUS);
+                        ScheduleSlot previousOvernightSlot = daySlots.get(daySlots.size() - 1);
+                        int overnightIndex = availableScheduleSlots.indexOf(previousOvernightSlot);
+                        if (previousOvernightSlot.getType() == ReservationType.OVERNIGHT) {
+                            availableScheduleSlots.remove(overnightIndex);
+                        }
+                        availableScheduleSlots.add(overnightIndex, new ScheduleSlot(scheduleSlot.getEndDateTime(),
+                                scheduleSlot.getEndDateTime(), scheduleSlot.getCurrAmount(), ReservationType.OVERNIGHT));
                     }
                 }
             } else {
-                //first and last slot of a day
-                scheduleSlot.setType(ReservationType.OVERNIGHT);
-                List<ScheduleSlot> nextDaySlots = availableScheduleSlots.stream()
-                        .filter(slot ->
-                                slot.getStartDateTime().getYear() == scheduleSlot.getStartDateTime().getYear() && slot.getStartDateTime().getDayOfYear() == scheduleSlot.getStartDateTime().getDayOfYear() + 1)
-                        .toList();
-                if (nextDaySlots.isEmpty()) {
-                    availableScheduleSlots.add(new ScheduleSlot(scheduleSlot.getStartDateTime().plusDays(1),
-                            scheduleSlot.getStartDateTime().plusDays(1), scheduleSlot.getCurrAmount(), ReservationType.MORNING));
-                } else {
-                    availableScheduleSlots.add(new ScheduleSlot(nextDaySlots.get(0).getStartDateTime(),
-                                    nextDaySlots.get(0).getStartDateTime(), scheduleSlot.getCurrAmount(), ReservationType.MORNING));
+                int index = 0;
+                for(int i = 0; i < availableScheduleSlots.size(); i++) {
+                    if(!availableScheduleSlots.get(i).getEndDateTime().isAfter(scheduleSlot.getStartDateTime()) &&
+                            (i + 1 >= availableScheduleSlots.size() ||
+                                    !availableScheduleSlots.get(i+1).getStartDateTime().isBefore(scheduleSlot.getEndDateTime()))) {
+                        index = i + 1;
+                        break;
+                    }
                 }
+                //first and last slot of a day
+                availableScheduleSlots.addAll(
+                        index,
+                        Arrays.asList(
+                            new ScheduleSlot(
+                                    scheduleSlot.getStartDateTime(),
+                                    scheduleSlot.getStartDateTime(),
+                                    scheduleSlot.getCurrAmount(),
+                                    ReservationType.MORNING),
+                            new ScheduleSlot(
+                                    scheduleSlot.getEndDateTime(),
+                                    scheduleSlot.getEndDateTime(),
+                                    scheduleSlot.getCurrAmount(),
+                                    ReservationType.OVERNIGHT)));
             }
         } else {
             scheduleSlot.setType(ReservationType.CONTINUOUS);

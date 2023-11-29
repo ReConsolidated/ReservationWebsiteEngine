@@ -27,11 +27,17 @@ public class StoreController {
 
     @GetMapping("/all")
     public ResponseEntity<List<StoreNameDto>> listStores() {
-        return ResponseEntity.ok(storeService.listStores().stream().map(StoreNameDto::new).toList());
+        return ResponseEntity.ok(storeService.listStores()
+                .stream()
+                .map(store -> new StoreNameDto(store.getStoreConfig()))
+                .toList());
     }
 
     @GetMapping
     public ResponseEntity<List<StoreNameDto>> listAllStores(@CurrentUser AppUser currentUser) {
-        return ResponseEntity.ok(storeService.listStores(currentUser).stream().map(StoreNameDto::new).toList());
+        return ResponseEntity.ok(storeService.listStores(currentUser)
+                .stream()
+                .map(store -> new StoreNameDto(store.getStoreConfig()))
+                .toList());
     }
 }

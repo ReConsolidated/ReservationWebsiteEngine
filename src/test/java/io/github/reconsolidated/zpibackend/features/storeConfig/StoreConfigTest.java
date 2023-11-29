@@ -43,7 +43,8 @@ public class StoreConfigTest {
                 mainPageConfig,
                 detailsPageConfig,
                 new ArrayList<>(),
-                null);
+                null,
+                "name");
 
         StoreConfig createdConfig = storeConfigService.createStoreConfig(user, storeConfig);
         assertThat(createdConfig.getStoreConfigId()).isNotNull();
@@ -71,7 +72,8 @@ public class StoreConfigTest {
                 mainPageConfig,
                 detailsPageConfig,
                 new ArrayList<>(),
-                null);
+                null,
+                "name");
 
         assertThrows(IllegalArgumentException.class, () -> storeConfigService.createStoreConfig(user, storeConfig));
     }
@@ -96,7 +98,8 @@ public class StoreConfigTest {
                 mainPageConfig,
                 detailsPageConfig,
                 new ArrayList<>(),
-                null);
+                null,
+                "name");
 
         Long storeId = storeConfigService.createStoreConfig(user, storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
@@ -126,7 +129,8 @@ public class StoreConfigTest {
                 mainPageConfig,
                 detailsPageConfig,
                 new ArrayList<>(),
-                null);
+                null,
+                "name");
 
         Long storeId = storeConfigService.createStoreConfig(user, storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
@@ -167,7 +171,8 @@ public class StoreConfigTest {
                 mainPageConfig,
                 detailsPageConfig,
                 new ArrayList<>(),
-                null);
+                null,
+                "name");
 
         Long storeId = storeConfigService.createStoreConfig(user, storeConfig).getStoreConfigId();
         assertThat(storeId).isNotNull();
@@ -210,7 +215,8 @@ public class StoreConfigTest {
                 mainPageConfig,
                 detailsPageConfig,
                 new ArrayList<>(),
-                null);
+                null,
+                "name");
         storeConfigService.createStoreConfig(user, storeConfig);
 
         storeConfigService.updateImageUrl(user, "name", imageUrl);
