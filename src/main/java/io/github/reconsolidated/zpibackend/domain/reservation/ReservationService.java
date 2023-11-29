@@ -57,17 +57,19 @@ public class ReservationService {
             Reservation reservation = Reservation.builder()
                     .user(appUser)
                     .email(reservationDto.getUserEmail())
-                    .personalData(personalData)
                     .item(item)
+                    .subItemIdList(new ArrayList<>())
+                    .personalData(personalData)
                     .startDateTime(reservationDto.getStartDateTime())
                     .endDateTime(reservationDto.getEndDateTime())
                     .amount(reservationDto.getAmount())
-                    .subItemIdList(new ArrayList<>())
+                    .message(reservationDto.getMessage())
                     .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                     .build();
             reservation.setStatus(LocalDateTime.now());
-            schedule.processReservation(core, reservation);
-
+            if(!schedule.processReservation(core, reservation)) {
+                throw new IllegalArgumentException("Unexpected error. Reservation is not possible!");
+            }
             return new ReservationDto(reservationRepository.save(reservation));
         } else {
             if (core.getPeriodicity() || core.getSpecificReservation()) {
@@ -96,6 +98,7 @@ public class ReservationService {
                         .endDateTime(toReserve.get(0).getSlot().getEndDateTime())
                         .subItemIdList(reservationDto.getSubItemIds())
                         .amount(reservationDto.getAmount())
+                        .message(reservationDto.getMessage())
                         .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                         .build();
                 reservation.setStatus(LocalDateTime.now());
@@ -115,6 +118,7 @@ public class ReservationService {
                         .endDateTime(LocalDateTime.now())
                         .subItemIdList(new LinkedList<>())
                         .amount(reservationDto.getAmount())
+                        .message(reservationDto.getMessage())
                         .confirmed(false)
                         .build();
                 reservation.setStatus(LocalDateTime.now());
