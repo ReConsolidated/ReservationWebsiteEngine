@@ -159,7 +159,8 @@ public class ReservationService {
     }
 
     public List<Reservation> getUserReservations(Long currentUserId, String storeName) {
-        return reservationRepository.findByUser_IdAndItemStoreStoreName(currentUserId, storeName);
+        return reservationRepository.findByUser_IdAndItemStoreStoreName(currentUserId, storeName)
+                .stream().peek((reservation -> reservation.setStatus(LocalDateTime.now()))).toList();
     }
 
     public List<UserReservationDto> getUserReservationsDto(Long currentUserId, String storeName) {
@@ -183,6 +184,7 @@ public class ReservationService {
         }
         return reservationRepository.findByItemStoreStoreName(storeName)
                 .stream()
+                .peek((reservation -> reservation.setStatus(LocalDateTime.now())))
                 .map(ReservationDto::new)
                 .toList();
     }
