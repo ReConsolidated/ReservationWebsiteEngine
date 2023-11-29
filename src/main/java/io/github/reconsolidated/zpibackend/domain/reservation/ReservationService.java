@@ -66,7 +66,7 @@ public class ReservationService {
                     .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                     .build();
             reservation.setStatus(LocalDateTime.now());
-            if(!schedule.processReservation(core, reservation)) {
+            if (!schedule.processReservation(core, reservation)) {
                 throw new IllegalArgumentException("Unexpected error. Reservation is not possible!");
             }
             return new ReservationDto(reservationRepository.save(reservation));
@@ -93,8 +93,8 @@ public class ReservationService {
                         .email(reservationDto.getUserEmail())
                         .personalData(personalData)
                         .item(item)
-                        .startDateTime(toReserve.get(0).getSlot().getStartDateTime())
-                        .endDateTime(toReserve.get(0).getSlot().getEndDateTime())
+                        .startDateTime(toReserve.get(0).getStartDateTime())
+                        .endDateTime(toReserve.get(0).getEndDateTime())
                         .subItemIdList(reservationDto.getSubItemIds())
                         .amount(reservationDto.getAmount())
                         .message(reservationDto.getMessage())
@@ -132,7 +132,7 @@ public class ReservationService {
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
-        if(core.getUniqueness()) {
+        if (core.getUniqueness()) {
             throw new IllegalArgumentException("For core with unique items use \"/refetch\" endpoint!");
         }
 

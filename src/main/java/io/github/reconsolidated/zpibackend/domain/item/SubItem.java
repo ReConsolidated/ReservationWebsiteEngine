@@ -24,7 +24,7 @@ public class SubItem {
     private LocalDateTime endDateTime;
     private Integer amount;
 
-    public ScheduleSlot getScheduleSlot() {
+    public ScheduleSlot getSlot() {
         return new ScheduleSlot(startDateTime, endDateTime, amount);
     }
     public SubItemDto toSubItemDto() {

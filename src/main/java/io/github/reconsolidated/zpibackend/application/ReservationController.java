@@ -9,7 +9,6 @@ import io.github.reconsolidated.zpibackend.domain.reservation.dtos.UserReservati
 import io.github.reconsolidated.zpibackend.domain.reservation.request.CheckAvailabilityRequest;
 import io.github.reconsolidated.zpibackend.domain.reservation.response.CheckAvailabilityResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
