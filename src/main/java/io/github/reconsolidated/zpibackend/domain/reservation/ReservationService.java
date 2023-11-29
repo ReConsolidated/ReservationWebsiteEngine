@@ -2,16 +2,15 @@ package io.github.reconsolidated.zpibackend.domain.reservation;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUserService;
+import io.github.reconsolidated.zpibackend.domain.availability.Availability;
 import io.github.reconsolidated.zpibackend.domain.item.Item;
 import io.github.reconsolidated.zpibackend.domain.item.ItemService;
 import io.github.reconsolidated.zpibackend.domain.item.SubItem;
 import io.github.reconsolidated.zpibackend.domain.reservation.dtos.ReservationDto;
-import io.github.reconsolidated.zpibackend.domain.reservation.response.CheckAvailabilityResponseSuccess;
-import io.github.reconsolidated.zpibackend.domain.reservation.response.CheckAvailabilityResponseSuggestion;
+import io.github.reconsolidated.zpibackend.domain.reservation.request.CheckAvailabilityRequestUnique;
+import io.github.reconsolidated.zpibackend.domain.reservation.response.*;
 import io.github.reconsolidated.zpibackend.domain.reservation.dtos.UserReservationDto;
 import io.github.reconsolidated.zpibackend.domain.reservation.request.CheckAvailabilityRequest;
-import io.github.reconsolidated.zpibackend.domain.reservation.response.CheckAvailabilityResponse;
-import io.github.reconsolidated.zpibackend.domain.reservation.response.CheckAvailabilityResponseFailure;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.CoreConfig;
 
@@ -127,11 +126,15 @@ public class ReservationService {
         }
     }
 
-    public List<CheckAvailabilityResponse> checkAvailability(CheckAvailabilityRequest request) {
+    public List<CheckAvailabilityResponse> checkAvailabilityNotUnique(CheckAvailabilityRequest request) {
 
         Item item = itemService.getItem(request.getItemId());
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();
+
+        if(core.getUniqueness()) {
+            throw new IllegalArgumentException("For core with unique items use \"/refetch\" endpoint!");
+        }
 
         ScheduleSlot requestSlot = new ScheduleSlot(request.getStartDate(), request.getEndDate(), request.getAmount());
         if (schedule.verify(core, requestSlot)) {
@@ -160,6 +163,19 @@ public class ReservationService {
                 return result;
             }
         }
+    }
+
+    public CheckAvailabilityResponseUnique checkAvailabilityUnique(CheckAvailabilityRequestUnique request) {
+
+        Item item = itemService.getItem(request.getItemId());
+        return new CheckAvailabilityResponseUnique(
+                item.getItemId(),
+                request.getAmount(),
+                item.getSchedule().getAvailableScheduleSlots()
+                        .stream()
+                        .filter(scheduleSlot -> scheduleSlot.getCurrAmount() >= request.getAmount())
+                        .map(Availability::new)
+                        .toList());
     }
 
     public List<Reservation> getUserReservations(Long currentUserId, String storeName) {
