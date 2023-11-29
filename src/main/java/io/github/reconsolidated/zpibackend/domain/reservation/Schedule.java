@@ -6,7 +6,6 @@ import io.github.reconsolidated.zpibackend.domain.storeConfig.CoreConfig;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -143,10 +142,10 @@ public class Schedule {
                 }
             } else {
                 int index = 0;
-                for(int i = 0; i < availableScheduleSlots.size(); i++) {
-                    if(!availableScheduleSlots.get(i).getEndDateTime().isAfter(scheduleSlot.getStartDateTime()) &&
+                for (int i = 0; i < availableScheduleSlots.size(); i++) {
+                    if (!availableScheduleSlots.get(i).getEndDateTime().isAfter(scheduleSlot.getStartDateTime()) &&
                             (i + 1 >= availableScheduleSlots.size() ||
-                                    !availableScheduleSlots.get(i+1).getStartDateTime().isBefore(scheduleSlot.getEndDateTime()))) {
+                                    !availableScheduleSlots.get(i + 1).getStartDateTime().isBefore(scheduleSlot.getEndDateTime()))) {
                         index = i + 1;
                         break;
                     }
@@ -171,125 +170,222 @@ public class Schedule {
         }
     }
 
-    public boolean verify(boolean granularity, ScheduleSlot scheduleSlot) {
+    public void removeSlot(ScheduleSlot slot) {
 
-        if (granularity) {
-            return verifyGranular(scheduleSlot);
+        if (slot.getType() == ReservationType.CONTINUOUS) {
+            int index = availableScheduleSlots.indexOf(slot);
+            if (index != -1) {
+                if (index + 1 < availableScheduleSlots.size()) {
+                    if (availableScheduleSlots.get(index + 1).getType() == ReservationType.OVERNIGHT) {
+                        if (index + 2 < availableScheduleSlots.size()) {
+                            if (availableScheduleSlots.get(index + 2).getType() == ReservationType.MORNING) {
+                                availableScheduleSlots.remove(index + 2);
+                            }
+                        }
+                        availableScheduleSlots.remove(index + 1);
+                    }
+                }
+                availableScheduleSlots.remove(index);
+            }
         } else {
-            return verifyNotGranular(scheduleSlot);
+            availableScheduleSlots.remove(slot);
         }
     }
 
-    private boolean verifyNotGranular(ScheduleSlot scheduleSlot) {
-
-        if (availableScheduleSlots.isEmpty()) {
+    public boolean verify(CoreConfig coreConfig, ScheduleSlot scheduleSlot) {
+        if (!scheduleSlot.getStartDateTime().isBefore(scheduleSlot.getEndDateTime())) {
             return false;
         }
-        availableScheduleSlots.sort(Comparator.comparing(ScheduleSlot::getStartDateTime));
-
-        List<ScheduleSlot> toVerify = new ArrayList<>(availableScheduleSlots.stream()
+        //list of slots that are in boundaries of given schedule slot
+        List<ScheduleSlot> toVerify = availableScheduleSlots.stream()
                 .filter(slot -> slot.overlap(scheduleSlot))
-                .toList());
-        if (toVerify.isEmpty()) {
+                .toList();
+        //verification of continuity of slots and boundaries
+        if (!verifyScheduleSlots(coreConfig.getGranularity(), toVerify, scheduleSlot)) {
             return false;
         }
-        LocalDateTime prevSlotEndTime = toVerify.get(0).getStartDateTime();
+        return verifyReservationFitting(coreConfig, toVerify, scheduleSlot);
+    }
 
-        if (!prevSlotEndTime.isAfter(scheduleSlot.getStartDateTime())) {
-            ArrayList<Integer> subItemIndexes = toVerify.get(0).getAvailableItemsIndexes();
-            for (ScheduleSlot currSlot : toVerify) {
-                //remove object
-                subItemIndexes.removeIf(index -> !currSlot.getAvailableItemsIndexes().contains(index));
-                //gap between slots or amount is too small
-                if (currSlot.getStartDateTime().isAfter(prevSlotEndTime) ||
-                        subItemIndexes.size() < scheduleSlot.getCurrAmount()) {
-                    return false;
-                }
-                //whole schedule slot is covered by slots in schedule
-                if (!currSlot.getEndDateTime().isBefore(scheduleSlot.getEndDateTime())) {
-                    return true;
-                }
+    private boolean verifyReservationFitting(CoreConfig coreConfig, List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
+        if (!coreConfig.getUniqueness()) {
+            return verifyReservationFittingNotUnique(scheduleSlots, reservationSlot);
+        }
+        if (coreConfig.getSimultaneous()) {
+            return verifyReservationFittingSimultaneously(scheduleSlots, reservationSlot);
+        }
+        return true;
+    }
+
+    private boolean verifyReservationFittingSimultaneously(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
+
+        if (scheduleSlots.isEmpty()) {
+            return false;
+        }
+        return scheduleSlots
+                .stream()
+                .allMatch(scheduleSlot -> scheduleSlot.getCurrAmount() >= reservationSlot.getCurrAmount());
+    }
+
+    private boolean verifyReservationFittingNotUnique(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
+
+        if (scheduleSlots.isEmpty()) {
+            return false;
+        }
+        ArrayList<Integer> subItemIndexes = scheduleSlots.get(0).getAvailableItemsIndexes();
+        for (ScheduleSlot currSlot : scheduleSlots) {
+            //remove indexes that aren't available in all slots
+            subItemIndexes.removeIf(index -> !currSlot.getAvailableItemsIndexes().contains(index));
+            //amount is too small
+            if (subItemIndexes.size() < reservationSlot.getCurrAmount()) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
-    private boolean verifyGranular(ScheduleSlot scheduleSlot) {
+    private boolean verifyScheduleSlots(boolean granularity, List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
+        return granularity ?
+                verifyScheduleSlotsGranular(scheduleSlots, reservationSlot) :
+                verifyScheduleSlotsNotGranular(scheduleSlots, reservationSlot);
+    }
 
-        if (availableScheduleSlots.isEmpty()) {
+    private boolean verifyScheduleSlotsGranular(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
+        if (scheduleSlots.isEmpty()) {
             return false;
         }
-
-        List<ScheduleSlot> toVerify = availableScheduleSlots.stream()
-                .filter(slot -> slot.equalsTime(scheduleSlot))
-                .toList();
-
-        return toVerify.size() == 1 && toVerify.get(0).getCurrAmount() >= scheduleSlot.getCurrAmount();
+        if (!scheduleSlots.get(0).getStartDateTime().equals(reservationSlot.getStartDateTime())) {
+            return false;
+        }
+        if (!scheduleSlots.get(scheduleSlots.size() - 1).getEndDateTime().equals(reservationSlot.getEndDateTime())) {
+            return false;
+        }
+        return checkSlotsContinuity(scheduleSlots);
     }
 
-
-    /**
-     Use verify method before calling processReservation()
-     */
-    public void processReservation(Reservation reservation) {
-
-        List<ScheduleSlot> toReserve = new ArrayList<>(availableScheduleSlots.stream()
-                .filter(slot -> slot.overlap(reservation.getScheduleSlot()))
-                .toList());
-
-        List<Integer> availableItems = findAvailableItem(toReserve);
-        if (availableItems.size() < reservation.getAmount()) {
-            throw new IllegalArgumentException();
+    private boolean verifyScheduleSlotsNotGranular(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
+        if (scheduleSlots.isEmpty()) {
+            return false;
         }
-        if (toReserve.get(0).getStartDateTime().isBefore(reservation.getStartDateTime())) {
-            ScheduleSlot first = toReserve.get(0);
-            toReserve.remove(0);
-            int scheduleIndex = availableScheduleSlots.indexOf(first);
-            availableScheduleSlots.remove(scheduleIndex);
+        if (scheduleSlots.get(0).getStartDateTime().isAfter(reservationSlot.getStartDateTime())) {
+            return false;
+        }
+        if (scheduleSlots.get(scheduleSlots.size() - 1).getEndDateTime().isBefore(reservationSlot.getEndDateTime())) {
+            return false;
+        }
+        return checkSlotsContinuity(scheduleSlots);
+    }
+
+    private boolean checkSlotsContinuity(List<ScheduleSlot> scheduleSlots) {
+        for (int i = 0; i < scheduleSlots.size() - 1; i++) {
+            if (!scheduleSlots.get(i).getEndDateTime().equals(scheduleSlots.get(i + 1).getStartDateTime()) &&
+                    !(scheduleSlots.get(i).getType() == ReservationType.OVERNIGHT &&
+                    scheduleSlots.get(i + 1).getType() == ReservationType.MORNING)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean processReservation(CoreConfig core, Reservation reservation) {
+        List<ScheduleSlot> toReserve = availableScheduleSlots.stream()
+                .filter(slot -> slot.overlap(reservation.getScheduleSlot()))
+                .toList();
+        if (core.getGranularity()) {
+            if (!verifyScheduleSlotsGranular(toReserve, reservation.getScheduleSlot())) {
+                return false;
+            }
+        } else {
+            if (!verifyScheduleSlotsNotGranular(toReserve, reservation.getScheduleSlot())) {
+                return false;
+            }
+            toReserve = prepareScheduleNotGranular(reservation, toReserve);
+        }
+        if (!core.getUniqueness()) {
+            return processReservationNotUnique(reservation, toReserve);
+        } else {
+            return processReservationUnique(reservation, toReserve);
+        }
+    }
+
+    private List<ScheduleSlot> prepareScheduleNotGranular(Reservation reservation, List<ScheduleSlot> toReserve) {
+        if (toReserve.isEmpty()) {
+            return new ArrayList<>();
+        }
+        ArrayList<ScheduleSlot> preparedToReserve = new ArrayList<>(toReserve.size());
+        preparedToReserve.addAll(toReserve);
+
+        if (preparedToReserve.get(0).getStartDateTime().isBefore(reservation.getStartDateTime())) {
+            ScheduleSlot first = preparedToReserve.get(0);
+            int firstIndex = availableScheduleSlots.indexOf(first);
+            availableScheduleSlots.remove(firstIndex);
+            preparedToReserve.remove(0);
             ScheduleSlot[] split = first.split(reservation.getStartDateTime());
             setSlotType(split[0]);
             setSlotType(split[1]);
-            availableScheduleSlots.addAll(scheduleIndex, Arrays.asList(split));
-            toReserve.add(0, split[1]);
+            availableScheduleSlots.addAll(firstIndex, Arrays.asList(split));
+            preparedToReserve.add(0, split[1]);
         }
-        if (toReserve.get(toReserve.size() - 1).getEndDateTime().isAfter(reservation.getEndDateTime())) {
-            ScheduleSlot last = toReserve.get(toReserve.size() - 1);
-            toReserve.remove(toReserve.size() - 1);
-            int scheduleIndex = availableScheduleSlots.indexOf(last);
-            availableScheduleSlots.remove(scheduleIndex);
+        if (preparedToReserve.get(preparedToReserve.size() - 1).getEndDateTime().isAfter(reservation.getEndDateTime())) {
+            ScheduleSlot last = preparedToReserve.get(preparedToReserve.size() - 1);
+            int lastIndex = availableScheduleSlots.indexOf(last);
+            availableScheduleSlots.remove(lastIndex);
+            preparedToReserve.remove(preparedToReserve.size() - 1);
             ScheduleSlot[] split = last.split(reservation.getEndDateTime());
             setSlotType(split[0]);
             setSlotType(split[1]);
-            availableScheduleSlots.addAll(scheduleIndex, Arrays.asList(split));
-            toReserve.add(split[0]);
+            availableScheduleSlots.addAll(lastIndex, Arrays.asList(split));
+            preparedToReserve.add(split[0]);
         }
-
-        for (ScheduleSlot slot: toReserve) {
-            slot.setCurrAmount(slot.getCurrAmount() - reservation.getAmount());
-            for (int i = 0; i < reservation.getAmount(); i++) {
-                slot.getItemsAvailability().set(availableItems.get(i), false);
-            }
-            if (slot.getCurrAmount() == 0) {
-                availableScheduleSlots.remove(slot);
-            }
-        }
-        ArrayList<Long> subItemId = new ArrayList<>();
-        for (int i = 0; i < reservation.getAmount(); i++) {
-            subItemId.add(Long.valueOf(availableItems.get(i)));
-        }
-        reservation.setSubItemIdList(subItemId);
+        return preparedToReserve;
     }
 
-    public List<Integer> findAvailableItem(List<ScheduleSlot> slotsToVerify) {
+    private boolean processReservationUnique(Reservation reservation, List<ScheduleSlot> toReserve) {
+        if (toReserve.isEmpty()) {
+            return false;
+        }
+        ArrayList<Integer> availableSubItemsId = toReserve.get(0).getAvailableItemsIndexes();
+        for (ScheduleSlot slot : toReserve) {
 
-        LinkedList<Integer> availableItems = new LinkedList<>();
-        for (int i = 0; i < item.getAmount(); i++) {
-            availableItems.add(i);
+            availableSubItemsId
+                    .forEach(
+                            index -> availableSubItemsId.removeIf(
+                                    i -> !slot.getAvailableItemsIndexes().contains(i)));
+            if (availableSubItemsId.size() < reservation.getAmount()) {
+                return false;
+            }
         }
-        for (ScheduleSlot slot : slotsToVerify) {
-            availableItems.removeIf(index -> !slot.getItemsAvailability().get(index));
+        ArrayList<Long> reservedSubItemsIndexes = new ArrayList<>();
+        for (int i = 0; i < reservation.getAmount(); i++) {
+            reservedSubItemsIndexes.add(Long.valueOf(availableSubItemsId.get(i)));
         }
-        return availableItems;
+        for (ScheduleSlot slot : toReserve) {
+            slot.setCurrAmount(slot.getCurrAmount() - reservation.getAmount());
+            for (Long subItemId : reservedSubItemsIndexes) {
+                slot.getItemsAvailability().set(subItemId.intValue(), false);
+            }
+            if (slot.getCurrAmount() == 0) {
+                removeSlot(slot);
+            }
+        }
+        return true;
+    }
+
+    private boolean processReservationNotUnique(Reservation reservation, List<ScheduleSlot> toReserve) {
+        if (toReserve.isEmpty()) {
+            return false;
+        }
+        for (ScheduleSlot slot : toReserve) {
+            if (slot.getCurrAmount() >= reservation.getAmount()) {
+                slot.setCurrAmount(slot.getCurrAmount() - reservation.getAmount());
+                if (slot.getCurrAmount() == 0) {
+                    removeSlot(slot);
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -300,7 +396,7 @@ public class Schedule {
      - if free slot in same time but day after
      - if free slot in same time but week after
      */
-    public List<ScheduleSlot> suggest(ScheduleSlot originalSlot) {
+    public List<ScheduleSlot> suggest(CoreConfig coreConfig, ScheduleSlot originalSlot) {
 
         List<ScheduleSlot> fittingDaySlots = availableScheduleSlots.stream()
                 .filter(slot ->
@@ -315,21 +411,21 @@ public class Schedule {
                 originalSlot.getStartDateTime().minusDays(1),
                 originalSlot.getEndDateTime().minusDays(1),
                 item.getAmount());
-        if (verify(false, dayBeforeSlot)) {
+        if (verify(coreConfig, dayBeforeSlot)) {
             suggestions.add(dayBeforeSlot);
         }
         ScheduleSlot dayAfterSlot = new ScheduleSlot(
                 originalSlot.getStartDateTime().plusDays(1),
                 originalSlot.getEndDateTime().plusDays(1),
                 item.getAmount());
-        if (verify(false, dayAfterSlot)) {
+        if (verify(coreConfig, dayAfterSlot)) {
             suggestions.add(dayAfterSlot);
         }
         ScheduleSlot weekAfterSlot = new ScheduleSlot(
                 originalSlot.getStartDateTime().plusDays(WEEKDAYS),
                 originalSlot.getEndDateTime().plusDays(WEEKDAYS),
                 item.getAmount());
-        if (verify(false, weekAfterSlot)) {
+        if (verify(coreConfig, weekAfterSlot)) {
             suggestions.add(weekAfterSlot);
         }
 

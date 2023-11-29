@@ -50,7 +50,7 @@ public class ReservationService {
             Schedule schedule = item.getSchedule();
             ScheduleSlot requestSlot = new ScheduleSlot(reservationDto.getStartDateTime(), reservationDto.getEndDateTime(),
                     reservationDto.getAmount());
-            if (!schedule.verify(core.getGranularity(), requestSlot)) {
+            if (!schedule.verify(core, requestSlot)) {
                 throw new IllegalArgumentException("Right slot is not available. Reservation is not possible!");
             }
 
@@ -66,7 +66,7 @@ public class ReservationService {
                     .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                     .build();
             reservation.setStatus(LocalDateTime.now());
-            schedule.processReservation(reservation);
+            schedule.processReservation(core, reservation);
 
             return new ReservationDto(reservationRepository.save(reservation));
         } else {
@@ -130,7 +130,7 @@ public class ReservationService {
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
         ScheduleSlot requestSlot = new ScheduleSlot(request.getStartDate(), request.getEndDate(), request.getAmount());
-        if (schedule.verify(core.getGranularity(), requestSlot)) {
+        if (schedule.verify(core, requestSlot)) {
             return Collections.singletonList(CheckAvailabilityResponseSuccess.builder()
                     .itemId(request.getItemId())
                     .amount(request.getAmount())
@@ -138,7 +138,7 @@ public class ReservationService {
                     .endDate(request.getEndDate())
                     .build());
         } else {
-            List<ScheduleSlot> suggestions = schedule.suggest(requestSlot);
+            List<ScheduleSlot> suggestions = schedule.suggest(core, requestSlot);
             if (suggestions.isEmpty()) {
                 return Collections.singletonList(CheckAvailabilityResponseFailure.builder()
                         .itemId(item.getItemId())
