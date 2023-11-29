@@ -44,17 +44,16 @@ public class Reservation {
     }
 
     public void setStatus(LocalDateTime now) {
-        if (startDateTime.isBefore(now)) {
-            if (status == null || status == ReservationStatus.PENDING) {
-                status = ReservationStatus.UNKNOWN;
-            }
+        if (status == null || status == ReservationStatus.CANCELLED_BY_USER || status == ReservationStatus.CANCELLED_BY_ADMIN) {
+
         } else {
-            if (!confirmed) {
-                status = ReservationStatus.PENDING;
+            if (startDateTime.isBefore(now)) {
+                status = ReservationStatus.ACTIVE;
             } else {
-                status = ReservationStatus.CONFIRMED;
+                status = ReservationStatus.PAST;
             }
         }
+
     }
 
     public Map<String, String> getPersonalDataMap() {

@@ -23,7 +23,7 @@ public class ArchitectureTests {
 
     @Test
     public void applicationClassesShouldNotDependOnInfrastructure() {
-        JavaClasses importedClasses = new ClassFileImporter().importPackages("your.base.package");
+        JavaClasses importedClasses = new ClassFileImporter().importPackages("io.github.reconsolidated.zpibackend");
 
         ArchRule rule = noClasses()
                 .that().resideInAPackage("..application..")
