@@ -53,6 +53,18 @@ public class Schedule {
                 )).collect(Collectors.toList());
     }
 
+    public List<Availability> getAvailabilitiesForSubItems(List<Integer> subItemsId) {
+        return availableScheduleSlots.stream()
+                .filter(
+                        slot -> subItemsId.stream()
+                                .allMatch(id -> slot.getItemsAvailability().get(id)))
+                .map((slot) -> new Availability(
+                        slot.getStartDateTime(),
+                        slot.getEndDateTime(),
+                        slot.getType()
+                )).collect(Collectors.toList());
+    }
+
     public void addSlot(ScheduleSlot scheduleSlot) {
 
         setSlotType(scheduleSlot);

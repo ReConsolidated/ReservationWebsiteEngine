@@ -11,6 +11,7 @@ import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfig
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class StoreConfigController {
     private final StoreService storeService;
     private final AppUserService appUserService;
     @PostMapping
+    @Transactional
     public ResponseEntity<Long> createStoreConfig(@CurrentUser AppUser currentUser, @RequestBody StoreConfigDto storeConfig) {
         StoreConfig result = storeConfigService.createStoreConfig(currentUser, storeConfig);
         storeService.createStore(currentUser, new CreateStoreDto(result.getStoreConfigId(), result.getName()));

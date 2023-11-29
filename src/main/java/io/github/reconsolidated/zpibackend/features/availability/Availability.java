@@ -19,4 +19,29 @@ public class Availability {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime endDateTime;
     private ReservationType type;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Availability that)) {
+            return false;
+        }
+        if (!startDateTime.equals(that.startDateTime)) {
+            return false;
+        }
+        if (!endDateTime.equals(that.endDateTime)) {
+            return false;
+        }
+        return type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = startDateTime.hashCode();
+        result = 31 * result + endDateTime.hashCode();
+        result = 31 * result + type.hashCode();
+        return result;
+    }
 }

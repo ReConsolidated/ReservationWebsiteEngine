@@ -55,6 +55,10 @@ public class AppUserService {
     public AppUser getUser(Long appUserId) {
         return appUserRepository.findById(appUserId).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
+
+    public Optional<AppUser> getUserByEmail(String email) {
+        return appUserRepository.findByEmail(email);
+    }
     public void deleteUser(AppUser user) {
         appUserRepository.delete(user);
     }

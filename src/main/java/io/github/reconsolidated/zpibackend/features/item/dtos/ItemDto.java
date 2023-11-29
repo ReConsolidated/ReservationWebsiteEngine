@@ -55,7 +55,12 @@ public class ItemDto {
         this.mark = AVERAGE;
         this.subItems = item.getSubItems();
         this.availabilities = item.getSchedule().getAvailabilities();
-        this.schedule = new ScheduleDto(item.getInitialSchedule().getAvailabilities());
+        if (item.getStore().getStoreConfig().getCore().getFlexibility()) {
+            this.schedule = new ScheduleDto(item.getInitialSchedule().getAvailabilities(), null, null);
+        } else {
+            Availability single = item.getInitialSchedule().getAvailabilities().get(0);
+            this.schedule = new ScheduleDto(single.getStartDateTime(), single.getEndDateTime());
+        }
 
         for (ScheduleSlot slot : item.getSchedule().getAvailableScheduleSlots()) {
             if (earliestStartHour > slot.getStartDateTime().getHour()) {
