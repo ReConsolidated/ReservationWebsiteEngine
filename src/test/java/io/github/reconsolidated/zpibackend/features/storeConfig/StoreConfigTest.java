@@ -1,10 +1,11 @@
 package io.github.reconsolidated.zpibackend.features.storeConfig;
 
-import io.github.reconsolidated.zpibackend.authentication.appUser.AppUser;
-import io.github.reconsolidated.zpibackend.authentication.appUser.AppUserService;
-import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.OwnerDto;
-import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigDto;
-import io.github.reconsolidated.zpibackend.features.storeConfig.dtos.StoreConfigsListDto;
+import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.domain.appUser.AppUserService;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.*;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.OwnerDto;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.StoreConfigDto;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.StoreConfigsListDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,5 +1,7 @@
 package io.github.reconsolidated.zpibackend.authentication.appUser;
 
+import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.domain.appUser.AppUserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
