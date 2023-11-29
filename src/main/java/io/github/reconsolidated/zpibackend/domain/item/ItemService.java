@@ -16,18 +16,19 @@ import java.util.List;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final StoreService storeService;
+    private final ItemMapper itemMapper;
 
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow();
     }
 
     public ItemDto getItemDto(Long itemId) {
-        return new ItemDto(itemRepository.findById(itemId).orElseThrow());
+        return itemMapper.toItemDto(itemRepository.findById(itemId).orElseThrow());
     }
 
     public List<ItemDto> getItems(AppUser currentUser, String storeName) {
         Store store = storeService.getStore(storeName);
-        return itemRepository.findAllByStore_Id(store.getId()).stream().map(ItemDto::new).toList();
+        return itemRepository.findAllByStore_Id(store.getId()).stream().map(itemMapper::toItemDto).toList();
     }
 
     public Item createItem(AppUser currentUser, String storeName, ItemDto itemDto) {
@@ -36,9 +37,7 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         Item item = new Item(store, itemDto);
-        item = itemRepository.save(item);
-
-        return item;
+        return itemRepository.save(item);
     }
 
     public ItemDto updateItem(AppUser currentUser, Long itemId, ItemDto itemDto) {
@@ -62,7 +61,7 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         item.setActive(true);
-        return new ItemDto(itemRepository.save(item));
+        return itemMapper.toItemDto(itemRepository.save(item));
     }
 
     public ItemDto deactivateItem(AppUser currentUser, Long itemId) {
@@ -72,7 +71,7 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         item.setActive(false);
-        return new ItemDto(itemRepository.save(item));
+        return itemMapper.toItemDto(itemRepository.save(item));
     }
 
     public void deleteItem(AppUser currentUser, Long itemId) {

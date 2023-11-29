@@ -87,7 +87,7 @@ public class ReservationServiceTests {
         item.setSchedule(schedule);
         item.setInitialSchedule(schedule);
 
-        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item));
+        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item, 0.0));
 
         LocalDateTime start = LocalDateTime.of(2023, 1, 1, 12, 0);
         LocalDateTime end = LocalDateTime.of(2023, 1, 1, 14, 0);
@@ -176,7 +176,7 @@ public class ReservationServiceTests {
         item.setSchedule(schedule);
         item.setInitialSchedule(schedule);
 
-        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item));
+        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item, 0.0));
 
         Reservation reservation = Reservation.builder()
                 .user(appUser)

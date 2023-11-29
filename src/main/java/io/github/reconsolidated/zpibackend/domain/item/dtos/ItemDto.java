@@ -20,7 +20,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemDto {
 
-    private static final double AVERAGE = 3.0;
     private static final int LATEST_HOUR = 23;
 
     private Long id;
@@ -41,7 +40,7 @@ public class ItemDto {
     private Integer earliestStartHour = LATEST_HOUR;
     private Integer latestEndHour = 0;
 
-    public ItemDto(Item item) {
+    public ItemDto(Item item, Double average) {
         this.id = item.getItemId();
         this.active = item.getActive();
         this.attributes = new ItemAttributesDto(
@@ -52,9 +51,9 @@ public class ItemDto {
         this.customAttributeList = item.getCustomAttributeList();
         this.amount = item.getAmount();
         this.availableAmount = item.getAmount();
-        this.mark = AVERAGE;
         this.subItems = item.getSubItems();
         this.availabilities = item.getSchedule().getAvailabilities();
+        this.mark = average;
         if (item.getStore().getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new ScheduleDto(item.getInitialSchedule().getAvailabilities(), null, null);
         } else {

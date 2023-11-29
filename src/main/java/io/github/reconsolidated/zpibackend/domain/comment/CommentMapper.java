@@ -19,7 +19,8 @@ public class CommentMapper {
                 comment.getItem().getItemId(),
                 comment.getUser().getNickname(),
                 comment.getContent(),
-                comment.getDateTime()
+                comment.getDateTime(),
+                comment.getRating()
                 );
     }
 
@@ -32,6 +33,7 @@ public class CommentMapper {
                 .user(appUser)
                 .dateTime(commentDto.getDatetime())
                 .item(item)
+                .rating(commentDto.getRating())
                 .build();
     }
 }
