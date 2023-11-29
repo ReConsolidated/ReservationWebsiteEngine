@@ -22,7 +22,6 @@ public class StoreService {
 
     public Store getStore(String storeName) {
         return storeRepository.findByStoreConfigName(storeName).orElseThrow();
-
     }
 
     public Store createStore(AppUser currentUser, CreateStoreDto dto) {

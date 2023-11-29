@@ -9,12 +9,12 @@ spring:
     username: sa
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
-    show-sql: true
+    show-sql: false
   mail:
     host: localhost
     port: 1025
