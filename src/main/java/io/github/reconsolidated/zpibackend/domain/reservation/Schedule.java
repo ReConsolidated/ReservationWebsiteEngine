@@ -92,7 +92,7 @@ public class Schedule {
 
         if (core.getGranularity()) {
             scheduleSlot.setType(ReservationType.SLOT);
-        } else if (core.getIsAllowOvernight()) {
+        } else if (core.getAllowOverNight()) {
             scheduleSlot.setType(ReservationType.CONTINUOUS);
             //slots available on same day as new scheduleSlot
             List<ScheduleSlot> daySlots = availableScheduleSlots.stream()
