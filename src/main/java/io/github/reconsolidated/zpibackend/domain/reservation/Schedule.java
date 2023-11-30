@@ -340,7 +340,7 @@ public class Schedule {
         return preparedToReserve;
     }
 
-    private boolean processReservationUnique(Reservation reservation, List<ScheduleSlot> toReserve) {
+    private boolean processReservationNotUnique(Reservation reservation, List<ScheduleSlot> toReserve) {
         if (toReserve.isEmpty()) {
             return false;
         }
@@ -368,10 +368,11 @@ public class Schedule {
                 removeSlot(slot);
             }
         }
+        reservation.setSubItemIdList(reservedSubItemsIndexes);
         return true;
     }
 
-    private boolean processReservationNotUnique(Reservation reservation, List<ScheduleSlot> toReserve) {
+    private boolean processReservationUnique(Reservation reservation, List<ScheduleSlot> toReserve) {
         if (toReserve.isEmpty()) {
             return false;
         }

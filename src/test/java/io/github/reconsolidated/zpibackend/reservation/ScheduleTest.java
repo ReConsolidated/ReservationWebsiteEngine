@@ -338,8 +338,8 @@ public class ScheduleTest {
                 .flexibility(true)
                 .granularity(false)
                 .isAllowOvernight(false)
-                .uniqueness(true)
-                .simultaneous(true)
+                .uniqueness(false)
+                .simultaneous(false)
                 .build();
 
         StoreConfig storeConfig = StoreConfig.builder()
