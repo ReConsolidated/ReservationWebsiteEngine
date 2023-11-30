@@ -12,6 +12,7 @@ import io.github.reconsolidated.zpibackend.domain.store.Store;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,4 +88,18 @@ public class Item {
         return new SubItemDto(itemId, title, subtitle);
     }
 
+    public boolean isFixedPast() {
+        if (store.getStoreConfig().getCore().getFlexibility()) {
+            return false;
+        }
+        if (store.getStoreConfig().getCore().getSpecificReservation() ||
+                store.getStoreConfig().getCore().getPeriodicity()) {
+            return subItems.stream().anyMatch(subItem -> subItem.getStartDateTime().isBefore(LocalDateTime.now()));
+        } else {
+            return schedule != null &&
+                    !schedule.getAvailableScheduleSlots().isEmpty() &&
+                    schedule.getAvailableScheduleSlots().get(0).getStartDateTime().isBefore(LocalDateTime.now());
+        }
+
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -27,8 +28,22 @@ public class ItemService {
     }
 
     public List<ItemDto> getItems(AppUser currentUser, String storeName) {
+
         Store store = storeService.getStore(storeName);
+        if (!Objects.equals(currentUser.getId(), store.getOwnerAppUserId())) {
+            throw new IllegalArgumentException("Only owner of a store can see all items!");
+        }
         return itemRepository.findAllByStore_Id(store.getId()).stream().map(itemMapper::toItemDto).toList();
+    }
+
+    public List<ItemDto> getFilteredItems(AppUser currentUser, String storeName) {
+
+        Store store = storeService.getStore(storeName);
+        return itemRepository.findAllByStore_Id(store.getId())
+                .stream()
+                .filter(item -> item.getActive() && !item.isFixedPast())
+                .map(itemMapper::toItemDto)
+                .toList();
     }
 
     public Item createItem(AppUser currentUser, String storeName, ItemDto itemDto) {
