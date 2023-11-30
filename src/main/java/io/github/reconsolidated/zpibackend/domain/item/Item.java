@@ -80,6 +80,13 @@ public class Item {
                                     itemDto.getSchedule().getStartDateTime() :
                                     itemDto.getSchedule().getEndDateTime(),
                             ReservationType.NONE)));
+            this.initialSchedule.setAvailableScheduleSlots(
+                    initialSchedule.getAvailableScheduleSlots()
+                            .stream()
+                            .filter(scheduleSlot ->
+                                        scheduleSlot.getType() != ReservationType.MORNING &&
+                                        scheduleSlot.getType() != ReservationType.OVERNIGHT)
+                            .toList());
         }
         this.subItems = itemDto.getSubItems().stream().map(SubItem::new).toList();
         this.reservations = new ArrayList<>();
