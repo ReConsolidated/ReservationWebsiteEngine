@@ -27,14 +27,14 @@ public class OwnerDto {
         this.phone = owner.getPhoneNumber();
         this.email = owner.getEmail();
         this.color = owner.getColor();
-        this.storeName = owner.getStoreName();
+        this.storeName = owner.getStoreName().replaceAll("[ /]", "_");
     }
 
     public Owner toOwner(Long ownerUserId) {
         return Owner.builder()
                 .ownerId(ownerId)
                 .appUserId(ownerUserId)
-                .storeName(storeName)
+                .storeName(name)
                 .imageUrl(logoSrc)
                 .phoneNumber(phone)
                 .email(email)
