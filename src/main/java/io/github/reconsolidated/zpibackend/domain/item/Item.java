@@ -111,12 +111,11 @@ public class Item {
             return false;
         }
         if (store.getStoreConfig().getCore().getPeriodicity()) {
-            return !subItems.stream().anyMatch(subItem -> subItem.getStartDateTime().isAfter(LocalDateTime.now()));
+            return subItems.stream().noneMatch(subItem -> subItem.getStartDateTime().isAfter(LocalDateTime.now()));
         } else {
             return schedule != null &&
                     !schedule.getAvailableScheduleSlots().isEmpty() &&
                     schedule.getAvailableScheduleSlots().get(0).getStartDateTime().isBefore(LocalDateTime.now());
         }
-
     }
 }
