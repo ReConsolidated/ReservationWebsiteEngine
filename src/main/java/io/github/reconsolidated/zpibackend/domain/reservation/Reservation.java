@@ -47,7 +47,7 @@ public class Reservation {
         if (status == ReservationStatus.CANCELLED_BY_USER || status == ReservationStatus.CANCELLED_BY_ADMIN) {
 
         } else {
-            if (startDateTime.isBefore(now)) {
+            if (!startDateTime.isBefore(now)) {
                 status = ReservationStatus.ACTIVE;
             } else {
                 status = ReservationStatus.PAST;
