@@ -39,7 +39,8 @@ public class ItemService {
     public List<ItemDto> getFilteredItems(AppUser currentUser, String storeName) {
 
         Store store = storeService.getStore(storeName);
-        return itemRepository.findAllByStore_Id(store.getId())
+        List<Item> ite = itemRepository.findAllByStore_Id(store.getId());
+        return ite
                 .stream()
                 .filter(item -> item.getActive() && !item.isFixedPast())
                 .map(itemMapper::toItemDto)

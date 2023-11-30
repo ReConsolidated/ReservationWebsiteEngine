@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.domain.storeConfig.dtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.Owner;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -23,7 +23,8 @@ public class ItemController {
     @GetMapping
     public ResponseEntity<List<ItemDto>> listFilteredItems(@CurrentUser AppUser currentUser,
                                                    @PathVariable String storeName) {
-        return ResponseEntity.ok(itemService.getFilteredItems(currentUser, storeName));
+        List<ItemDto> res = itemService.getFilteredItems(currentUser, storeName);
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/admin")

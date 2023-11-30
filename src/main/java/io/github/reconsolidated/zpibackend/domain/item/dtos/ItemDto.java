@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,17 +24,12 @@ public class ItemDto {
     private Long id;
     private Boolean active;
     private ItemAttributesDto attributes;
-    @NotNull
     private List<Parameter> customAttributeList = new ArrayList<>();
-    @NotNull
-    private List<SubItem> subItems = new ArrayList<>();
+    private List<SubItemDto> subItems = new ArrayList<>();
     private ScheduleDto schedule;
-    @NotNull
     private List<Availability> availabilities = new ArrayList<>();
-    @NotNull
     private Integer amount = 1;
     private Integer availableAmount = amount;
-    @NotNull
     private Double mark = 0.0;
     private Integer earliestStartHour = LATEST_HOUR;
     private Integer latestEndHour = 0;
@@ -49,9 +43,9 @@ public class ItemDto {
                 item.getDescription(),
                 item.getImage());
         this.customAttributeList = item.getCustomAttributeList();
-        this.amount = item.getAmount();
+        this.amount = item.getInitialAmount();
         this.availableAmount = item.getAmount();
-        this.subItems = item.getSubItems();
+        this.subItems = item.getSubItems().stream().map(SubItem::toSubItemDto).toList();
         this.availabilities = item.getSchedule().getAvailabilities();
         this.mark = average;
         if (item.getStore().getStoreConfig().getCore().getFlexibility()) {

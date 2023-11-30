@@ -187,7 +187,7 @@ public class ReservationServiceTests {
         Reservation reservation = Reservation.builder()
                 .user(appUser)
                 .item(item)
-                .subItemIdList(Arrays.asList(subItem1.getSubItemId(), subItem2.getSubItemId()))
+                .subItemIdList(Arrays.asList(item.getSubItems().get(1).getSubItemId(), item.getSubItems().get(2).getSubItemId()))
                 .startDateTime(start)
                 .endDateTime(end)
                 .amount(1)
