@@ -187,6 +187,7 @@ public class ReservationService {
 
         return getUserReservations(currentUserId, storeName)
                 .stream()
+                .peek((reservation -> reservation.setStatus(LocalDateTime.now())))
                 .map(reservation -> new UserReservationDto(reservation,
                                 reservation.getItem()
                                         .getSubItemsListDto()
@@ -202,6 +203,7 @@ public class ReservationService {
         if (!currentUser.getId().equals(storeService.getStore(storeName).getOwnerAppUserId())) {
             throw new IllegalArgumentException("Only owner can get all reservations");
         }
+
         return reservationRepository.findByItemStoreStoreName(storeName)
                 .stream()
                 .peek((reservation -> reservation.setStatus(LocalDateTime.now())))
