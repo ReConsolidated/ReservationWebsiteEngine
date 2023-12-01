@@ -42,7 +42,7 @@ public class ScheduleTest {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
                 .granularity(true)
-                .isAllowOvernight(false)
+                .allowOverNight(false)
                 .build();
         AuthenticationConfig authentication = AuthenticationConfig.builder()
                 .confirmationRequire(false)
@@ -105,7 +105,7 @@ public class ScheduleTest {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
                 .granularity(false)
-                .isAllowOvernight(true)
+                .allowOverNight(true)
                 .build();
 
         StoreConfig storeConfig = StoreConfig.builder()
@@ -225,7 +225,7 @@ public class ScheduleTest {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
                 .granularity(false)
-                .isAllowOvernight(false)
+                .allowOverNight(false)
                 .uniqueness(true)
                 .simultaneous(true)
                 .build();
@@ -337,7 +337,7 @@ public class ScheduleTest {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
                 .granularity(false)
-                .isAllowOvernight(false)
+                .allowOverNight(false)
                 .uniqueness(false)
                 .simultaneous(false)
                 .build();
@@ -430,7 +430,7 @@ public class ScheduleTest {
                 .flexibility(true)
                 .granularity(false)
                 .uniqueness(false)
-                .isAllowOvernight(false)
+                .allowOverNight(false)
                 .uniqueness(false)
                 .simultaneous(false)
                 .build();
