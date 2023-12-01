@@ -83,7 +83,7 @@ public class ItemTest {
     private StoreConfigDto getStoreConfigDto() {
         CoreConfig coreConfig = new CoreConfig();
         OwnerDto owner = new OwnerDto();
-        owner.setStoreName("store_name");
+        owner.setName("store_name");
         MainPageConfig mainPageConfig = new MainPageConfig();
         DetailsPageConfig detailsPageConfig = new DetailsPageConfig();
 

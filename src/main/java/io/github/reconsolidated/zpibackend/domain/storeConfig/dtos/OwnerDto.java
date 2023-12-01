@@ -18,7 +18,6 @@ public class OwnerDto {
     private String phone;
     private String email;
     private String color;
-    private String storeName;
 
     public OwnerDto(Owner owner) {
         this.ownerId = owner.getOwnerId();
@@ -27,18 +26,17 @@ public class OwnerDto {
         this.phone = owner.getPhoneNumber();
         this.email = owner.getEmail();
         this.color = owner.getColor();
-        this.storeName = owner.getStoreName();
     }
 
     public Owner toOwner(Long ownerUserId) {
         return Owner.builder()
                 .ownerId(ownerId)
                 .appUserId(ownerUserId)
-                .storeName(storeName)
                 .imageUrl(logoSrc)
                 .phoneNumber(phone)
                 .email(email)
                 .color(color)
+                .storeName(name)
                 .build();
     }
 }
