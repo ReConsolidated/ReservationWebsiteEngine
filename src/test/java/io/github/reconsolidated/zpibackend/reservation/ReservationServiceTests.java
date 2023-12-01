@@ -46,7 +46,7 @@ public class ReservationServiceTests {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
                 .granularity(false)
-                .isAllowOvernight(false)
+                .allowOverNight(false)
                 .periodicity(false)
                 .simultaneous(false)
                 .specificReservation(false)
@@ -82,7 +82,7 @@ public class ReservationServiceTests {
         Schedule schedule = new Schedule(1L, item);
 
         schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
-                LocalDateTime.of(2023, 1, 1, 14, 0), 2));
+                LocalDateTime.of(2023, 1, 1, 14, 0), item.getInitialAmount()));
 
         item.setSchedule(schedule);
         item.setInitialSchedule(schedule);
@@ -120,7 +120,7 @@ public class ReservationServiceTests {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(false)
                 .granularity(false)
-                .isAllowOvernight(false)
+                .allowOverNight(false)
                 .periodicity(true)
                 .simultaneous(false)
                 .specificReservation(false)
@@ -150,15 +150,21 @@ public class ReservationServiceTests {
         Store store = storeService.getStore(STORE_NAME);
         SubItem subItem0 = SubItem.builder()
                 .amount(1)
-                .slot(subItemSlot)
+                .startDateTime(subItemSlot.getStartDateTime())
+                .endDateTime(subItemSlot.getEndDateTime())
+                .amount(subItemSlot.getCurrAmount())
                 .build();
         SubItem subItem1 = SubItem.builder()
                 .amount(1)
-                .slot(subItemSlot)
+                .startDateTime(subItemSlot.getStartDateTime())
+                .endDateTime(subItemSlot.getEndDateTime())
+                .amount(subItemSlot.getCurrAmount())
                 .build();
         SubItem subItem2 = SubItem.builder()
                 .amount(1)
-                .slot(subItemSlot)
+                .startDateTime(subItemSlot.getStartDateTime())
+                .endDateTime(subItemSlot.getEndDateTime())
+                .amount(subItemSlot.getCurrAmount())
                 .build();
 
         Item item = Item.builder()
@@ -181,7 +187,7 @@ public class ReservationServiceTests {
         Reservation reservation = Reservation.builder()
                 .user(appUser)
                 .item(item)
-                .subItemIdList(Arrays.asList(subItem1.getSubItemId(), subItem2.getSubItemId()))
+                .subItemIdList(Arrays.asList(item.getSubItems().get(1).getSubItemId(), item.getSubItems().get(2).getSubItemId()))
                 .startDateTime(start)
                 .endDateTime(end)
                 .amount(1)

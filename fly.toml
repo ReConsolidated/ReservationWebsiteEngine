@@ -10,7 +10,7 @@ primary_region = "waw"
   SPRING_DATASOURCE_PASSWORD = "wgglGsK5wIjVyVF"
   SPRING_DATASOURCE_URL = "jdbc:postgresql://zpibackend-db.flycast:5432/zpibackend?sslmode=disable"
   SPRING_DATASOURCE_USERNAME = "postgres"
-  SPRING_JPA_HIBERNATE_DDL_AUTO = "create"
+  SPRING_JPA_HIBERNATE_DDL_AUTO = "update"
   swap_size_mb = "512"
 
 [http_service]

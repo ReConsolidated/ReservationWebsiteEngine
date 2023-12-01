@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class ScheduleTest {
 
+    private static final int OVERNIGHT_DURATION = 30;
     @Test
     public void testAddSlot() {
 
@@ -42,6 +43,7 @@ public class ScheduleTest {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
                 .granularity(true)
+                .allowOverNight(false)
                 .build();
         AuthenticationConfig authentication = AuthenticationConfig.builder()
                 .confirmationRequire(false)
@@ -104,7 +106,7 @@ public class ScheduleTest {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
                 .granularity(false)
-                .isAllowOvernight(true)
+                .allowOverNight(true)
                 .build();
 
         StoreConfig storeConfig = StoreConfig.builder()
@@ -126,12 +128,15 @@ public class ScheduleTest {
                 1));
         //creating expected result
         ArrayList<ScheduleSlot> result = new ArrayList<>();
+        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
+                LocalDateTime.of(2023, 1, 1, 12, 0),
+                1, ReservationType.MORNING));
         result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
+                1, ReservationType.CONTINUOUS));
+        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 13, 0),
+                LocalDateTime.of(2023, 1, 1, 13, 30),
                 1, ReservationType.OVERNIGHT));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 2, 12, 0),
-                LocalDateTime.of(2023, 1, 2, 12, 0),
-                1, ReservationType.MORNING));
 
         assertEquals(result, schedule.getAvailableScheduleSlots());
         for (int i = 0; i < result.size(); i++) {
@@ -143,41 +148,45 @@ public class ScheduleTest {
                 1));
         //creating expected result
         result.clear();
+        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
+                LocalDateTime.of(2023, 1, 1, 12, 0),
+                1, ReservationType.MORNING));
         result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 1, ReservationType.CONTINUOUS));
         result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 14, 0),
                 LocalDateTime.of(2023, 1, 1, 15, 0),
+                1, ReservationType.CONTINUOUS));
+        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 15, 0),
+                LocalDateTime.of(2023, 1, 1, 15, 30),
                 1, ReservationType.OVERNIGHT));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 2, 12, 0),
-                LocalDateTime.of(2023, 1, 2, 12, 0),
-                1, ReservationType.MORNING));
+
 
         assertEquals(result, schedule.getAvailableScheduleSlots());
         for (int i = 0; i < result.size(); i++) {
             assertEquals(result.get(i).getType(), schedule.getAvailableScheduleSlots().get(i).getType());
         }
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 2, 13, 0),
-                LocalDateTime.of(2023, 1, 2, 14, 0),
+        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 13, 0),
+                LocalDateTime.of(2023, 1, 1, 14, 0),
                 1));
         //creating expected result
         result.clear();
+        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
+                LocalDateTime.of(2023, 1, 1, 12, 0),
+                1, ReservationType.MORNING));
         result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 1, ReservationType.CONTINUOUS));
+        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 13, 0),
+                LocalDateTime.of(2023, 1, 1, 14, 0),
+                1, ReservationType.CONTINUOUS));
         result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 14, 0),
                 LocalDateTime.of(2023, 1, 1, 15, 0),
+                1, ReservationType.CONTINUOUS));
+        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 15, 0),
+                LocalDateTime.of(2023, 1, 1, 15, 30),
                 1, ReservationType.OVERNIGHT));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 2, 13, 0),
-                LocalDateTime.of(2023, 1, 2, 13, 0),
-                1, ReservationType.MORNING));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 2, 13, 0),
-                LocalDateTime.of(2023, 1, 2, 14, 0),
-                1, ReservationType.OVERNIGHT));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 3, 13, 0),
-                LocalDateTime.of(2023, 1, 3, 13, 0),
-                1, ReservationType.MORNING));
 
         assertEquals(result, schedule.getAvailableScheduleSlots());
         for (int i = 0; i < result.size(); i++) {
@@ -214,10 +223,12 @@ public class ScheduleTest {
 
     @Test
     public void verifyNotGranularTest() {
-        //granularity true here is used only in setting slot type because it is the fastest
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
-                .granularity(true)
+                .granularity(false)
+                .allowOverNight(false)
+                .uniqueness(true)
+                .simultaneous(true)
                 .build();
 
         StoreConfig storeConfig = StoreConfig.builder()
@@ -236,7 +247,7 @@ public class ScheduleTest {
         Schedule schedule = new Schedule(1L, item);
         //empty schedule
         assertFalse(
-                schedule.verify(false,
+                schedule.verify(core,
                 new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                         LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
 
@@ -244,22 +255,22 @@ public class ScheduleTest {
                 LocalDateTime.of(2023, 1, 1, 13, 0), 1));
         //fitting slot
         assertTrue(
-                schedule.verify(false,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 12, 30), 1)));
         //too big amount
         assertFalse(
-                schedule.verify(false,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 2)));
         //too early slot
         assertFalse(
-                schedule.verify(false,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
         //too late slot
         assertFalse(
-                schedule.verify(false,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 30), 1)));
 
@@ -270,6 +281,7 @@ public class ScheduleTest {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
                 .granularity(true)
+                .uniqueness(false)
                 .build();
 
         StoreConfig storeConfig = StoreConfig.builder()
@@ -287,7 +299,7 @@ public class ScheduleTest {
         Schedule schedule = new Schedule(1L, item);
         //empty schedule
         assertFalse(
-                schedule.verify(true,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
 
@@ -295,27 +307,27 @@ public class ScheduleTest {
                 LocalDateTime.of(2023, 1, 1, 13, 0), 1));
         //fitting slot
         assertTrue(
-                schedule.verify(true,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
         //slot not matching whole schedule slot
         assertFalse(
-                schedule.verify(true,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 12, 30), 1)));
         //too big amount
         assertFalse(
-                schedule.verify(true,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 2)));
         //too early slot
         assertFalse(
-                schedule.verify(true,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
         //too late slot
         assertFalse(
-                schedule.verify(true,
+                schedule.verify(core,
                         new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 30), 1)));
 
@@ -325,7 +337,10 @@ public class ScheduleTest {
     public void processReservationTest() {
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
-                .granularity(true)
+                .granularity(false)
+                .allowOverNight(false)
+                .uniqueness(false)
+                .simultaneous(false)
                 .build();
 
         StoreConfig storeConfig = StoreConfig.builder()
@@ -366,7 +381,7 @@ public class ScheduleTest {
                 .amount(1)
                 .subItemIdList(new ArrayList<>())
                 .build();
-        schedule.processReservation(reservation);
+        schedule.processReservation(core, reservation);
 
         assertEquals(result, schedule.getAvailableScheduleSlots());
 
@@ -386,7 +401,7 @@ public class ScheduleTest {
                 .amount(2)
                 .subItemIdList(new ArrayList<>())
                 .build();
-        schedule.processReservation(reservation);
+        schedule.processReservation(core, reservation);
         assertEquals(result, schedule.getAvailableScheduleSlots());
 
         result.clear();
@@ -405,28 +420,8 @@ public class ScheduleTest {
                 .amount(1)
                 .subItemIdList(new ArrayList<>())
                 .build();
-        schedule.processReservation(reservation);
+        schedule.processReservation(core, reservation);
         assertEquals(result, schedule.getAvailableScheduleSlots());
-
-        result.clear();
-        result.add(ScheduleSlot.builder()
-                .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 0))
-                .endDateTime(LocalDateTime.of(2023, 1, 1, 12, 45))
-                .currAmount(1)
-                .itemsAvailability(Arrays.asList(false, true))
-                .type(ReservationType.SLOT)
-                .build());
-        result.add(ScheduleSlot.builder()
-                .startDateTime(LocalDateTime.of(2023, 1, 1, 12, 45))
-                .endDateTime(LocalDateTime.of(2023, 1, 1, 13, 0))
-                .currAmount(1)
-                .itemsAvailability(Arrays.asList(true, false))
-                .type(ReservationType.NONE)
-                .build());
-
-        schedule.processReservationRemoval(reservation);
-        assertEquals(result, schedule.getAvailableScheduleSlots());
-
     }
 
     @Test
@@ -434,7 +429,11 @@ public class ScheduleTest {
 
         CoreConfig core = CoreConfig.builder()
                 .flexibility(true)
-                .granularity(true)
+                .granularity(false)
+                .uniqueness(false)
+                .allowOverNight(false)
+                .uniqueness(false)
+                .simultaneous(false)
                 .build();
 
         StoreConfig storeConfig = StoreConfig.builder()
@@ -457,7 +456,7 @@ public class ScheduleTest {
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 2);
 
-        List<ScheduleSlot> suggestions = schedule.suggest(testSlot);
+        List<ScheduleSlot> suggestions = schedule.suggest(core, testSlot);
 
         ArrayList<ScheduleSlot> expected = new ArrayList<>();
 
@@ -514,7 +513,7 @@ public class ScheduleTest {
         expected.add(dayAfterSlot);
         expected.add(weekAfterSlot);
 
-        suggestions = schedule.suggest(testSlot);
+        suggestions = schedule.suggest(core, testSlot);
 
         assertEquals(expected, suggestions);
 
@@ -548,7 +547,7 @@ public class ScheduleTest {
         expected.add(daySlot3);
         expected.add(daySlot4);
 
-        suggestions = schedule.suggest(testSlot);
+        suggestions = schedule.suggest(core, testSlot);
 
         assertEquals(expected, suggestions);
     }
@@ -616,6 +615,190 @@ public class ScheduleTest {
         );
 
         assertEquals(expected, schedule.getAvailabilitiesForSubItems(subItemsId));
+    }
+
+    @Test
+    void testGetLongestAvailabilitiesEmptyList() {
+        CoreConfig core = CoreConfig.builder()
+                .flexibility(true)
+                .granularity(false)
+                .uniqueness(false)
+                .allowOverNight(false)
+                .uniqueness(false)
+                .simultaneous(false)
+                .build();
+
+        StoreConfig storeConfig = StoreConfig.builder()
+                .core(core)
+                .build();
+
+        Store store = Store.builder()
+                .storeConfig(storeConfig)
+                .build();
+
+        Item item = Item.builder()
+                .store(store)
+                .amount(1)
+                .build();
+        Schedule schedule = new Schedule(item, new ArrayList<>());
+
+        List<Availability> result = schedule.getLongestAvailabilities();
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetLongestAvailabilitiesSingleSlot() {
+        CoreConfig core = CoreConfig.builder()
+                .flexibility(true)
+                .granularity(false)
+                .uniqueness(false)
+                .allowOverNight(false)
+                .uniqueness(false)
+                .simultaneous(false)
+                .build();
+
+        StoreConfig storeConfig = StoreConfig.builder()
+                .core(core)
+                .build();
+
+        Store store = Store.builder()
+                .storeConfig(storeConfig)
+                .build();
+
+        Item item = Item.builder()
+                .store(store)
+                .amount(1)
+                .build();
+        LocalDateTime startDateTime = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2023, 1, 1, 12, 0);
+        Availability singleSlot = new Availability(startDateTime, endDateTime, ReservationType.CONTINUOUS);
+        List<Availability> slots = List.of(singleSlot);
+        Schedule schedule = new Schedule(item, slots);
+
+        List<Availability> result = schedule.getLongestAvailabilities();
+
+        assertEquals(1, result.size());
+        assertEquals(singleSlot.getType(), result.get(0).getType());
+        assertEquals(startDateTime, result.get(0).getStartDateTime());
+        assertEquals(endDateTime, result.get(0).getEndDateTime());
+    }
+
+    @Test
+    void testGetLongestAvailabilitiesMultipleSlots() {
+        CoreConfig core = CoreConfig.builder()
+                .flexibility(true)
+                .granularity(false)
+                .uniqueness(false)
+                .allowOverNight(false)
+                .uniqueness(false)
+                .simultaneous(false)
+                .build();
+
+        StoreConfig storeConfig = StoreConfig.builder()
+                .core(core)
+                .build();
+
+        Store store = Store.builder()
+                .storeConfig(storeConfig)
+                .build();
+
+        Item item = Item.builder()
+                .store(store)
+                .amount(1)
+                .build();
+        LocalDateTime startDateTime1 = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime endDateTime1 = LocalDateTime.of(2023, 1, 1, 12, 0);
+        LocalDateTime startDateTime2 = LocalDateTime.of(2023, 1, 1, 14, 0);
+        LocalDateTime endDateTime2 = LocalDateTime.of(2023, 1, 1, 16, 0);
+        LocalDateTime startDateTime3 = LocalDateTime.of(2023, 1, 1, 17, 0);
+        LocalDateTime endDateTime3 = LocalDateTime.of(2023, 1, 1, 18, 0);
+        Availability slot1 = new Availability(startDateTime1, endDateTime1, ReservationType.NONE);
+        Availability slot2 = new Availability(endDateTime1, startDateTime2, ReservationType.NONE);
+        Availability slot3 = new Availability(startDateTime2, endDateTime2, ReservationType.NONE);
+        Availability slot4 = new Availability(startDateTime3, endDateTime3, ReservationType.NONE);
+
+        List<Availability> slots = List.of(slot1, slot2, slot3, slot4);
+        Schedule schedule = new Schedule(item, slots);
+
+        List<Availability> result = schedule.getLongestAvailabilities();
+
+        assertEquals(2, result.size());
+        assertEquals(startDateTime1, result.get(0).getStartDateTime());
+        assertEquals(endDateTime2, result.get(0).getEndDateTime());
+        assertEquals(startDateTime3, result.get(1).getStartDateTime());
+        assertEquals(endDateTime3, result.get(1).getEndDateTime());
+    }
+
+    @Test
+    void testGetLongestAvailabilitiesOverNight() {
+        CoreConfig core = CoreConfig.builder()
+                .flexibility(true)
+                .granularity(false)
+                .uniqueness(false)
+                .allowOverNight(true)
+                .uniqueness(false)
+                .simultaneous(false)
+                .build();
+
+        StoreConfig storeConfig = StoreConfig.builder()
+                .core(core)
+                .build();
+
+        Store store = Store.builder()
+                .storeConfig(storeConfig)
+                .build();
+
+        Item item = Item.builder()
+                .store(store)
+                .amount(1)
+                .build();
+        LocalDateTime startDateTime1 = LocalDateTime.of(2023, 1, 1, 10, 0);
+        LocalDateTime endDateTime1 = LocalDateTime.of(2023, 1, 1, 12, 0);
+        LocalDateTime startDateTime2 = LocalDateTime.of(2023, 1, 1, 14, 0);
+        LocalDateTime endDateTime2 = LocalDateTime.of(2023, 1, 1, 16, 0);
+        LocalDateTime startDateTime3 = LocalDateTime.of(2023, 1, 1, 17, 0);
+        LocalDateTime endDateTime3 = LocalDateTime.of(2023, 1, 1, 18, 0);
+        LocalDateTime startDateTime4 = LocalDateTime.of(2023, 1, 2, 17, 0);
+        LocalDateTime endDateTime4 = LocalDateTime.of(2023, 1, 2, 18, 0);
+
+        Availability slot1 = new Availability(startDateTime1, endDateTime1, ReservationType.CONTINUOUS);
+        Availability slot2 = new Availability(endDateTime1, startDateTime2, ReservationType.CONTINUOUS);
+        Availability slot3 = new Availability(startDateTime2, endDateTime2, ReservationType.CONTINUOUS);
+        Availability slot4 = new Availability(startDateTime3, endDateTime3, ReservationType.CONTINUOUS);
+        Availability slot5 = new Availability(startDateTime4, endDateTime4, ReservationType.CONTINUOUS);
+
+        List<Availability> slots = List.of(slot1, slot2, slot3, slot4, slot5);
+        Schedule schedule = new Schedule(item, slots);
+
+        List<Availability> result = schedule.getLongestAvailabilities();
+
+        assertEquals(startDateTime1.minusMinutes(OVERNIGHT_DURATION), result.get(0).getStartDateTime());
+        assertEquals(startDateTime1, result.get(0).getEndDateTime());
+        assertEquals(ReservationType.MORNING, result.get(0).getType());
+
+        assertEquals(startDateTime1, result.get(1).getStartDateTime());
+        assertEquals(endDateTime2, result.get(1).getEndDateTime());
+        assertEquals(ReservationType.CONTINUOUS, result.get(1).getType());
+
+        assertEquals(startDateTime3, result.get(2).getStartDateTime());
+        assertEquals(endDateTime3, result.get(2).getEndDateTime());
+        assertEquals(ReservationType.CONTINUOUS, result.get(2).getType());
+
+        assertEquals(endDateTime3, result.get(3).getStartDateTime());
+        assertEquals(endDateTime3.plusMinutes(OVERNIGHT_DURATION), result.get(3).getEndDateTime());
+        assertEquals(ReservationType.OVERNIGHT, result.get(3).getType());
+
+        assertEquals(startDateTime4.minusMinutes(OVERNIGHT_DURATION), result.get(4).getStartDateTime());
+        assertEquals(startDateTime4, result.get(4).getEndDateTime());
+        assertEquals(ReservationType.MORNING, result.get(4).getType());
+
+        assertEquals(startDateTime4, result.get(5).getStartDateTime());
+        assertEquals(endDateTime4, result.get(5).getEndDateTime());
+        assertEquals(ReservationType.CONTINUOUS, result.get(5).getType());
+
+        assertEquals(endDateTime4, result.get(6).getStartDateTime());
+        assertEquals(endDateTime4.plusMinutes(OVERNIGHT_DURATION), result.get(6).getEndDateTime());
+        assertEquals(ReservationType.OVERNIGHT, result.get(6).getType());
     }
 
 }

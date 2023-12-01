@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -22,13 +24,33 @@ public class ItemService {
         return itemRepository.findById(itemId).orElseThrow();
     }
 
+    public Item getItemFromStore(Long itemId, String storeName) {
+        return itemRepository.findByStoreStoreNameAndItemId(storeName, itemId)
+                .orElseThrow(() -> new NoSuchElementException(String.format("There is no item with id: %d in store: %s", itemId, storeName)));
+    }
+
     public ItemDto getItemDto(Long itemId) {
         return itemMapper.toItemDto(itemRepository.findById(itemId).orElseThrow());
     }
 
     public List<ItemDto> getItems(AppUser currentUser, String storeName) {
+
         Store store = storeService.getStore(storeName);
+        if (!Objects.equals(currentUser.getId(), store.getOwnerAppUserId())) {
+            throw new IllegalArgumentException("Only owner of a store can see all items!");
+        }
         return itemRepository.findAllByStore_Id(store.getId()).stream().map(itemMapper::toItemDto).toList();
+    }
+
+    public List<ItemDto> getFilteredItems(String storeName) {
+
+        Store store = storeService.getStore(storeName);
+        List<Item> ite = itemRepository.findAllByStore_Id(store.getId());
+        return ite
+                .stream()
+                .filter(item -> item.getActive() && !item.isFixedPast())
+                .map(itemMapper::toItemDto)
+                .toList();
     }
 
     public Item createItem(AppUser currentUser, String storeName, ItemDto itemDto) {

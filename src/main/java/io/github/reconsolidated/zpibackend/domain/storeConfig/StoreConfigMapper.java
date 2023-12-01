@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.domain.storeConfig;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUserService;
+import io.github.reconsolidated.zpibackend.domain.store.dtos.StoreNameDto;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.StoreConfigDto;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.OwnerDto;
 import lombok.AllArgsConstructor;
@@ -13,18 +14,10 @@ public class StoreConfigMapper {
 
     public StoreConfigDto toDto(StoreConfig storeConfig) {
         OwnerDto ownerDto = new OwnerDto(storeConfig.getOwner());
-        return new StoreConfigDto(
-                storeConfig.getStoreConfigId(),
-                ownerDto,
-                storeConfig.getCore(),
-                storeConfig.getMainPage(),
-                storeConfig.getDetailsPage(),
-                storeConfig.getCustomAttributesSpec(),
-                storeConfig.getAuthConfig()
-        );
+        return new StoreConfigDto(storeConfig);
     }
 
-    public StoreSummary storeSummary(StoreConfig storeConfig) {
+    public StoreNameDto getStoreNameDto(StoreConfig storeConfig) {
         return storeConfig.getStoreSummary();
     }
 }

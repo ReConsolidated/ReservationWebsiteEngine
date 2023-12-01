@@ -3,7 +3,7 @@ package io.github.reconsolidated.zpibackend.domain.item;
 import io.github.reconsolidated.zpibackend.domain.availability.Availability;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.SubItemListDto;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
-import io.github.reconsolidated.zpibackend.domain.item.dtos.SubItemDto;
+import io.github.reconsolidated.zpibackend.domain.item.dtos.SubItemInfoDto;
 import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationType;
@@ -12,6 +12,7 @@ import io.github.reconsolidated.zpibackend.domain.store.Store;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,10 +41,13 @@ public class Item {
     private Schedule initialSchedule = new Schedule(this, new ArrayList<>());
     @OneToMany(cascade = CascadeType.ALL)
     private List<Parameter> customAttributeList;
+    @Builder.Default
     private Integer amount = 1;
+    @Builder.Default
     private Integer initialAmount = 1;
     @OneToMany(cascade = CascadeType.ALL)
     private List<SubItem> subItems;
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
 
@@ -61,6 +65,13 @@ public class Item {
         if (store.getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
             this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+            initialSchedule.setAvailableScheduleSlots(initialSchedule
+                            .getAvailableScheduleSlots()
+                            .stream()
+                            .filter(scheduleSlot ->
+                            scheduleSlot.getType() != ReservationType.MORNING &&
+                                    scheduleSlot.getType() != ReservationType.OVERNIGHT)
+                            .toList());
         } else {
             this.schedule = new Schedule(this,
                     List.of(new Availability(
@@ -69,22 +80,42 @@ public class Item {
                                     itemDto.getSchedule().getStartDateTime() :
                                     itemDto.getSchedule().getEndDateTime(),
                             ReservationType.NONE)));
-            this.initialSchedule = this.schedule;
+            this.initialSchedule = new Schedule(this,
+                    List.of(new Availability(
+                            itemDto.getSchedule().getStartDateTime(),
+                            itemDto.getSchedule().getEndDateTime() == null ?
+                                    itemDto.getSchedule().getStartDateTime() :
+                                    itemDto.getSchedule().getEndDateTime(),
+                            ReservationType.NONE)));
+            this.initialSchedule.setAvailableScheduleSlots(
+                    initialSchedule.getAvailableScheduleSlots());
         }
-        this.subItems = itemDto.getSubItems();
+        this.subItems = itemDto.getSubItems().stream().map(SubItem::new).toList();
         this.reservations = new ArrayList<>();
     }
 
     public SubItemListDto getSubItemsListDto() {
-        ArrayList<SubItemDto> subItemsDto = new ArrayList<>();
+        ArrayList<SubItemInfoDto> subItemsDto = new ArrayList<>();
         for (SubItem subItem : subItems) {
-            subItemsDto.add(subItem.toSubItemDto());
+            subItemsDto.add(subItem.toSubItemInfoDto());
         }
         return new SubItemListDto(subItemsDto);
     }
 
-    public SubItemDto toSubItemDto() {
-        return new SubItemDto(itemId, title, subtitle);
+    public SubItemInfoDto toSubItemDto() {
+        return new SubItemInfoDto(itemId, title, subtitle);
     }
 
+    public boolean isFixedPast() {
+        if (store.getStoreConfig().getCore().getFlexibility()) {
+            return false;
+        }
+        if (store.getStoreConfig().getCore().getPeriodicity()) {
+            return subItems.stream().noneMatch(subItem -> subItem.getStartDateTime().isAfter(LocalDateTime.now()));
+        } else {
+            return schedule != null &&
+                    !schedule.getAvailableScheduleSlots().isEmpty() &&
+                    schedule.getAvailableScheduleSlots().get(0).getStartDateTime().isBefore(LocalDateTime.now());
+        }
+    }
 }

@@ -2,6 +2,7 @@ package io.github.reconsolidated.zpibackend.application;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUserService;
+import io.github.reconsolidated.zpibackend.domain.store.dtos.StoreNameDto;
 import io.github.reconsolidated.zpibackend.infrastracture.currentUser.CurrentUser;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
 import io.github.reconsolidated.zpibackend.domain.store.dtos.CreateStoreDto;
@@ -34,7 +35,7 @@ public class StoreConfigController {
     }
 
     @GetMapping
-    public ResponseEntity<List<StoreSummary>> listConfigsSummary(@CurrentUser AppUser currentUser) {
+    public ResponseEntity<List<StoreNameDto>> listConfigsSummary(@CurrentUser AppUser currentUser) {
         return ResponseEntity.ok(storeConfigService.listStoreConfigsSummary(currentUser));
     }
 

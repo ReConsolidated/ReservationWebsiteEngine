@@ -5,7 +5,6 @@ import io.github.reconsolidated.zpibackend.domain.appUser.AppUserService;
 import io.github.reconsolidated.zpibackend.domain.comment.CommentDto;
 import io.github.reconsolidated.zpibackend.domain.comment.CommentService;
 import io.github.reconsolidated.zpibackend.domain.item.Item;
-import io.github.reconsolidated.zpibackend.domain.item.ItemMapper;
 import io.github.reconsolidated.zpibackend.domain.item.ItemService;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemAttributesDto;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
@@ -31,8 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ItemTest {
     @Autowired
     private ItemService itemService;
-    @Autowired
-    private ItemMapper itemMapper;
     @Autowired
     private AppUserService appUserService;
     @Autowired
@@ -84,9 +81,9 @@ public class ItemTest {
         CoreConfig coreConfig = new CoreConfig();
         OwnerDto owner = new OwnerDto();
         owner.setName("store_name");
+        owner.setStoreName("store_name");
         MainPageConfig mainPageConfig = new MainPageConfig();
         DetailsPageConfig detailsPageConfig = new DetailsPageConfig();
-
 
         return new StoreConfigDto(
                 null,
@@ -95,7 +92,8 @@ public class ItemTest {
                 mainPageConfig,
                 detailsPageConfig,
                 new ArrayList<>(),
-                AuthenticationConfig.builder().build()
+                AuthenticationConfig.builder().build(),
+                owner.getStoreName().replaceAll("[ /]", "_")
         );
     }
 

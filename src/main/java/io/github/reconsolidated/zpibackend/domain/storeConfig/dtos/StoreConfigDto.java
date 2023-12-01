@@ -21,6 +21,7 @@ public class StoreConfigDto {
     private DetailsPageConfig detailsPage;
     private List<ParameterSettings> customAttributesSpec;
     private AuthenticationConfig authConfig;
+    private String storeName;
 
     public StoreConfigDto(StoreConfig storeConfig) {
         storeConfigId = storeConfig.getStoreConfigId();
@@ -30,6 +31,7 @@ public class StoreConfigDto {
         detailsPage = storeConfig.getDetailsPage();
         customAttributesSpec = storeConfig.getCustomAttributesSpec();
         authConfig = storeConfig.getAuthConfig();
+        storeName = storeConfig.getName();
     }
 
 }

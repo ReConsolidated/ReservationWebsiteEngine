@@ -2,16 +2,15 @@ package io.github.reconsolidated.zpibackend.domain.reservation;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUserService;
+import io.github.reconsolidated.zpibackend.domain.availability.Availability;
 import io.github.reconsolidated.zpibackend.domain.item.Item;
 import io.github.reconsolidated.zpibackend.domain.item.ItemService;
 import io.github.reconsolidated.zpibackend.domain.item.SubItem;
 import io.github.reconsolidated.zpibackend.domain.reservation.dtos.ReservationDto;
-import io.github.reconsolidated.zpibackend.domain.reservation.response.CheckAvailabilityResponseSuccess;
-import io.github.reconsolidated.zpibackend.domain.reservation.response.CheckAvailabilityResponseSuggestion;
+import io.github.reconsolidated.zpibackend.domain.reservation.request.CheckAvailabilityRequestUnique;
+import io.github.reconsolidated.zpibackend.domain.reservation.response.*;
 import io.github.reconsolidated.zpibackend.domain.reservation.dtos.UserReservationDto;
 import io.github.reconsolidated.zpibackend.domain.reservation.request.CheckAvailabilityRequest;
-import io.github.reconsolidated.zpibackend.domain.reservation.response.CheckAvailabilityResponse;
-import io.github.reconsolidated.zpibackend.domain.reservation.response.CheckAvailabilityResponseFailure;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.CoreConfig;
 
@@ -31,8 +30,9 @@ public class ReservationService {
     private ItemService itemService;
     private AppUserService appUserService;
 
-    public ReservationDto reserveItem(AppUser appUser, ReservationDto reservationDto) {
-        Item item = itemService.getItem(reservationDto.getItemId());
+    public ReservationDto reserveItem(AppUser appUser, String storeName, ReservationDto reservationDto) {
+        Item item = itemService.getItemFromStore(reservationDto.getItemId(), storeName);
+
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
         Optional<AppUser> appUserOptional = appUserService.getUserByEmail(reservationDto.getUserEmail());
@@ -50,24 +50,26 @@ public class ReservationService {
             Schedule schedule = item.getSchedule();
             ScheduleSlot requestSlot = new ScheduleSlot(reservationDto.getStartDateTime(), reservationDto.getEndDateTime(),
                     reservationDto.getAmount());
-            if (!schedule.verify(core.getGranularity(), requestSlot)) {
+            if (!schedule.verify(core, requestSlot)) {
                 throw new IllegalArgumentException("Right slot is not available. Reservation is not possible!");
             }
 
             Reservation reservation = Reservation.builder()
                     .user(appUser)
                     .email(reservationDto.getUserEmail())
-                    .personalData(personalData)
                     .item(item)
+                    .subItemIdList(new ArrayList<>())
+                    .personalData(personalData)
                     .startDateTime(reservationDto.getStartDateTime())
                     .endDateTime(reservationDto.getEndDateTime())
                     .amount(reservationDto.getAmount())
-                    .subItemIdList(new ArrayList<>())
+                    .message(reservationDto.getMessage())
                     .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                     .build();
             reservation.setStatus(LocalDateTime.now());
-            schedule.processReservation(reservation);
-
+            if (!schedule.processReservation(core, reservation)) {
+                throw new IllegalArgumentException("Unexpected error. Reservation is not possible!");
+            }
             return new ReservationDto(reservationRepository.save(reservation));
         } else {
             if (core.getPeriodicity() || core.getSpecificReservation()) {
@@ -92,10 +94,11 @@ public class ReservationService {
                         .email(reservationDto.getUserEmail())
                         .personalData(personalData)
                         .item(item)
-                        .startDateTime(toReserve.get(0).getSlot().getStartDateTime())
-                        .endDateTime(toReserve.get(0).getSlot().getEndDateTime())
+                        .startDateTime(toReserve.get(0).getStartDateTime())
+                        .endDateTime(toReserve.get(0).getEndDateTime())
                         .subItemIdList(reservationDto.getSubItemIds())
                         .amount(reservationDto.getAmount())
+                        .message(reservationDto.getMessage())
                         .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
                         .build();
                 reservation.setStatus(LocalDateTime.now());
@@ -115,6 +118,7 @@ public class ReservationService {
                         .endDateTime(LocalDateTime.now())
                         .subItemIdList(new LinkedList<>())
                         .amount(reservationDto.getAmount())
+                        .message(reservationDto.getMessage())
                         .confirmed(false)
                         .build();
                 reservation.setStatus(LocalDateTime.now());
@@ -123,14 +127,18 @@ public class ReservationService {
         }
     }
 
-    public List<CheckAvailabilityResponse> checkAvailability(CheckAvailabilityRequest request) {
+    public List<CheckAvailabilityResponse> checkAvailabilityNotUnique(CheckAvailabilityRequest request) {
 
         Item item = itemService.getItem(request.getItemId());
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
+        if (core.getUniqueness()) {
+            throw new IllegalArgumentException("For core with unique items use \"/refetch\" endpoint!");
+        }
+
         ScheduleSlot requestSlot = new ScheduleSlot(request.getStartDate(), request.getEndDate(), request.getAmount());
-        if (schedule.verify(core.getGranularity(), requestSlot)) {
+        if (schedule.verify(core, requestSlot)) {
             return Collections.singletonList(CheckAvailabilityResponseSuccess.builder()
                     .itemId(request.getItemId())
                     .amount(request.getAmount())
@@ -138,7 +146,7 @@ public class ReservationService {
                     .endDate(request.getEndDate())
                     .build());
         } else {
-            List<ScheduleSlot> suggestions = schedule.suggest(requestSlot);
+            List<ScheduleSlot> suggestions = schedule.suggest(core, requestSlot);
             if (suggestions.isEmpty()) {
                 return Collections.singletonList(CheckAvailabilityResponseFailure.builder()
                         .itemId(item.getItemId())
@@ -158,14 +166,29 @@ public class ReservationService {
         }
     }
 
+    public CheckAvailabilityResponseUnique checkAvailabilityUnique(CheckAvailabilityRequestUnique request) {
+
+        Item item = itemService.getItem(request.getItemId());
+        return new CheckAvailabilityResponseUnique(
+                item.getItemId(),
+                request.getAmount(),
+                item.getSchedule().getAvailableScheduleSlots()
+                        .stream()
+                        .filter(scheduleSlot -> scheduleSlot.getCurrAmount() >= request.getAmount())
+                        .map(Availability::new)
+                        .toList());
+    }
+
     public List<Reservation> getUserReservations(Long currentUserId, String storeName) {
-        return reservationRepository.findByUser_IdAndItemStoreStoreName(currentUserId, storeName);
+        return reservationRepository.findByUser_IdAndItemStoreStoreName(currentUserId, storeName)
+                .stream().peek((reservation -> reservation.setStatus(LocalDateTime.now()))).toList();
     }
 
     public List<UserReservationDto> getUserReservationsDto(Long currentUserId, String storeName) {
 
         return getUserReservations(currentUserId, storeName)
                 .stream()
+                .peek((reservation -> reservation.setStatus(LocalDateTime.now())))
                 .map(reservation -> new UserReservationDto(reservation,
                                 reservation.getItem()
                                         .getSubItemsListDto()
@@ -181,8 +204,10 @@ public class ReservationService {
         if (!currentUser.getId().equals(storeService.getStore(storeName).getOwnerAppUserId())) {
             throw new IllegalArgumentException("Only owner can get all reservations");
         }
+
         return reservationRepository.findByItemStoreStoreName(storeName)
                 .stream()
+                .peek((reservation -> reservation.setStatus(LocalDateTime.now())))
                 .map(ReservationDto::new)
                 .toList();
     }

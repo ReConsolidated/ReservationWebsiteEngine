@@ -21,7 +21,14 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
     @GetMapping
-    public ResponseEntity<List<ItemDto>> listItems(@CurrentUser AppUser currentUser,
+    public ResponseEntity<List<ItemDto>> listFilteredItems(@CurrentUser AppUser currentUser,
+                                                   @PathVariable String storeName) {
+        List<ItemDto> res = itemService.getFilteredItems(storeName);
+        return ResponseEntity.ok(res);
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<List<ItemDto>> listItemsAdmin(@CurrentUser AppUser currentUser,
                                                    @PathVariable String storeName) {
         return ResponseEntity.ok(itemService.getItems(currentUser, storeName));
     }
