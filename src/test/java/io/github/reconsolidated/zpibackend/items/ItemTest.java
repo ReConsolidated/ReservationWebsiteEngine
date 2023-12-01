@@ -87,7 +87,6 @@ public class ItemTest {
         MainPageConfig mainPageConfig = new MainPageConfig();
         DetailsPageConfig detailsPageConfig = new DetailsPageConfig();
 
-
         return new StoreConfigDto(
                 null,
                 owner,
@@ -95,7 +94,8 @@ public class ItemTest {
                 mainPageConfig,
                 detailsPageConfig,
                 new ArrayList<>(),
-                AuthenticationConfig.builder().build()
+                AuthenticationConfig.builder().build(),
+                owner.getStoreName().replaceAll("[ /]", "_")
         );
     }
 

@@ -1,17 +1,17 @@
 package io.github.reconsolidated.zpibackend.domain.store.dtos;
 
-import io.github.reconsolidated.zpibackend.domain.store.Store;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfig;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
 public class StoreNameDto {
-    private String storeName;
+    private String name;
     private String storeConfigId;
 
-    public StoreNameDto(Store store) {
-        this.storeName = store.getStoreConfig().getOwner().getStoreName();
-        this.storeConfigId = store.getStoreName();
+    public StoreNameDto(StoreConfig storeConfig) {
+        this.name = storeConfig.getOwner().getStoreName();
+        this.storeConfigId = storeConfig.getName();
     }
 }

@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.domain.storeConfig;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.domain.store.dtos.StoreNameDto;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.StoreConfigDto;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.StoreConfigsListDto;
 import lombok.AllArgsConstructor;
@@ -51,7 +52,7 @@ public class StoreConfigService {
         return new StoreConfigsListDto(configList.stream().map(storeConfigMapper::toDto).toList());
     }
 
-    public List<StoreSummary> listStoreConfigsSummary(AppUser currentUser) {
+    public List<StoreNameDto> listStoreConfigsSummary(AppUser currentUser) {
         List<StoreConfig> configList = storeConfigRepository.findByOwner_AppUserId(currentUser.getId());
         return configList.stream().map(StoreConfig::getStoreSummary).toList();
     }
