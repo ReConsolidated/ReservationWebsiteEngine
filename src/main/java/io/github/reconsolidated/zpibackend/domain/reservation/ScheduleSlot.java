@@ -77,8 +77,8 @@ public class ScheduleSlot {
             throw new IllegalArgumentException("Cannot split Schedule slot by time outside the slot time range!\nSlot: "
                     + this + ", splitBy: " + splitBy);
         }
-        ScheduleSlot first = new ScheduleSlot(startDateTime, splitBy, itemsAvailability.size());
-        ScheduleSlot second = new ScheduleSlot(splitBy, endDateTime, itemsAvailability.size());
+        ScheduleSlot first = new ScheduleSlot(startDateTime, splitBy, itemsAvailability.size(), type);
+        ScheduleSlot second = new ScheduleSlot(splitBy, endDateTime, itemsAvailability.size(), type);
         for (int i = 0; i < itemsAvailability.size(); i++) {
             first.getItemsAvailability().set(i, itemsAvailability.get(i));
             second.getItemsAvailability().set(i, itemsAvailability.get(i));

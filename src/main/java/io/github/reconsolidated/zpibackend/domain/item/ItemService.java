@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Service
@@ -21,6 +22,11 @@ public class ItemService {
 
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow();
+    }
+
+    public Item getItemFromStore(Long itemId, String storeName) {
+        return itemRepository.findByStoreStoreNameAndItemId(storeName, itemId)
+                .orElseThrow(() -> new NoSuchElementException(String.format("There is no item with id: %d in store: %s", itemId, storeName)));
     }
 
     public ItemDto getItemDto(Long itemId) {
@@ -36,7 +42,7 @@ public class ItemService {
         return itemRepository.findAllByStore_Id(store.getId()).stream().map(itemMapper::toItemDto).toList();
     }
 
-    public List<ItemDto> getFilteredItems(AppUser currentUser, String storeName) {
+    public List<ItemDto> getFilteredItems(String storeName) {
 
         Store store = storeService.getStore(storeName);
         List<Item> ite = itemRepository.findAllByStore_Id(store.getId());

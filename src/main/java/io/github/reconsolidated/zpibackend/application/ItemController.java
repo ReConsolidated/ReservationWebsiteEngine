@@ -23,7 +23,7 @@ public class ItemController {
     @GetMapping
     public ResponseEntity<List<ItemDto>> listFilteredItems(@CurrentUser AppUser currentUser,
                                                    @PathVariable String storeName) {
-        List<ItemDto> res = itemService.getFilteredItems(currentUser, storeName);
+        List<ItemDto> res = itemService.getFilteredItems(storeName);
         return ResponseEntity.ok(res);
     }
 

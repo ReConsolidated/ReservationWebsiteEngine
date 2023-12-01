@@ -30,8 +30,9 @@ public class ReservationService {
     private ItemService itemService;
     private AppUserService appUserService;
 
-    public ReservationDto reserveItem(AppUser appUser, ReservationDto reservationDto) {
-        Item item = itemService.getItem(reservationDto.getItemId());
+    public ReservationDto reserveItem(AppUser appUser, String storeName, ReservationDto reservationDto) {
+        Item item = itemService.getItemFromStore(reservationDto.getItemId(), storeName);
+
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
         Optional<AppUser> appUserOptional = appUserService.getUserByEmail(reservationDto.getUserEmail());
