@@ -65,6 +65,13 @@ public class Item {
         if (store.getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
             this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
+            initialSchedule.setAvailableScheduleSlots(initialSchedule
+                            .getAvailableScheduleSlots()
+                            .stream()
+                            .filter(scheduleSlot ->
+                            scheduleSlot.getType() != ReservationType.MORNING &&
+                                    scheduleSlot.getType() != ReservationType.OVERNIGHT)
+                            .toList());
         } else {
             this.schedule = new Schedule(this,
                     List.of(new Availability(
@@ -80,6 +87,8 @@ public class Item {
                                     itemDto.getSchedule().getStartDateTime() :
                                     itemDto.getSchedule().getEndDateTime(),
                             ReservationType.NONE)));
+            this.initialSchedule.setAvailableScheduleSlots(
+                    initialSchedule.getAvailableScheduleSlots());
         }
         this.subItems = itemDto.getSubItems().stream().map(SubItem::new).toList();
         this.reservations = new ArrayList<>();
@@ -102,12 +111,11 @@ public class Item {
             return false;
         }
         if (store.getStoreConfig().getCore().getPeriodicity()) {
-            return !subItems.stream().anyMatch(subItem -> subItem.getStartDateTime().isAfter(LocalDateTime.now()));
+            return subItems.stream().noneMatch(subItem -> subItem.getStartDateTime().isAfter(LocalDateTime.now()));
         } else {
             return schedule != null &&
                     !schedule.getAvailableScheduleSlots().isEmpty() &&
                     schedule.getAvailableScheduleSlots().get(0).getStartDateTime().isBefore(LocalDateTime.now());
         }
-
     }
 }

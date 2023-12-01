@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Schedule {
-    private static final int OVERNIGHT_DURATION = 1;
+    private static final int OVERNIGHT_DURATION = 30;
     @Id
     @GeneratedValue(generator = "schedule_generator")
     private Long scheduleId;
@@ -49,6 +49,32 @@ public class Schedule {
                         slot.getEndDateTime(),
                         slot.getType()
                 )).collect(Collectors.toList());
+    }
+
+    public List<Availability> getLongestAvailabilities() {
+        if (availableScheduleSlots.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Availability> availabilities = new ArrayList<>();
+        Availability newAvailability = new Availability();
+        newAvailability.setType(availableScheduleSlots.get(0).getType());
+        newAvailability.setStartDateTime(availableScheduleSlots.get(0).getStartDateTime());
+        for (int i = 0; i < availableScheduleSlots.size() - 1; i++) {
+            if (!availableScheduleSlots.get(i).getEndDateTime().isEqual(availableScheduleSlots.get(i + 1).getStartDateTime()) ||
+                    availableScheduleSlots.get(i + 1).getType() == ReservationType.OVERNIGHT ||
+                    availableScheduleSlots.get(i + 1).getType() == ReservationType.MORNING ||
+                    availableScheduleSlots.get(i).getType() == ReservationType.OVERNIGHT ||
+                    availableScheduleSlots.get(i).getType() == ReservationType.MORNING) {
+                newAvailability.setEndDateTime(availableScheduleSlots.get(i).getEndDateTime());
+                availabilities.add(newAvailability);
+                newAvailability = new Availability();
+                newAvailability.setType(availableScheduleSlots.get(i + 1).getType());
+                newAvailability.setStartDateTime(availableScheduleSlots.get(i + 1).getStartDateTime());
+            }
+        }
+        newAvailability.setEndDateTime(availableScheduleSlots.get(availableScheduleSlots.size() - 1).getEndDateTime());
+        availabilities.add(newAvailability);
+        return availabilities;
     }
 
     public List<Availability> getAvailabilitiesForSubItems(List<Integer> subItemsId) {
