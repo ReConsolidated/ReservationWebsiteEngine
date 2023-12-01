@@ -45,7 +45,7 @@ public class ReservationController {
                                      @PathVariable String storeName,
                                      @RequestBody ReservationDto reservation) {
 
-        return ResponseEntity.ok(reservationService.reserveItem(currentUser, reservation));
+        return ResponseEntity.ok(reservationService.reserveItem(currentUser, storeName, reservation));
     }
 
     @DeleteMapping("/{reservationId}")

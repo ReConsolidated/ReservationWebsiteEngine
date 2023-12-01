@@ -21,9 +21,9 @@ public class Schedule {
     private Long scheduleId;
     @OneToOne
     private Item item;
+    @OrderBy("startDateTime ASC, endDateTime ASC")
     @OneToMany(cascade = CascadeType.ALL)
     private List<ScheduleSlot> availableScheduleSlots = new ArrayList<>(); //it must be sorted, and not overlapping
-
     private static final int WEEKDAYS = 7;
 
     public Schedule(Long scheduleId, Item item) {
@@ -347,8 +347,6 @@ public class Schedule {
             availableScheduleSlots.remove(firstIndex);
             preparedToReserve.remove(0);
             ScheduleSlot[] split = first.split(reservation.getStartDateTime());
-            setSlotType(split[0]);
-            setSlotType(split[1]);
             availableScheduleSlots.addAll(firstIndex, Arrays.asList(split));
             preparedToReserve.add(0, split[1]);
         }
@@ -358,8 +356,6 @@ public class Schedule {
             availableScheduleSlots.remove(lastIndex);
             preparedToReserve.remove(preparedToReserve.size() - 1);
             ScheduleSlot[] split = last.split(reservation.getEndDateTime());
-            setSlotType(split[0]);
-            setSlotType(split[1]);
             availableScheduleSlots.addAll(lastIndex, Arrays.asList(split));
             preparedToReserve.add(split[0]);
         }
@@ -370,13 +366,12 @@ public class Schedule {
         if (toReserve.isEmpty()) {
             return false;
         }
-        ArrayList<Integer> availableSubItemsId = toReserve.get(0).getAvailableItemsIndexes();
+        List<Integer> availableSubItemsId = toReserve.get(0).getAvailableItemsIndexes();
         for (ScheduleSlot slot : toReserve) {
-
-            availableSubItemsId
-                    .forEach(
-                            index -> availableSubItemsId.removeIf(
-                                    i -> !slot.getAvailableItemsIndexes().contains(i)));
+            availableSubItemsId = availableSubItemsId
+                    .stream()
+                    .filter(index -> slot.getAvailableItemsIndexes().contains(index))
+                    .toList();
             if (availableSubItemsId.size() < reservation.getAmount()) {
                 return false;
             }
