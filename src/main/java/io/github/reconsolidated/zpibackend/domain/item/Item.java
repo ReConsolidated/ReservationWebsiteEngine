@@ -39,7 +39,7 @@ public class Item {
     private Schedule schedule = new Schedule(this, new ArrayList<>());
     @OneToOne(cascade = CascadeType.ALL)
     private Schedule initialSchedule = new Schedule(this, new ArrayList<>());
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<Parameter> customAttributeList;
     @Builder.Default
     private Integer amount = 1;
@@ -61,7 +61,8 @@ public class Item {
         this.amount = itemDto.getAmount();
         this.initialAmount = itemDto.getAmount();
         itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
-        this.customAttributeList = itemDto.getCustomAttributeList();
+        this.customAttributeList = itemDto.getCustomAttributeList().stream().map((p) -> new Parameter(p, this)).toList();
+
         if (store.getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
             this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());

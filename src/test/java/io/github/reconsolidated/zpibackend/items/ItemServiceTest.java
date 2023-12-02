@@ -22,6 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -66,12 +67,11 @@ public class ItemServiceTest {
                 .storeConfig(storeConfig)
                 .build();
         item = new Item();
-        itemDto = ItemDto.builder()
-                .attributes(ItemAttributesDto.builder().title("TestTitle").build())
-                .customAttributeList(new ArrayList<>())
-                .schedule(ScheduleDto.builder().scheduledRanges(new ArrayList<>()).build())
-                .subItems(new ArrayList<>())
-                .build();
+        itemDto = new ItemDto();
+        itemDto.setAttributes(ItemAttributesDto.builder().title("TestTitle").build());
+        itemDto.setCustomAttributeList(new ArrayList<>());
+        itemDto.setSchedule(new ScheduleDto(LocalDateTime.now(), LocalDateTime.now()));
+        itemDto.setSubItems(new ArrayList<>());
         itemId = 1L;
         storeName = "TestStore";
     }

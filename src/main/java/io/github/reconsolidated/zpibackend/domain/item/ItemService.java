@@ -58,8 +58,7 @@ public class ItemService {
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
-        Item item = new Item(store, itemDto);
-        return itemRepository.save(item);
+        return itemRepository.save(new Item(store, itemDto));
     }
 
     public ItemDto updateItem(AppUser currentUser, Long itemId, ItemDto itemDto) {
