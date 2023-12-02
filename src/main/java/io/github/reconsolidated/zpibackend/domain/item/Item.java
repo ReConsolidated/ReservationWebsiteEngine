@@ -5,6 +5,8 @@ import io.github.reconsolidated.zpibackend.domain.item.dtos.SubItemListDto;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.SubItemInfoDto;
 import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
+import io.github.reconsolidated.zpibackend.domain.parameter.ParameterSettings;
+import io.github.reconsolidated.zpibackend.domain.parameter.ParameterStringSettings;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationType;
 import io.github.reconsolidated.zpibackend.domain.reservation.Schedule;
 import io.github.reconsolidated.zpibackend.domain.store.Store;
@@ -57,7 +59,21 @@ public class Item {
         this.amount = itemDto.getAmount() == null ?
                 (itemDto.getSubItems() == null ? 1 : itemDto.getSubItems().size()) : itemDto.getAmount();
         this.initialAmount = this.amount;
-        itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
+        for(int i = 0; i < store.getStoreConfig().getCustomAttributesSpec().size(); i++) {
+            ParameterSettings curr = store.getStoreConfig().getCustomAttributesSpec().get(i);
+            if (curr instanceof ParameterStringSettings currString) {
+                if(currString.getLimitValues() &&
+                        (currString.getIsRequired() || itemDto.getCustomAttributeList().get(i).getValue() != null)) {
+                    int finalI = i;
+                    if(currString.getPossibleValues()
+                            .stream()
+                            .noneMatch(value -> value.equals(itemDto.getCustomAttributeList().get(finalI).getValue()))) {
+                        throw new IllegalArgumentException("Parameter " + curr.getName()
+                                + " doesn't have one of possible values");
+                    }
+                }
+            }
+        }
         this.customAttributeList = itemDto.getCustomAttributeList().stream().map((p) -> new Parameter(p, this)).toList();
         if (store.getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());

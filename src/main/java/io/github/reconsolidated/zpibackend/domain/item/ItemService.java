@@ -6,6 +6,7 @@ import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemFailure;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemResponse;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemSuccess;
+import io.github.reconsolidated.zpibackend.domain.parameter.ParameterRepository;
 import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationService;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationStatus;
@@ -32,6 +33,7 @@ public class ItemService {
     @Autowired
     private ReservationService reservationService;
     private final ItemMapper itemMapper;
+    private final ParameterRepository parameterRepository;
 
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow();
