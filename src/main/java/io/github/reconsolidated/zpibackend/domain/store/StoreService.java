@@ -15,11 +15,6 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final StoreConfigService storeConfigService;
 
-
-    public Store getStore(AppUser currentUser, Long storeId) {
-        return storeRepository.findById(storeId).orElseThrow();
-    }
-
     public Store getStore(String storeName) {
         return storeRepository.findByStoreName(storeName).orElseThrow();
     }

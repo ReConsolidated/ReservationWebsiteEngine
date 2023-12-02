@@ -91,6 +91,7 @@ public class StoreConfigService {
         if (!currentStoreConfig.getCore().equals(newStoreConfig.getCore())) {
             throw new IllegalArgumentException("Core Config cannot be edited");
         }
+        newStoreConfig.getOwner().setAppUserId(currentUser.getId());
         storeConfigValidator.validateStoreConfig(newStoreConfig);
         storeConfigRepository.save(newStoreConfig);
     }

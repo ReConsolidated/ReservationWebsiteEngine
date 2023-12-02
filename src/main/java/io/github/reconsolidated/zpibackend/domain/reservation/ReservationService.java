@@ -225,6 +225,7 @@ public class ReservationService {
     }
 
     public void deleteReservation(AppUser appUser, Long reservationId) {
+
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
         Item item = reservation.getItem();
         Schedule schedule = item.getSchedule();
