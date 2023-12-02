@@ -5,10 +5,7 @@ import io.github.reconsolidated.zpibackend.domain.item.Item;
 import io.github.reconsolidated.zpibackend.domain.item.SubItem;
 import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ItemDto {
 
     private static final int LATEST_HOUR = 23;
