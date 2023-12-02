@@ -1,23 +1,36 @@
 package io.github.reconsolidated.zpibackend.domain.item;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.domain.availability.Availability;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
+import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemFailure;
+import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemResponse;
+import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemSuccess;
 import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
+import io.github.reconsolidated.zpibackend.domain.reservation.ReservationService;
+import io.github.reconsolidated.zpibackend.domain.reservation.ReservationStatus;
+import io.github.reconsolidated.zpibackend.domain.reservation.dtos.ReservationDto;
 import io.github.reconsolidated.zpibackend.domain.store.Store;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
     private final StoreService storeService;
+    @Lazy
+    @Autowired
+    private ReservationService reservationService;
     private final ItemMapper itemMapper;
 
     public Item getItem(Long itemId) {
@@ -61,18 +74,55 @@ public class ItemService {
         return itemRepository.save(new Item(store, itemDto));
     }
 
-    public ItemDto updateItem(AppUser currentUser, Long itemId, ItemDto itemDto) {
+    public UpdateItemResponse updateItem(AppUser currentUser, Long itemId, ItemDto itemDto) {
         Item item = getItem(itemId);
-        List<Reservation> reservations = item.getReservations();
         Store store = item.getStore();
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
+        if (store.getStoreConfig().getCore().getFlexibility()) {
+
+            List<Availability> deletedAvailabilities = item.getInitialSchedule()
+                    .getAvailabilities()
+                    .stream()
+                    .filter(slot -> slot.getStartDateTime().isAfter(LocalDateTime.now()) &&
+                            !itemDto.getSchedule().getScheduledRanges().contains(slot))
+                    .toList();
+
+            List<Reservation> itemReservations = reservationService
+                    .getItemReservations(item.getItemId())
+                    .stream()
+                    .filter(reservation -> reservation.getStartDateTime().isAfter(LocalDateTime.now()))
+                    .toList();
+            List<Reservation> toProcess = new ArrayList<>();
+            List<Reservation> causeError = new ArrayList<>();
+            for (Reservation reservation : itemReservations) {
+                if (deletedAvailabilities
+                        .stream()
+                        .anyMatch(availability ->
+                                availability.overlap(new Availability(reservation.getScheduleSlot())))) {
+                    causeError.add(reservation);
+                } else {
+                    toProcess.add(reservation);
+                }
+            }
+            if (!causeError.isEmpty()) {
+                return new UpdateItemFailure(causeError.stream().map(ReservationDto::new).toList());
+            } else {
+                item = new Item(store, itemDto);
+                item.setItemId(itemId);
+                item.setAvailableSchedule(itemDto.getSchedule().getScheduledRanges());
+                for (Reservation reservation : toProcess) {
+                    item.getSchedule().processReservation(store.getStoreConfig().getCore(), reservation);
+                }
+                item = itemRepository.save(item);
+                return new UpdateItemSuccess(itemMapper.toItemDto(item));
+            }
+        }
         item = new Item(store, itemDto);
         item.setItemId(itemId);
-        item.setReservations(reservations);
         itemRepository.save(item);
-        return itemDto;
+        return new UpdateItemSuccess(itemMapper.toItemDto(item));
     }
 
     public ItemDto activateItem(AppUser currentUser, Long itemId) {
@@ -95,19 +145,23 @@ public class ItemService {
         return itemMapper.toItemDto(itemRepository.save(item));
     }
 
-    public void deleteItem(AppUser currentUser, Long itemId) {
-        Item item = getItem(itemId);
+    public boolean deleteItem(AppUser currentUser, String storeName, Long itemId) {
+        Item item = getItemFromStore(itemId, storeName);
         Store store = item.getStore();
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
-        if (!item.getReservations().isEmpty()) {
-            for (Reservation reservation : item.getReservations()) {
-                if (reservation.getEndDateTime().isAfter(LocalDateTime.now())) {
-                    throw new RuntimeException("Can't delete item with reservations");
+        List<Reservation> itemReservations = reservationService.getItemReservations(item.getItemId());
+        if (!itemReservations.isEmpty()) {
+            for (Reservation reservation : itemReservations) {
+                if (reservation.getStatus() == ReservationStatus.ACTIVE) {
+                    return false;
                 }
             }
         }
-        itemRepository.deleteById(itemId);
+        itemReservations.forEach(reservation ->
+                reservationService.deletePastReservation(currentUser, reservation.getReservationId()));
+        itemRepository.deleteById(item.getItemId());
+        return true;
     }
 }

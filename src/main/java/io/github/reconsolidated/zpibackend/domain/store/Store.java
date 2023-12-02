@@ -22,6 +22,7 @@ public class Store {
     @GeneratedValue(generator = "store_generator")
     private Long id;
     private Long ownerAppUserId;
+    @Column(unique = true)
     private String storeName;
     @OneToOne(cascade = CascadeType.ALL)
     private StoreConfig storeConfig;
@@ -29,7 +30,7 @@ public class Store {
     private List<Item> items;
 
     public Store(StoreConfig storeConfig) {
-        this.storeName = storeConfig.getName();
+        this.storeName = storeConfig.getOwner().getStoreName().replaceAll("[ /]", "_");
         this.storeConfig = storeConfig;
         this.ownerAppUserId = storeConfig.getOwner().getAppUserId();
         this.items = new ArrayList<>();

@@ -46,7 +46,7 @@ public class ScheduleTest {
                 .allowOverNight(false)
                 .build();
         AuthenticationConfig authentication = AuthenticationConfig.builder()
-                .confirmationRequire(false)
+                .confirmationRequired(false)
                 .build();
         StoreConfig storeConfig = StoreConfig.builder()
                 .core(core)

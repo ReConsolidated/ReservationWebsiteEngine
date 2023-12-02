@@ -5,7 +5,6 @@ import io.github.reconsolidated.zpibackend.domain.item.dtos.SubItemListDto;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.SubItemInfoDto;
 import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
-import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationType;
 import io.github.reconsolidated.zpibackend.domain.reservation.Schedule;
 import io.github.reconsolidated.zpibackend.domain.store.Store;
@@ -47,9 +46,6 @@ public class Item {
     private Integer initialAmount = 1;
     @OneToMany(cascade = CascadeType.ALL)
     private List<SubItem> subItems;
-    @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Reservation> reservations = new ArrayList<>();
 
     public Item(Store store, ItemDto itemDto) {
         this.store = store;
@@ -58,11 +54,11 @@ public class Item {
         this.subtitle = itemDto.getAttributes().getSubtitle();
         this.description = itemDto.getAttributes().getDescription();
         this.image = itemDto.getAttributes().getImage();
-        this.amount = itemDto.getAmount();
-        this.initialAmount = itemDto.getAmount();
+        this.amount = itemDto.getAmount() == null ?
+                (itemDto.getSubItems() == null ? 1 : itemDto.getSubItems().size()) : itemDto.getAmount();
+        this.initialAmount = this.amount;
         itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
         this.customAttributeList = itemDto.getCustomAttributeList().stream().map((p) -> new Parameter(p, this)).toList();
-
         if (store.getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
             this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
@@ -91,8 +87,9 @@ public class Item {
             this.initialSchedule.setAvailableScheduleSlots(
                     initialSchedule.getAvailableScheduleSlots());
         }
-        this.subItems = itemDto.getSubItems().stream().map(SubItem::new).toList();
-        this.reservations = new ArrayList<>();
+        this.subItems = itemDto.getSubItems() == null ?
+                new ArrayList<>() :
+                itemDto.getSubItems().stream().map(SubItem::new).toList();
     }
 
     public SubItemListDto getSubItemsListDto() {
@@ -101,6 +98,10 @@ public class Item {
             subItemsDto.add(subItem.toSubItemInfoDto());
         }
         return new SubItemListDto(subItemsDto);
+    }
+
+    public void setAvailableSchedule(List<Availability> availabilities) {
+        this.schedule = new Schedule(this, availabilities);
     }
 
     public SubItemInfoDto toSubItemDto() {

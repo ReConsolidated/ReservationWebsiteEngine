@@ -16,19 +16,26 @@ public class StoreService {
     private final StoreConfigService storeConfigService;
 
     public Store getStore(String storeName) {
-        return storeRepository.findByStoreConfigName(storeName).orElseThrow();
+        return storeRepository.findByStoreName(storeName).orElseThrow();
     }
 
     public Store createStore(AppUser currentUser, CreateStoreDto dto) {
-        StoreConfig storeConfig = storeConfigService.getStoreConfig(currentUser, dto.getStoreConfigId());
+        StoreConfig storeConfig = storeConfigService.getStoreConfig(dto.getStoreConfigId());
         Store store = new Store(storeConfig);
         return storeRepository.save(store);
     }
 
+    /**
+     * @param currentUser
+     * @return list of stores that are owned by curren user
+     */
     public List<Store> listStores(AppUser currentUser) {
         return storeRepository.findAllByOwnerAppUserId(currentUser.getId());
     }
 
+    /**
+     * @return list of all stores in database
+     */
     public List<Store> listStores() {
         return storeRepository.findAll();
     }

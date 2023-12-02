@@ -64,7 +64,7 @@ public class ReservationService {
                     .endDateTime(reservationDto.getEndDateTime())
                     .amount(reservationDto.getAmount())
                     .message(reservationDto.getMessage())
-                    .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
+                    .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequired())
                     .build();
             reservation.setStatus(LocalDateTime.now());
             if (!schedule.processReservation(core, reservation)) {
@@ -99,7 +99,7 @@ public class ReservationService {
                         .subItemIdList(reservationDto.getSubItemIds())
                         .amount(reservationDto.getAmount())
                         .message(reservationDto.getMessage())
-                        .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
+                        .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequired())
                         .build();
                 reservation.setStatus(LocalDateTime.now());
                 return new ReservationDto(reservationRepository.save(reservation));
@@ -210,6 +210,18 @@ public class ReservationService {
                 .peek((reservation -> reservation.setStatus(LocalDateTime.now())))
                 .map(ReservationDto::new)
                 .toList();
+    }
+
+    public List<Reservation> getItemReservations(Long itemId) {
+        return reservationRepository.findByItemItemId(itemId)
+                .stream()
+                .peek((reservation -> reservation.setStatus(LocalDateTime.now())))
+                .toList();
+    }
+
+    public void deletePastReservation(AppUser appUser, Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
+        reservationRepository.delete(reservation);
     }
 
     public void deleteReservation(AppUser appUser, Long reservationId) {

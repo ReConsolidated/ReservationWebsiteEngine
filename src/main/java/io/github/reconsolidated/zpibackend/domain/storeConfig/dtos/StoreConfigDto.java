@@ -31,7 +31,6 @@ public class StoreConfigDto {
         detailsPage = storeConfig.getDetailsPage();
         customAttributesSpec = storeConfig.getCustomAttributesSpec();
         authConfig = storeConfig.getAuthConfig();
-        storeName = storeConfig.getName();
     }
 
 }

@@ -6,6 +6,7 @@ import io.github.reconsolidated.zpibackend.domain.item.Item;
 import io.github.reconsolidated.zpibackend.domain.item.ItemService;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -61,8 +62,11 @@ public class ItemController {
     public ResponseEntity<?> deleteItem(@CurrentUser AppUser currentUser,
                                         @PathVariable String storeName,
                                         @PathVariable Long itemId) {
-        itemService.deleteItem(currentUser, itemId);
-        return ResponseEntity.ok().build();
+        if (itemService.deleteItem(currentUser, storeName, itemId)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return new ResponseEntity<>("Item have active reservations!", HttpStatus.FORBIDDEN);
+        }
     }
 
     @PostMapping("/{itemId}/activate")

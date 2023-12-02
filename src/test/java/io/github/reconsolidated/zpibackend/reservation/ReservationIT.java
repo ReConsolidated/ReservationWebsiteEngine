@@ -58,7 +58,6 @@ public class ReservationIT {
                 .color("blue")
                 .build();
         StoreConfig storeConfig = StoreConfig.builder()
-                .name(STORE_NAME)
                 .owner(owner)
                 .authConfig(new AuthenticationConfig())
                 .core(core)
@@ -68,7 +67,11 @@ public class ReservationIT {
         AppUser appUser = appUserService.getOrCreateUser("1", "test@test", "FirstName", "LastName");
 
         storeConfig = storeConfigService.createStoreConfig(appUser, new StoreConfigDto(storeConfig));
-        storeService.createStore(appUser, new CreateStoreDto(storeConfig.getStoreConfigId(), storeConfig.getName()));
+        storeService.createStore(
+                appUser,
+                new CreateStoreDto(
+                        storeConfig.getStoreConfigId(),
+                        storeConfig.getOwner().getStoreName().replaceAll("[ /]", "_")));
         Store store = storeService.getStore(STORE_NAME);
         Item item = Item.builder()
                 .active(true)
@@ -132,7 +135,6 @@ public class ReservationIT {
                 .color("blue")
                 .build();
         StoreConfig storeConfig = StoreConfig.builder()
-                .name(STORE_NAME)
                 .owner(owner)
                 .authConfig(new AuthenticationConfig())
                 .core(core)
@@ -146,7 +148,11 @@ public class ReservationIT {
         ScheduleSlot subItemSlot = new ScheduleSlot(start, end, 1);
 
         storeConfig = storeConfigService.createStoreConfig(appUser, new StoreConfigDto(storeConfig));
-        storeService.createStore(appUser, new CreateStoreDto(storeConfig.getStoreConfigId(), storeConfig.getName()));
+        storeService.createStore(
+                appUser,
+                new CreateStoreDto(
+                        storeConfig.getStoreConfigId(),
+                        STORE_NAME.replaceAll("[ /]", "_")));
         Store store = storeService.getStore(STORE_NAME);
         SubItem subItem0 = SubItem.builder()
                 .amount(1)

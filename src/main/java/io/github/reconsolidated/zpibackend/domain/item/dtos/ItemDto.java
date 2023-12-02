@@ -3,12 +3,10 @@ package io.github.reconsolidated.zpibackend.domain.item.dtos;
 import io.github.reconsolidated.zpibackend.domain.availability.Availability;
 import io.github.reconsolidated.zpibackend.domain.item.Item;
 import io.github.reconsolidated.zpibackend.domain.item.SubItem;
-import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.domain.parameter.dtos.ParameterDto;
 import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,11 +20,11 @@ public class ItemDto {
     private Long id;
     private Boolean active;
     private ItemAttributesDto attributes;
-    private List<ParameterDto> customAttributeList = new ArrayList<>();
-    private List<SubItemDto> subItems = new ArrayList<>();
+    private List<ParameterDto> customAttributeList;
+    private List<SubItemDto> subItems;
     private ScheduleDto schedule;
-    private List<Availability> availabilities = new ArrayList<>();
-    private Integer amount = 1;
+    private List<Availability> availabilities;
+    private Integer amount;
     private Integer availableAmount = amount;
     private Double mark = 0.0;
     private Integer ratingCount = 0;

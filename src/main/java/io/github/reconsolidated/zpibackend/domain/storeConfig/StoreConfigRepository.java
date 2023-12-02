@@ -9,6 +9,6 @@ public interface StoreConfigRepository extends JpaRepository<StoreConfig, Long> 
 
     List<StoreConfig> findByOwner_AppUserId(Long id);
 
-    Optional<StoreConfig> findByName(String name);
+    Optional<StoreConfig> findByOwnerStoreName(String storeName);
 
 }
