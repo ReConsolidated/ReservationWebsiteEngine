@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.minidev.json.annotate.JsonIgnore;
 
 @Setter
 @Getter
@@ -12,5 +13,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UpdateItemSuccess implements UpdateItemResponse {
 
+    @JsonIgnore
+    private static final int HTTP_RESPONSE_CODE = 200;
     private ItemDto item;
+
+    @Override
+    public int getHttpResponseCode() {
+        return HTTP_RESPONSE_CODE;
+    }
 }

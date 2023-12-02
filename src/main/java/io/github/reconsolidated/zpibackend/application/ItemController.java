@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.application;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemResponse;
 import io.github.reconsolidated.zpibackend.infrastracture.currentUser.CurrentUser;
 import io.github.reconsolidated.zpibackend.domain.item.Item;
 import io.github.reconsolidated.zpibackend.domain.item.ItemService;
@@ -48,7 +49,9 @@ public class ItemController {
                                         @PathVariable Long itemId,
                                         @RequestBody ItemDto itemDto) {
 
-        return ResponseEntity.ok(itemService.updateItem(currentUser, itemId, itemDto));
+        UpdateItemResponse response = itemService.updateItem(currentUser, itemId, itemDto);
+
+        return new ResponseEntity<>(response, HttpStatus.valueOf(response.getHttpResponseCode()));
     }
 
     @GetMapping("/{itemId}")
