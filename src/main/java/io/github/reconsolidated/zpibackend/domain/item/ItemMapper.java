@@ -25,7 +25,8 @@ public class ItemMapper {
                 .orElse(0);
         return new ItemDto(
                 item,
-                average
+                average,
+                comments.size()
         );
     }
 }

@@ -31,10 +31,11 @@ public class ItemDto {
     private Integer amount = 1;
     private Integer availableAmount = amount;
     private Double mark = 0.0;
+    private Integer ratingCount = 0;
     private Integer earliestStartHour = LATEST_HOUR;
     private Integer latestEndHour = 0;
 
-    public ItemDto(Item item, Double average) {
+    public ItemDto(Item item, Double average, Integer ratingCount) {
         this.id = item.getItemId();
         this.active = item.getActive();
         this.attributes = new ItemAttributesDto(
