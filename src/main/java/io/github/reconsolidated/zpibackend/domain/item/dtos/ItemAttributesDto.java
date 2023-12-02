@@ -1,14 +1,12 @@
 package io.github.reconsolidated.zpibackend.domain.item.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ItemAttributesDto {
 
     private String title;

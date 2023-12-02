@@ -9,11 +9,11 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentDto {
     private Long id;
-    @Setter
     private Long userId;
     @NotNull
     private Long itemId;
