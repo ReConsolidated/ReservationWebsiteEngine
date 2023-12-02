@@ -22,7 +22,7 @@ public class Store {
     @GeneratedValue(generator = "store_generator")
     private Long id;
     private Long ownerAppUserId;
-    @Column(unique=true)
+    @Column(unique = true)
     private String storeName;
     @OneToOne(cascade = CascadeType.ALL)
     private StoreConfig storeConfig;

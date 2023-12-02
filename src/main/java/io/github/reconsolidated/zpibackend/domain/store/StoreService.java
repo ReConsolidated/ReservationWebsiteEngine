@@ -4,7 +4,6 @@ import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.domain.store.dtos.CreateStoreDto;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfig;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfigService;
-import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.StoreConfigDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +30,17 @@ public class StoreService {
         return storeRepository.save(store);
     }
 
+    /**
+     * @param currentUser
+     * @return list of stores that are owned by curren user
+     */
     public List<Store> listStores(AppUser currentUser) {
         return storeRepository.findAllByOwnerAppUserId(currentUser.getId());
     }
 
+    /**
+     * @return list of all stores in database
+     */
     public List<Store> listStores() {
         return storeRepository.findAll();
     }

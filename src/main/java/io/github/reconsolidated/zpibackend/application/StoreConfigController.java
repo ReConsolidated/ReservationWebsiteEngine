@@ -34,7 +34,7 @@ public class StoreConfigController {
                 currentUser,
                 new CreateStoreDto(
                         result.getStoreConfigId(),
-                        result.getOwner().getStoreName().replaceAll("[ /]","_")));
+                        result.getOwner().getStoreName().replaceAll("[ /]", "_")));
         return ResponseEntity.ok(result.getStoreConfigId());
     }
 

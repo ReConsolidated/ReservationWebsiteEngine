@@ -12,6 +12,6 @@ public class StoreNameDto {
 
     public StoreNameDto(StoreConfig storeConfig) {
         this.storeName = storeConfig.getOwner().getStoreName();
-        this.storeConfigId = storeConfig.getOwner().getStoreName().replaceAll("[ /]", "_");;
+        this.storeConfigId = storeConfig.getOwner().getStoreName().replaceAll("[ /]", "_");
     }
 }

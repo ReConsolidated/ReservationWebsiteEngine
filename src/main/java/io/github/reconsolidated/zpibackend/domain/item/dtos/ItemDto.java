@@ -3,7 +3,6 @@ package io.github.reconsolidated.zpibackend.domain.item.dtos;
 import io.github.reconsolidated.zpibackend.domain.availability.Availability;
 import io.github.reconsolidated.zpibackend.domain.item.Item;
 import io.github.reconsolidated.zpibackend.domain.item.SubItem;
-import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.domain.parameter.dtos.ParameterDto;
 import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
 import lombok.*;
