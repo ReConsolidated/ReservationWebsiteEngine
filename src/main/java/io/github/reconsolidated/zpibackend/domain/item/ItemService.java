@@ -69,6 +69,9 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         item = new Item(store, itemDto);
+        if(store.getStoreConfig().getCore().getFlexibility()) {
+
+        }
         item.setItemId(itemId);
         item.setReservations(reservations);
         itemRepository.save(item);

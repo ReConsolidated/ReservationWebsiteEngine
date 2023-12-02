@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class StoreNameDto {
-    private String storeName;
+    private String name;
     private String storeConfigId;
 
     public StoreNameDto(StoreConfig storeConfig) {
-        this.storeName = storeConfig.getOwner().getStoreName();
+        this.name = storeConfig.getOwner().getStoreName();
         this.storeConfigId = storeConfig.getOwner().getStoreName().replaceAll("[ /]", "_");
     }
 }
