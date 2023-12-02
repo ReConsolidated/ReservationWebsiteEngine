@@ -30,7 +30,7 @@ public class Store {
     private List<Item> items;
 
     public Store(StoreConfig storeConfig) {
-        this.storeName = storeConfig.getOwner().getStoreName().replaceAll("[ /]", "_");;
+        this.storeName = storeConfig.getOwner().getStoreName().replaceAll("[ /]", "_");
         this.storeConfig = storeConfig;
         this.ownerAppUserId = storeConfig.getOwner().getAppUserId();
         this.items = new ArrayList<>();

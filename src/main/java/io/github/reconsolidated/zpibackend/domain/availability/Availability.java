@@ -27,6 +27,10 @@ public class Availability {
         this.type = scheduleSlot.getType();
     }
 
+    public boolean overlap(Availability slot) {
+        return startDateTime.isBefore(slot.endDateTime) && endDateTime.isAfter(slot.startDateTime);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

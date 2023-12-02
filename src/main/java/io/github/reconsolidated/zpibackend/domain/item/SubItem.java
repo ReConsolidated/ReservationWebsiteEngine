@@ -31,7 +31,20 @@ public class SubItem {
         this.subItemId = subItemDto.getSubItemId();
         this.title = subItemDto.getTitle();
         this.subtitle = subItemDto.getSubtitle();
-        this.amount = subItemDto.getAmount();
+        this.amount = subItemDto.getAmount() == null ? 1 : subItemDto.getAmount();
+        if (subItemDto.getSchedule() != null) {
+            this.startDateTime = subItemDto.getSchedule().getStartDateTime();
+            this.endDateTime = subItemDto.getSchedule().getEndDateTime() == null ?
+                    subItemDto.getSchedule().getStartDateTime() :
+                    subItemDto.getSchedule().getEndDateTime();
+        }
+    }
+
+    public SubItem(SubItemDto subItemDto, Integer amount) {
+        this.subItemId = subItemDto.getSubItemId();
+        this.title = subItemDto.getTitle();
+        this.subtitle = subItemDto.getSubtitle();
+        this.amount = amount;
         if (subItemDto.getSchedule() != null) {
             this.startDateTime = subItemDto.getSchedule().getStartDateTime();
             this.endDateTime = subItemDto.getSchedule().getEndDateTime() == null ?
