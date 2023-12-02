@@ -2,6 +2,7 @@ package io.github.reconsolidated.zpibackend.domain.item;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.domain.availability.Availability;
+import io.github.reconsolidated.zpibackend.domain.comment.CommentService;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemFailure;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemResponse;
@@ -29,6 +30,9 @@ import java.util.Objects;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final StoreService storeService;
+    @Lazy
+    @Autowired
+    private CommentService commentService;
     @Lazy
     @Autowired
     private ReservationService reservationService;
@@ -164,6 +168,8 @@ public class ItemService {
         }
         itemReservations.forEach(reservation ->
                 reservationService.deletePastReservation(currentUser, reservation.getReservationId()));
+        commentService.getComments(item.getItemId())
+                .forEach(commentDto -> commentService.deleteComment(currentUser, item.getItemId(), commentDto.getId()));
         itemRepository.deleteById(item.getItemId());
         return true;
     }
