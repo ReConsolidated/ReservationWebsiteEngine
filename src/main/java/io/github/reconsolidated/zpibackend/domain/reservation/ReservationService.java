@@ -228,6 +228,10 @@ public class ReservationService {
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
         Item item = reservation.getItem();
+        if(!appUser.getId().equals(reservation.getUser().getId()) &&
+                !appUser.getId().equals(item.getStore().getOwnerAppUserId())) {
+            throw new IllegalArgumentException("Only owners of store or reservation cen cancel it!");
+        }
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
@@ -250,7 +254,8 @@ public class ReservationService {
                 item.setAmount(item.getAmount() + reservation.getAmount());
             }
         }
-
-        reservationRepository.delete(reservation);
+        reservation.setStatus(appUser.getId().equals(reservation.getUser().getId()) ?
+                ReservationStatus.CANCELLED_BY_USER : ReservationStatus.CANCELLED_BY_ADMIN);
+        reservationRepository.save(reservation);
     }
 }
