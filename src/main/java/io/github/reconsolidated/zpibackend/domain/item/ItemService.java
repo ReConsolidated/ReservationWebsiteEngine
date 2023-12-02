@@ -89,7 +89,11 @@ public class ItemService {
                             !itemDto.getSchedule().getScheduledRanges().contains(slot))
                     .toList();
 
-            List<Reservation> itemReservations = reservationService.getItemReservations(item.getItemId());
+            List<Reservation> itemReservations = reservationService
+                    .getItemReservations(item.getItemId())
+                    .stream()
+                    .filter(reservation -> reservation.getStartDateTime().isAfter(LocalDateTime.now()))
+                    .toList();
             List<Reservation> toProcess = new ArrayList<>();
             List<Reservation> causeError = new ArrayList<>();
             for (Reservation reservation : itemReservations) {
