@@ -50,14 +50,15 @@ public class StoreConfigController {
 
     @GetMapping("/{storeConfigName}/owner")
     public ResponseEntity<OwnerDto> getOwner(@CurrentUser AppUser currentUser, @PathVariable String storeConfigName) {
-        Owner owner = storeConfigService.getStoreConfig(currentUser, storeConfigName).getOwner();
+        Owner owner = storeService.getStore(storeConfigName).getStoreConfig().getOwner();
         AppUser appUser = appUserService.getUser(owner.getAppUserId());
         return ResponseEntity.ok(new OwnerDto(owner));
     }
 
     @GetMapping("/{storeConfigName}")
     public ResponseEntity<StoreConfigDto> getStoreConfigDto(@PathVariable String storeConfigName) {
-        StoreConfigDto config = storeConfigService.getStoreConfigDto(storeConfigName);
+        StoreConfigDto config = storeConfigService.getStoreConfigDto(
+                storeService.getStore(storeConfigName).getStoreConfig().getStoreConfigId());
         return ResponseEntity.ok(config);
     }
 

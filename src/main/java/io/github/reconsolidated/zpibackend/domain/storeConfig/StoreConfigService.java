@@ -41,8 +41,12 @@ public class StoreConfigService {
         return storeConfigRepository.save(storeConfig);
     }
 
+    /**
+     * @param storeName - original name passed by user
+     * @return true if is unique, false otherwise
+     */
     public boolean isNameUnique(String storeName) {
-        return storeConfigRepository.findByName(storeName.replaceAll("[ /]", "_")).isEmpty();
+        return storeConfigRepository.findByOwnerStoreName(storeName).isEmpty();
     }
 
 
@@ -54,6 +58,24 @@ public class StoreConfigService {
     public List<StoreNameDto> listStoreConfigsSummary(AppUser currentUser) {
         List<StoreConfig> configList = storeConfigRepository.findByOwner_AppUserId(currentUser.getId());
         return configList.stream().map(StoreConfig::getStoreSummary).toList();
+    }
+
+    public StoreConfig getStoreConfig(Long storeConfigId) {
+        return storeConfigRepository.findById(storeConfigId).orElseThrow();
+    }
+
+    public StoreConfig getStoreConfig(String storeConfigName) {
+        return storeConfigRepository.findByOwnerStoreName(storeConfigName).orElseThrow();
+    }
+
+    public StoreConfigDto getStoreConfigDto(String storeConfigName) {
+        StoreConfig config = storeConfigRepository.findByOwnerStoreName(storeConfigName).orElseThrow();
+        return storeConfigMapper.toDto(config);
+    }
+
+    public StoreConfigDto getStoreConfigDto(Long storeConfigId) {
+        StoreConfig config = storeConfigRepository.findById(storeConfigId).orElseThrow();
+        return storeConfigMapper.toDto(config);
     }
 
     public void updateStoreConfig(AppUser currentUser, StoreConfig newStoreConfig) {
@@ -73,26 +95,12 @@ public class StoreConfigService {
         storeConfigRepository.save(newStoreConfig);
     }
 
-    public StoreConfig getStoreConfig(AppUser currentUser, Long storeConfigId) {
-        StoreConfig config = storeConfigRepository.findById(storeConfigId).orElseThrow();
-        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
-            || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
-            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot access it.");
-        }
-        return config;
-    }
-
-    public StoreConfig getStoreConfig(AppUser currentUser, String storeConfigName) {
-        return storeConfigRepository.findByName(storeConfigName).orElseThrow();
-    }
-
-    public StoreConfigDto getStoreConfigDto(String storeConfigName) {
-        StoreConfig config = storeConfigRepository.findByName(storeConfigName).orElseThrow();
-        return storeConfigMapper.toDto(config);
-    }
-
     public StoreConfig updateMainPageConfig(AppUser currentUser, String storeConfigName, MainPageConfig mainPageConfig) {
-        StoreConfig config = getStoreConfig(currentUser, storeConfigName);
+        StoreConfig config = getStoreConfig(storeConfigName);
+        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
+                || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot edit it.");
+        }
         config.setMainPage(mainPageConfig);
         storeConfigValidator.validateStoreConfig(config);
         storeConfigRepository.save(config);
@@ -100,7 +108,11 @@ public class StoreConfigService {
     }
 
     public StoreConfig updateDetailsPageConfig(AppUser currentUser, String storeConfigName, DetailsPageConfig detailsPageConfig) {
-        StoreConfig config = getStoreConfig(currentUser, storeConfigName);
+        StoreConfig config = getStoreConfig(storeConfigName);
+        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
+                || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot edit it.");
+        }
         config.setDetailsPage(detailsPageConfig);
         storeConfigValidator.validateStoreConfig(config);
         storeConfigRepository.save(config);
@@ -108,23 +120,39 @@ public class StoreConfigService {
     }
 
     public MainPageConfig getMainPageConfig(AppUser currentUser, String storeConfigName) {
-        StoreConfig config = getStoreConfig(currentUser, storeConfigName);
+        StoreConfig config = getStoreConfig(storeConfigName);
+        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
+                || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot edit it.");
+        }
         return config.getMainPage();
     }
 
     public DetailsPageConfig getDetailsPageConfig(AppUser currentUser, String storeConfigName) {
-        StoreConfig config = getStoreConfig(currentUser, storeConfigName);
+        StoreConfig config = getStoreConfig(storeConfigName);
+        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
+                || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot edit it.");
+        }
         return config.getDetailsPage();
     }
 
     public StoreConfig updateColor(AppUser currentUser, String storeConfigName, String color) {
-        StoreConfig config = getStoreConfig(currentUser, storeConfigName);
+        StoreConfig config = getStoreConfig(storeConfigName);
+        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
+                || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot edit it.");
+        }
         config.getOwner().setColor(color);
         return config;
     }
 
     public StoreConfig updateImageUrl(AppUser currentUser, String storeConfigName, String imageUrl) {
-        StoreConfig config = getStoreConfig(currentUser, storeConfigName);
+        StoreConfig config = getStoreConfig(storeConfigName);
+        if (config.getOwner() == null || config.getOwner().getAppUserId() == null
+                || !config.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store Config. You cannot edit it.");
+        }
         config.getOwner().setImageUrl(imageUrl);
         return config;
     }
