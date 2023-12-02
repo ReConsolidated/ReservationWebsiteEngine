@@ -118,7 +118,8 @@ public class ItemTest {
                 new ArrayList<>(),
                 1,
                 1,
-                null,
+                2.0,
+                3,
                 null,
                 null
         );

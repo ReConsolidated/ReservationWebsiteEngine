@@ -25,6 +25,7 @@ public class CommentController {
     public ResponseEntity<CommentDto> addComment(@CurrentUser AppUser currentUser,
                                                  @PathVariable Long itemId,
                                                  @RequestBody CommentDto commentDto) {
+        commentDto.setUserId(currentUser.getId());
         return ResponseEntity.ok(commentService.addComment(currentUser, itemId, commentDto));
     }
 

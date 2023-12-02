@@ -87,7 +87,7 @@ public class ReservationServiceTests {
         item.setSchedule(schedule);
         item.setInitialSchedule(schedule);
 
-        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item, 0.0));
+        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item, 0.0, 0));
 
         LocalDateTime start = LocalDateTime.of(2023, 1, 1, 12, 0);
         LocalDateTime end = LocalDateTime.of(2023, 1, 1, 14, 0);
@@ -105,7 +105,7 @@ public class ReservationServiceTests {
 
         ReservationDto reservationDto = new ReservationDto(reservation);
 
-        ReservationDto result = reservationService.reserveItem(appUser, reservationDto);
+        ReservationDto result = reservationService.reserveItem(appUser, STORE_NAME, reservationDto);
 
         assertEquals(reservationDto.getStartDateTime(), result.getStartDateTime());
         assertEquals(reservationDto.getEndDateTime(), result.getEndDateTime());
@@ -182,7 +182,7 @@ public class ReservationServiceTests {
         item.setSchedule(schedule);
         item.setInitialSchedule(schedule);
 
-        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item, 0.0));
+        item = itemService.createItem(appUser, STORE_NAME, new ItemDto(item, 0.0, 0));
 
         Reservation reservation = Reservation.builder()
                 .user(appUser)
@@ -197,7 +197,7 @@ public class ReservationServiceTests {
 
         ReservationDto reservationDto = new ReservationDto(reservation);
 
-        ReservationDto result = reservationService.reserveItem(appUser, reservationDto);
+        ReservationDto result = reservationService.reserveItem(appUser, STORE_NAME, reservationDto);
 
         assertEquals(reservationDto.getStartDateTime(), result.getStartDateTime());
         assertEquals(reservationDto.getEndDateTime(), result.getEndDateTime());
