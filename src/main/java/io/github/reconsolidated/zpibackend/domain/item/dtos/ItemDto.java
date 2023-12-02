@@ -4,6 +4,7 @@ import io.github.reconsolidated.zpibackend.domain.availability.Availability;
 import io.github.reconsolidated.zpibackend.domain.item.Item;
 import io.github.reconsolidated.zpibackend.domain.item.SubItem;
 import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
+import io.github.reconsolidated.zpibackend.domain.parameter.dtos.ParameterDto;
 import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
 import lombok.*;
 
@@ -14,7 +15,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ItemDto {
 
     private static final int LATEST_HOUR = 23;
@@ -22,7 +22,7 @@ public class ItemDto {
     private Long id;
     private Boolean active;
     private ItemAttributesDto attributes;
-    private List<Parameter> customAttributeList = new ArrayList<>();
+    private List<ParameterDto> customAttributeList = new ArrayList<>();
     private List<SubItemDto> subItems = new ArrayList<>();
     private ScheduleDto schedule;
     private List<Availability> availabilities = new ArrayList<>();
@@ -41,7 +41,7 @@ public class ItemDto {
                 item.getSubtitle(),
                 item.getDescription(),
                 item.getImage());
-        this.customAttributeList = item.getCustomAttributeList();
+        this.customAttributeList = item.getCustomAttributeList().stream().map(ParameterDto::new).toList();
         this.amount = item.getInitialAmount();
         this.availableAmount = item.getAmount();
         this.subItems = item.getSubItems().stream().map(SubItem::toSubItemDto).toList();
