@@ -47,6 +47,7 @@ public class ItemDto {
         this.subItems = item.getSubItems().stream().map(SubItem::toSubItemDto).toList();
         this.availabilities = item.getSchedule().getLongestAvailabilities();
         this.mark = average;
+        this.ratingCount = ratingCount;
         if (item.getStore().getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new ScheduleDto(item.getInitialSchedule().getAvailabilities(), null, null);
         } else {
