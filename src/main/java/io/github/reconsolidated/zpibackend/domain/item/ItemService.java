@@ -7,18 +7,17 @@ import io.github.reconsolidated.zpibackend.domain.reservation.ReservationService
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationStatus;
 import io.github.reconsolidated.zpibackend.domain.store.Store;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
     private final StoreService storeService;
@@ -75,7 +74,7 @@ public class ItemService {
             throw new RuntimeException("You are not the owner of this store");
         }
         item = new Item(store, itemDto);
-        if(store.getStoreConfig().getCore().getFlexibility()) {
+        if (store.getStoreConfig().getCore().getFlexibility()) {
 
         }
         item.setItemId(itemId);

@@ -55,8 +55,9 @@ public class Item {
         this.subtitle = itemDto.getAttributes().getSubtitle();
         this.description = itemDto.getAttributes().getDescription();
         this.image = itemDto.getAttributes().getImage();
-        this.amount = itemDto.getAmount();
-        this.initialAmount = itemDto.getAmount();
+        this.amount = itemDto.getAmount() == null ?
+                (itemDto.getSubItems() == null ? 1 : itemDto.getSubItems().size()) : itemDto.getAmount();
+        this.initialAmount = this.amount;
         itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
         this.customAttributeList = itemDto.getCustomAttributeList().stream().map((p) -> new Parameter(p, this)).toList();
 
@@ -88,7 +89,9 @@ public class Item {
             this.initialSchedule.setAvailableScheduleSlots(
                     initialSchedule.getAvailableScheduleSlots());
         }
-        this.subItems = itemDto.getSubItems().stream().map(SubItem::new).toList();
+        this.subItems = itemDto.getSubItems() == null ?
+                new ArrayList<>() :
+                itemDto.getSubItems().stream().map(SubItem::new).toList();
     }
 
     public SubItemListDto getSubItemsListDto() {
