@@ -1,4 +1,4 @@
-package io.github.reconsolidated.zpibackend.features.storeConfig;
+package io.github.reconsolidated.zpibackend.storeConfig;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUserService;

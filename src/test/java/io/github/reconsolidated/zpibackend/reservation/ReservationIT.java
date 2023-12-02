@@ -27,7 +27,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class ReservationServiceTests {
+public class ReservationIT {
     private static final String STORE_NAME = "ReservationServiceTests";
     @Autowired
     private ReservationService reservationService;
