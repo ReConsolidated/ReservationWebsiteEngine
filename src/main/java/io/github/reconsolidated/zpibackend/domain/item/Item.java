@@ -5,7 +5,6 @@ import io.github.reconsolidated.zpibackend.domain.item.dtos.SubItemListDto;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.SubItemInfoDto;
 import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
-import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationType;
 import io.github.reconsolidated.zpibackend.domain.reservation.Schedule;
 import io.github.reconsolidated.zpibackend.domain.store.Store;
@@ -60,7 +59,6 @@ public class Item {
         this.initialAmount = this.amount;
         itemDto.getCustomAttributeList().forEach(attribute -> attribute.setId(null));
         this.customAttributeList = itemDto.getCustomAttributeList().stream().map((p) -> new Parameter(p, this)).toList();
-
         if (store.getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
             this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
