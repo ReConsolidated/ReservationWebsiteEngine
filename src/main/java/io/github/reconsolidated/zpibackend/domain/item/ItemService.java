@@ -73,6 +73,7 @@ public class ItemService {
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
+        itemDto.getCustomAttributeList().forEach(parameterDto -> parameterDto.setId(null));
         return itemRepository.save(new Item(store, itemDto));
     }
 

@@ -63,6 +63,7 @@ public class ReservationIT {
                 .core(core)
                 .mainPage(MainPageConfig.builder().build())
                 .detailsPage(DetailsPageConfig.builder().build())
+                .customAttributesSpec(new ArrayList<>())
                 .build();
         AppUser appUser = appUserService.getOrCreateUser("1", "test@test", "FirstName", "LastName");
 
@@ -140,6 +141,7 @@ public class ReservationIT {
                 .core(core)
                 .mainPage(MainPageConfig.builder().build())
                 .detailsPage(DetailsPageConfig.builder().build())
+                .customAttributesSpec(new ArrayList<>())
                 .build();
         AppUser appUser = appUserService.getOrCreateUser("1", "test@test", "FirstName", "LastName");
 

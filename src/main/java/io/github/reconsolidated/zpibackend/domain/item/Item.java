@@ -11,6 +11,8 @@ import io.github.reconsolidated.zpibackend.domain.reservation.ReservationType;
 import io.github.reconsolidated.zpibackend.domain.reservation.Schedule;
 import io.github.reconsolidated.zpibackend.domain.store.Store;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -36,9 +38,11 @@ public class Item {
     @Column(length = 1000)
     private String description;
     private String image;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Schedule schedule = new Schedule(this, new ArrayList<>());
-    @OneToOne(cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Schedule initialSchedule = new Schedule(this, new ArrayList<>());
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
     private List<Parameter> customAttributeList;
