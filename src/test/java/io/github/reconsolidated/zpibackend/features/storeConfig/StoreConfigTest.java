@@ -221,6 +221,6 @@ public class StoreConfigTest {
 
         storeConfigService.updateImageUrl(user, "name", imageUrl);
 
-        assertThat(storeConfigService.getStoreConfig(user, "name").getOwner().getImageUrl()).isEqualTo(imageUrl);
+        assertThat(storeConfigService.getStoreConfig("name").getOwner().getImageUrl()).isEqualTo(imageUrl);
     }
 }

@@ -48,10 +48,13 @@ public class ItemTest {
         Store store = storeService.createStore(appUser,
                 new CreateStoreDto(
                 storeConfig.getStoreConfigId(),
-                storeConfig.getName())
+                storeConfig.getOwner().getStoreName().replaceAll("[ /]","_"))
         );
         ItemDto dto = getItemDto();
-        Item item = itemService.createItem(appUser, storeConfig.getName(), dto);
+        Item item = itemService.createItem(
+                appUser,
+                storeConfig.getOwner().getStoreName().replaceAll("[ /]","_"),
+                dto);
         CommentDto commentDto = new CommentDto(
                 null,
                 appUser.getId(),

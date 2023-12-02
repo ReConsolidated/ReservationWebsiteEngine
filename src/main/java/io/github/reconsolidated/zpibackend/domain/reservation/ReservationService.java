@@ -64,7 +64,7 @@ public class ReservationService {
                     .endDateTime(reservationDto.getEndDateTime())
                     .amount(reservationDto.getAmount())
                     .message(reservationDto.getMessage())
-                    .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
+                    .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequired())
                     .build();
             reservation.setStatus(LocalDateTime.now());
             if (!schedule.processReservation(core, reservation)) {
@@ -99,7 +99,7 @@ public class ReservationService {
                         .subItemIdList(reservationDto.getSubItemIds())
                         .amount(reservationDto.getAmount())
                         .message(reservationDto.getMessage())
-                        .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequire())
+                        .confirmed(!item.getStore().getStoreConfig().getAuthConfig().getConfirmationRequired())
                         .build();
                 reservation.setStatus(LocalDateTime.now());
                 return new ReservationDto(reservationRepository.save(reservation));
