@@ -30,7 +30,11 @@ public class StoreConfigController {
     @Transactional
     public ResponseEntity<Long> createStoreConfig(@CurrentUser AppUser currentUser, @RequestBody StoreConfigDto storeConfig) {
         StoreConfig result = storeConfigService.createStoreConfig(currentUser, storeConfig);
-        storeService.createStore(currentUser, new CreateStoreDto(result.getStoreConfigId(), result.getName()));
+        storeService.createStore(
+                currentUser,
+                new CreateStoreDto(
+                        result.getStoreConfigId(),
+                        result.getOwner().getStoreName().replaceAll("[ /]","_")));
         return ResponseEntity.ok(result.getStoreConfigId());
     }
 

@@ -29,7 +29,6 @@ public class StoreConfig {
     private List<ParameterSettings> customAttributesSpec;
     @OneToOne(cascade = CascadeType.ALL)
     private AuthenticationConfig authConfig;
-    private String name;
 
     public StoreConfig(Owner owner, CoreConfig core, MainPageConfig mainPage, DetailsPageConfig detailsPage,
                        AuthenticationConfig authConfig, List<ParameterSettings> customAttributesSpec) {
@@ -39,7 +38,6 @@ public class StoreConfig {
         this.detailsPage = detailsPage;
         this.authConfig = authConfig;
         this.customAttributesSpec = customAttributesSpec;
-        this.name = owner.getStoreName().replaceAll("[ /]", "_");
     }
 
     public StoreNameDto getStoreSummary() {

@@ -29,7 +29,6 @@ public class StoreConfigService {
         }
         StoreConfig storeConfig = StoreConfig.builder()
                 .owner(owner)
-                .name(owner.getStoreName().replaceAll("[ /]", "_"))
                 .core(storeConfigDto.getCore())
                 .mainPage(storeConfigDto.getMainPage())
                 .detailsPage(storeConfigDto.getDetailsPage())
