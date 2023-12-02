@@ -7,7 +7,6 @@ import io.github.reconsolidated.zpibackend.domain.parameter.dtos.ParameterDto;
 import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter

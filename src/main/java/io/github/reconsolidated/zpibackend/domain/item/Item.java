@@ -100,6 +100,10 @@ public class Item {
         return new SubItemListDto(subItemsDto);
     }
 
+    public void setAvailableSchedule(List<Availability> availabilities) {
+        this.schedule = new Schedule(this, availabilities);
+    }
+
     public SubItemInfoDto toSubItemDto() {
         return new SubItemInfoDto(itemId, title, subtitle);
     }
