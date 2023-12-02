@@ -3,9 +3,13 @@ package io.github.reconsolidated.zpibackend.domain.item;
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
+import io.github.reconsolidated.zpibackend.domain.reservation.ReservationService;
+import io.github.reconsolidated.zpibackend.domain.reservation.ReservationStatus;
 import io.github.reconsolidated.zpibackend.domain.store.Store;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,6 +22,9 @@ import java.util.Objects;
 public class ItemService {
     private final ItemRepository itemRepository;
     private final StoreService storeService;
+    @Lazy
+    @Autowired
+    private ReservationService reservationService;
     private final ItemMapper itemMapper;
 
     public Item getItem(Long itemId) {
@@ -63,7 +70,6 @@ public class ItemService {
 
     public ItemDto updateItem(AppUser currentUser, Long itemId, ItemDto itemDto) {
         Item item = getItem(itemId);
-        List<Reservation> reservations = item.getReservations();
         Store store = item.getStore();
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
@@ -73,7 +79,6 @@ public class ItemService {
 
         }
         item.setItemId(itemId);
-        item.setReservations(reservations);
         itemRepository.save(item);
         return itemDto;
     }
@@ -98,19 +103,23 @@ public class ItemService {
         return itemMapper.toItemDto(itemRepository.save(item));
     }
 
-    public void deleteItem(AppUser currentUser, Long itemId) {
-        Item item = getItem(itemId);
+    public boolean deleteItem(AppUser currentUser, String storeName, Long itemId) {
+        Item item = getItemFromStore(itemId, storeName);
         Store store = item.getStore();
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
-        if (!item.getReservations().isEmpty()) {
-            for (Reservation reservation : item.getReservations()) {
-                if (reservation.getEndDateTime().isAfter(LocalDateTime.now())) {
-                    throw new RuntimeException("Can't delete item with reservations");
+        List<Reservation> itemReservations = reservationService.getItemReservations(item.getItemId());
+        if (!itemReservations.isEmpty()) {
+            for (Reservation reservation : itemReservations) {
+                if (reservation.getStatus() == ReservationStatus.ACTIVE) {
+                    return false;
                 }
             }
         }
-        itemRepository.deleteById(itemId);
+        itemReservations.forEach(reservation ->
+                reservationService.deletePastReservation(currentUser, reservation.getReservationId()));
+        itemRepository.deleteById(item.getItemId());
+        return true;
     }
 }

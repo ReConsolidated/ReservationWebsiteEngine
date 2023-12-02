@@ -47,9 +47,6 @@ public class Item {
     private Integer initialAmount = 1;
     @OneToMany(cascade = CascadeType.ALL)
     private List<SubItem> subItems;
-    @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Reservation> reservations = new ArrayList<>();
 
     public Item(Store store, ItemDto itemDto) {
         this.store = store;
@@ -92,7 +89,6 @@ public class Item {
                     initialSchedule.getAvailableScheduleSlots());
         }
         this.subItems = itemDto.getSubItems().stream().map(SubItem::new).toList();
-        this.reservations = new ArrayList<>();
     }
 
     public SubItemListDto getSubItemsListDto() {
