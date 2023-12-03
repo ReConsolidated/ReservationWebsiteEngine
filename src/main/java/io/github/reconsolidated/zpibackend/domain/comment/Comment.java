@@ -27,4 +27,5 @@ public class Comment {
     private LocalDateTime dateTime;
     private String content;
     private Double rating;
+    private String nickname;
 }
