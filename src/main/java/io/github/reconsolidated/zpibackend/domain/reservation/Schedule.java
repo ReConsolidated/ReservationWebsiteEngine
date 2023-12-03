@@ -29,7 +29,7 @@ public class Schedule {
     @OneToOne
     private Item item;
     @OrderBy("startDateTime ASC, endDateTime ASC")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "schedule", orphanRemoval = true)
     private List<ScheduleSlot> availableScheduleSlots = new ArrayList<>(); //it must be sorted, and not overlapping
     private static final int WEEKDAYS = 7;
 
@@ -97,7 +97,7 @@ public class Schedule {
     }
 
     public void addSlot(ScheduleSlot scheduleSlot) {
-
+        scheduleSlot.setSchedule(this);
         setSlotType(scheduleSlot);
 
         for (int i = 0; i < availableScheduleSlots.size(); i++) {

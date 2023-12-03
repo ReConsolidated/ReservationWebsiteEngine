@@ -19,8 +19,8 @@ public class Parameter {
     @Id
     @GeneratedValue(generator = "parameter_generator")
     private Long id;
-    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "item_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Item item;
     private String name;
     private String value;

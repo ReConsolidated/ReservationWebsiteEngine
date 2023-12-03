@@ -31,7 +31,8 @@ public class Item {
     @Id
     @GeneratedValue(generator = "item_generator")
     private Long itemId;
-    @ManyToOne
+    @JoinColumn(name = "store_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Store store;
     private Boolean active;
     private String title;
@@ -45,7 +46,7 @@ public class Item {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Schedule initialSchedule = new Schedule(this, new ArrayList<>());
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", orphanRemoval = true)
     private List<Parameter> customAttributeList;
     @Builder.Default
     private Integer amount = 1;
