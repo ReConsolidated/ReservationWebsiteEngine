@@ -42,10 +42,7 @@ public class Availability {
         if (!startDateTime.equals(that.startDateTime)) {
             return false;
         }
-        if (!endDateTime.equals(that.endDateTime)) {
-            return false;
-        }
-        return type == that.type;
+        return endDateTime.equals(that.endDateTime);
     }
 
     @Override
