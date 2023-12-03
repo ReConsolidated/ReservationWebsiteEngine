@@ -55,6 +55,7 @@ public class ScheduleSlot {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.currAmount = initAmount - subItemIdList.size();
+        this.type = ReservationType.NONE;
         this.itemsAvailability = new ArrayList<>(initAmount);
         for (int i = 0; i < initAmount; i++) {
             itemsAvailability.add(!subItemIdList.contains((long) i));
