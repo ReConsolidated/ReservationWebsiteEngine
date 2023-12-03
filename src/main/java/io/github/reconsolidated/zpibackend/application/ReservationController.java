@@ -65,4 +65,11 @@ public class ReservationController {
                                                                   @PathVariable String storeName) {
         return ResponseEntity.ok(reservationService.getStoreReservations(currentUser, storeName));
     }
+
+    @PutMapping("/{reservationId}/confirm")
+    public ResponseEntity<?> confirmReservation(@CurrentUser AppUser currentUser,
+                                                @PathVariable String storeName,
+                                                @PathVariable Long reservationId) {
+        return ResponseEntity.ok(reservationService.confirm(currentUser, storeName, reservationId));
+    }
 }
