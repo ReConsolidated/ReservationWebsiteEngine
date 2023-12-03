@@ -2,10 +2,12 @@ package io.github.reconsolidated.zpibackend.domain.item;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.domain.availability.Availability;
+import io.github.reconsolidated.zpibackend.domain.comment.CommentService;
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemFailure;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemResponse;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemSuccess;
+import io.github.reconsolidated.zpibackend.domain.parameter.ParameterRepository;
 import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationService;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationStatus;
@@ -30,8 +32,12 @@ public class ItemService {
     private final StoreService storeService;
     @Lazy
     @Autowired
+    private CommentService commentService;
+    @Lazy
+    @Autowired
     private ReservationService reservationService;
     private final ItemMapper itemMapper;
+    private final ParameterRepository parameterRepository;
 
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow();
@@ -71,6 +77,7 @@ public class ItemService {
         if (!store.getStoreConfig().getOwner().getAppUserId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not the owner of this store");
         }
+        itemDto.getCustomAttributeList().forEach(parameterDto -> parameterDto.setId(null));
         return itemRepository.save(new Item(store, itemDto));
     }
 
@@ -161,6 +168,8 @@ public class ItemService {
         }
         itemReservations.forEach(reservation ->
                 reservationService.deletePastReservation(currentUser, reservation.getReservationId()));
+        commentService.getComments(item.getItemId())
+                .forEach(commentDto -> commentService.deleteComment(currentUser, item.getItemId(), commentDto.getId()));
         itemRepository.deleteById(item.getItemId());
         return true;
     }

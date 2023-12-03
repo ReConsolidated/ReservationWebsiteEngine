@@ -53,7 +53,6 @@ public class Reservation {
                 status = ReservationStatus.PAST;
             }
         }
-
     }
 
     public Map<String, String> getPersonalDataMap() {
@@ -100,5 +99,9 @@ public class Reservation {
         result = 31 * result + (endDateTime != null ? endDateTime.hashCode() : 0);
         result = 31 * result + amount.hashCode();
         return result;
+    }
+
+    public void setStatus(ReservationStatus reservationStatus) {
+        this.status = reservationStatus;
     }
 }
