@@ -8,16 +8,16 @@ import java.util.List;
 
 public final class SimultaneousReservationStrategy implements FlexibleReservationStrategy {
 
-    private static SimultaneousReservationStrategy INSTANCE;
+    private static SimultaneousReservationStrategy instance;
 
     private SimultaneousReservationStrategy() {
     }
 
     public static SimultaneousReservationStrategy getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new SimultaneousReservationStrategy();
+        if (instance == null) {
+            instance = new SimultaneousReservationStrategy();
         }
-        return INSTANCE;
+        return instance;
     }
     @Override
     public boolean verifyReservationFitting(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {

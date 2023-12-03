@@ -46,8 +46,7 @@ public class Reservation {
     public void setStatus(LocalDateTime now) {
         if (status == ReservationStatus.CANCELLED_BY_USER || status == ReservationStatus.CANCELLED_BY_ADMIN) {
 
-        }
-        else {
+        } else {
             if (startDateTime == null || !startDateTime.isBefore(now)) {
                 status = ReservationStatus.ACTIVE;
             } else {

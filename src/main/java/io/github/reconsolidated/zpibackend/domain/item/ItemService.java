@@ -8,7 +8,6 @@ import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemFailur
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemResponse;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemSuccess;
 import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
-import io.github.reconsolidated.zpibackend.domain.parameter.ParameterRepository;
 import io.github.reconsolidated.zpibackend.domain.parameter.ParameterService;
 import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationService;
@@ -136,7 +135,7 @@ public class ItemService {
                 return new UpdateItemSuccess(itemMapper.toItemDto(item));
             }
         }
-        if(itemDto.getSubItems() != null) {
+        if (itemDto.getSubItems() != null) {
             itemDto.setAmount(null);
         }
         item = new Item(store, itemDto);
@@ -203,9 +202,9 @@ public class ItemService {
             throw new IllegalArgumentException("Core Config cannot be edited");
         }
         List<Integer> settingsToDelete = new ArrayList<>();
-        for(int i = 0; i < currentStoreConfig.getCustomAttributesSpec().size(); i++) {
+        for (int i = 0; i < currentStoreConfig.getCustomAttributesSpec().size(); i++) {
             int finalI = i;
-            if(newStoreConfig.getCustomAttributesSpec()
+            if (newStoreConfig.getCustomAttributesSpec()
                     .stream()
                     .noneMatch(parameterSettings ->
                             Objects.equals(
@@ -214,17 +213,17 @@ public class ItemService {
                 settingsToDelete.add(i);
             }
         }
-        for(Integer index : settingsToDelete) {
-            for(Item item : getStoreItems(store.getStoreName())) {
+        for (Integer index : settingsToDelete) {
+            for (Item item : getStoreItems(store.getStoreName())) {
                 List<Parameter> parameters = item.getCustomAttributeList();
                 parameterService.deleteParameter(parameters.get(index).getId());
                 parameters.remove(index.intValue());
                 item.setCustomAttributeList(parameters);
             }
         }
-        for(int i = currentStoreConfig.getCustomAttributesSpec().size() - settingsToDelete.size();
+        for (int i = currentStoreConfig.getCustomAttributesSpec().size() - settingsToDelete.size();
             i < newStoreConfig.getCustomAttributesSpec().size(); i++) {
-            for(Item item : getStoreItems(store.getStoreName())) {
+            for (Item item : getStoreItems(store.getStoreName())) {
                 List<Parameter> parameters = item.getCustomAttributeList();
                 parameters.add(
                         i,

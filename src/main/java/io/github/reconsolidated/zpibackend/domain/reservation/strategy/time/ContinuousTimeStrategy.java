@@ -10,15 +10,15 @@ import java.util.List;
 
 public final class ContinuousTimeStrategy implements FlexibleTimeStrategy {
 
-    private static ContinuousTimeStrategy INSTANCE;
+    private static ContinuousTimeStrategy instance;
     private ContinuousTimeStrategy() {
     }
 
     public static ContinuousTimeStrategy getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new ContinuousTimeStrategy();
+        if (instance == null) {
+            instance = new ContinuousTimeStrategy();
         }
-        return INSTANCE;
+        return instance;
     }
     @Override
     public boolean verifyScheduleSlots(Schedule schedule, List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {

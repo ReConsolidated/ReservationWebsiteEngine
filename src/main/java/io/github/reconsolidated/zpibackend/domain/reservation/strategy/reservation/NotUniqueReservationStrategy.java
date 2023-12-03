@@ -9,15 +9,15 @@ import java.util.List;
 
 public final class NotUniqueReservationStrategy implements FlexibleReservationStrategy {
 
-    private static NotUniqueReservationStrategy INSTANCE;
+    private static NotUniqueReservationStrategy instance;
     private NotUniqueReservationStrategy() {
     }
 
     public static NotUniqueReservationStrategy getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new NotUniqueReservationStrategy();
+        if (instance == null) {
+            instance = new NotUniqueReservationStrategy();
         }
-        return INSTANCE;
+        return instance;
     }
 
     @Override
