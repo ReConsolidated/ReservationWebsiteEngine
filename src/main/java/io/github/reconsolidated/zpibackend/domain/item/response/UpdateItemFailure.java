@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.domain.item.response;
 
 import io.github.reconsolidated.zpibackend.domain.reservation.dtos.ReservationDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
 
@@ -10,6 +11,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(allOf = UpdateItemResponse.class)
 public class  UpdateItemFailure implements UpdateItemResponse {
 
     @JsonIgnore

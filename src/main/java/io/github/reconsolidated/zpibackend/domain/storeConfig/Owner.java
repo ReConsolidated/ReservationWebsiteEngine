@@ -21,7 +21,7 @@ public class Owner {
     private Long appUserId;
     private String email = "";
     private String imageUrl = "";
-    private String phoneNumber = "";
+    private String phone = "";
     private String color = "";
     @JsonProperty("name")
     private String storeName = "";

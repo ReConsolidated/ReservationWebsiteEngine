@@ -7,17 +7,21 @@ import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemFailure;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemResponse;
 import io.github.reconsolidated.zpibackend.domain.item.response.UpdateItemSuccess;
+import io.github.reconsolidated.zpibackend.domain.parameter.Parameter;
 import io.github.reconsolidated.zpibackend.domain.parameter.ParameterRepository;
+import io.github.reconsolidated.zpibackend.domain.parameter.ParameterService;
 import io.github.reconsolidated.zpibackend.domain.reservation.Reservation;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationService;
 import io.github.reconsolidated.zpibackend.domain.reservation.ReservationStatus;
 import io.github.reconsolidated.zpibackend.domain.reservation.dtos.ReservationDto;
 import io.github.reconsolidated.zpibackend.domain.store.Store;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,7 +41,7 @@ public class ItemService {
     @Autowired
     private ReservationService reservationService;
     private final ItemMapper itemMapper;
-    private final ParameterRepository parameterRepository;
+    private final ParameterService parameterService;
 
     public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow();
@@ -47,6 +51,7 @@ public class ItemService {
         return itemRepository.findByStoreStoreNameAndItemId(storeName, itemId)
                 .orElseThrow(() -> new NoSuchElementException(String.format("There is no item with id: %d in store: %s", itemId, storeName)));
     }
+
 
     public ItemDto getItemDto(Long itemId) {
         return itemMapper.toItemDto(itemRepository.findById(itemId).orElseThrow());
@@ -59,6 +64,11 @@ public class ItemService {
             throw new IllegalArgumentException("Only owner of a store can see all items!");
         }
         return itemRepository.findAllByStore_Id(store.getId()).stream().map(itemMapper::toItemDto).toList();
+    }
+
+    public List<Item> getStoreItems(String storeName) {
+        Store store = storeService.getStore(storeName);
+        return itemRepository.findAllByStore_Id(store.getId());
     }
 
     public List<ItemDto> getFilteredItems(String storeName) {
@@ -126,6 +136,9 @@ public class ItemService {
                 return new UpdateItemSuccess(itemMapper.toItemDto(item));
             }
         }
+        if(itemDto.getSubItems() != null) {
+            itemDto.setAmount(null);
+        }
         item = new Item(store, itemDto);
         item.setItemId(itemId);
         itemRepository.save(item);
@@ -172,5 +185,57 @@ public class ItemService {
                 .forEach(commentDto -> commentService.deleteComment(currentUser, item.getItemId(), commentDto.getId()));
         itemRepository.deleteById(item.getItemId());
         return true;
+    }
+
+    @Transactional
+    public void updateCustomAttribute(AppUser currentUser, StoreConfig newStoreConfig) {
+        if (newStoreConfig.getStoreConfigId() == null) {
+            throw new IllegalArgumentException("Updated Store Config Id cannot be null.");
+        }
+        Store store = storeService.getStore(newStoreConfig.getOwner().getStoreName().replaceAll("[ /]", "_"));
+        StoreConfig currentStoreConfig = store.getStoreConfig();
+        if (currentStoreConfig.getOwner() == null || currentStoreConfig.getOwner().getAppUserId() == null
+                || !currentStoreConfig.getOwner().getAppUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You are not the owner of this Store. You cannot edit it.");
+        }
+        // Core Config cannot be edited
+        if (!currentStoreConfig.getCore().equals(newStoreConfig.getCore())) {
+            throw new IllegalArgumentException("Core Config cannot be edited");
+        }
+        List<Integer> settingsToDelete = new ArrayList<>();
+        for(int i = 0; i < currentStoreConfig.getCustomAttributesSpec().size(); i++) {
+            int finalI = i;
+            if(newStoreConfig.getCustomAttributesSpec()
+                    .stream()
+                    .noneMatch(parameterSettings ->
+                            Objects.equals(
+                                    parameterSettings.getId(),
+                                    currentStoreConfig.getCustomAttributesSpec().get(finalI).getId()))) {
+                settingsToDelete.add(i);
+            }
+        }
+        for(Integer index : settingsToDelete) {
+            for(Item item : getStoreItems(store.getStoreName())) {
+                List<Parameter> parameters = item.getCustomAttributeList();
+                parameterService.deleteParameter(parameters.get(index).getId());
+                parameters.remove(index.intValue());
+                item.setCustomAttributeList(parameters);
+            }
+        }
+        for(int i = currentStoreConfig.getCustomAttributesSpec().size() - settingsToDelete.size();
+            i < newStoreConfig.getCustomAttributesSpec().size(); i++) {
+            for(Item item : getStoreItems(store.getStoreName())) {
+                List<Parameter> parameters = item.getCustomAttributeList();
+                parameters.add(
+                        i,
+                        new Parameter(
+                                null,
+                                item,
+                                newStoreConfig.getCustomAttributesSpec().get(i).getName(),
+                                ""));
+                item.setCustomAttributeList(parameters);
+            }
+        }
+        storeService.saveStore(store);
     }
 }

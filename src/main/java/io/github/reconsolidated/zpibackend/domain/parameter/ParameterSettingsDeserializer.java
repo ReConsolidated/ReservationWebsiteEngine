@@ -19,6 +19,7 @@ public class ParameterSettingsDeserializer extends JsonDeserializer<ParameterSet
         ParameterType type = ParameterType.valueOf(node.get("dataType").asText().toUpperCase());
 
         ParameterSettings base = ParameterSettings.builder()
+                .id(node.get("id") != null ? node.get("id").asLong() : null)
                 .name(node.get("name").asText())
                 .dataType(type)
                 .isRequired(node.get("isRequired") != null && node.get("isRequired").asBoolean())

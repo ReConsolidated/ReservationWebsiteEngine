@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.domain.item.response;
 
 import io.github.reconsolidated.zpibackend.domain.item.dtos.ItemDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import net.minidev.json.annotate.JsonIgnore;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(allOf = UpdateItemResponse.class)
 public class UpdateItemSuccess implements UpdateItemResponse {
 
     @JsonIgnore

@@ -2,6 +2,7 @@ package io.github.reconsolidated.zpibackend.application;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUserService;
+import io.github.reconsolidated.zpibackend.domain.item.ItemService;
 import io.github.reconsolidated.zpibackend.domain.store.dtos.StoreNameDto;
 import io.github.reconsolidated.zpibackend.infrastracture.currentUser.CurrentUser;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
@@ -25,6 +26,7 @@ public class StoreConfigController {
 
     private final StoreConfigService storeConfigService;
     private final StoreService storeService;
+    private final ItemService itemService;
     private final AppUserService appUserService;
     @PostMapping
     @Transactional
@@ -62,10 +64,12 @@ public class StoreConfigController {
         return ResponseEntity.ok(config);
     }
 
+    @Transactional
     @PutMapping("/{storeConfigName}")
     public ResponseEntity<?> updateStoreConfig(@CurrentUser AppUser currentUser,
                                                @RequestBody StoreConfig storeConfig,
                                                @PathVariable String storeConfigName) {
+        itemService.updateCustomAttribute(currentUser, storeConfig);
         storeConfigService.updateStoreConfig(currentUser, storeConfig);
         return ResponseEntity.ok().build();
     }

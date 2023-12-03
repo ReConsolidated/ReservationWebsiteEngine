@@ -83,10 +83,10 @@ public class ReservationService {
                     }
                 }
                 for (SubItem subItem : toReserve) {
-                    if (subItem.getAmount() <= reservationDto.getAmount()) {
+                    if (subItem.getAmount() >= reservationDto.getAmount()) {
                         subItem.setAmount(subItem.getAmount() - reservationDto.getAmount());
                     } else {
-                        throw new IllegalArgumentException();
+                        throw new IllegalArgumentException("This item has insufficient amount!");
                     }
                 }
                 Reservation reservation = Reservation.builder()

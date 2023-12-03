@@ -18,6 +18,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -67,7 +68,8 @@ public class Item {
             ParameterSettings curr = store.getStoreConfig().getCustomAttributesSpec().get(i);
             if (curr instanceof ParameterStringSettings currString) {
                 if (currString.getLimitValues() &&
-                        (currString.getIsRequired() || itemDto.getCustomAttributeList().get(i).getValue() != null)) {
+                        (currString.getIsRequired() || (itemDto.getCustomAttributeList().get(i).getValue() != null
+                                && !Objects.equals(itemDto.getCustomAttributeList().get(i).getValue(), "")))) {
                     int finalI = i;
                     if (currString.getPossibleValues()
                             .stream()

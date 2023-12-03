@@ -28,7 +28,7 @@ public class SubItem {
     private Integer amount = 1;
 
     public SubItem(SubItemDto subItemDto) {
-        this.subItemId = subItemDto.getSubItemId();
+        this.subItemId = subItemDto.getId();
         this.title = subItemDto.getTitle();
         this.subtitle = subItemDto.getSubtitle();
         this.amount = subItemDto.getAmount() == null ? 1 : subItemDto.getAmount();
@@ -41,7 +41,7 @@ public class SubItem {
     }
 
     public SubItem(SubItemDto subItemDto, Integer amount) {
-        this.subItemId = subItemDto.getSubItemId();
+        this.subItemId = subItemDto.getId();
         this.title = subItemDto.getTitle();
         this.subtitle = subItemDto.getSubtitle();
         this.amount = amount;
