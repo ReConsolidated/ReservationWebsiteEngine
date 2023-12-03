@@ -139,7 +139,7 @@ public class Item {
         } else {
             return schedule != null &&
                     !schedule.getAvailableScheduleSlots().isEmpty() &&
-                    schedule.getAvailableScheduleSlots().get(0).getStartDateTime().isBefore(LocalDateTime.now());
+                    schedule.getAvailableScheduleSlots().get(0).getEndDateTime().isBefore(LocalDateTime.now());
         }
     }
 }
