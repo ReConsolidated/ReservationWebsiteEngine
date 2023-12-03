@@ -28,10 +28,6 @@ public interface FlexibleTimeStrategy {
 
     default List<ScheduleSlot> fillGaps(Reservation reservation, List<ScheduleSlot> scheduleSlots) {
 
-        scheduleSlots = scheduleSlots
-                .stream()
-                .filter(slot -> !slot.getType().equals(ReservationType.MORNING) &&
-                        !slot.getType().equals(ReservationType.OVERNIGHT)).collect(Collectors.toList());
         //needed to initialize slots with currentAmount = 0 that were fully reserved and removed
         List<Long> allSubItems = new ArrayList<>();
         for (int i = 0; i < reservation.getItem().getInitialAmount(); i++) {
@@ -63,7 +59,16 @@ public interface FlexibleTimeStrategy {
         //filling all possible gaps in time range of reservation
         ScheduleSlot prev = scheduleSlots.get(0);
         for (int i = 1; i < scheduleSlots.size(); i++) {
-            if (!prev.getEndDateTime().equals(scheduleSlots.get(i).getStartDateTime())) {
+            if(!prev.getType().equals(ReservationType.OVERNIGHT) &&
+                    scheduleSlots.get(i).getType().equals(ReservationType.MORNING)) {
+                scheduleSlots.add(i + 1, new ScheduleSlot(
+                        prev.getEndDateTime(),
+                        scheduleSlots.get(i).getEndDateTime(),
+                        allSubItems.size(),
+                        allSubItems));
+            }
+            if (!scheduleSlots.get(i).getType().equals(ReservationType.MORNING) &&
+                    !prev.getEndDateTime().equals(scheduleSlots.get(i).getStartDateTime())) {
                 scheduleSlots.add(i, new ScheduleSlot(
                         prev.getEndDateTime(),
                         scheduleSlots.get(i).getStartDateTime(),
@@ -71,6 +76,9 @@ public interface FlexibleTimeStrategy {
                         allSubItems));
             }
         }
-        return scheduleSlots;
+        return scheduleSlots
+                .stream()
+                .filter(slot -> !slot.getType().equals(ReservationType.MORNING) &&
+                        !slot.getType().equals(ReservationType.OVERNIGHT)).collect(Collectors.toList());
     }
 }

@@ -414,7 +414,7 @@ public class Schedule {
         List<ScheduleSlot> reservationSlots = availableScheduleSlots
                 .stream()
                 .filter(slot -> slot.overlap(reservationSlot))
-                .toList();
+                .collect(Collectors.toList());
         availableScheduleSlots.removeAll(reservationSlots);
         reservationSlots = getTimeStrategy(core).fillGaps(reservation, reservationSlots);
 
