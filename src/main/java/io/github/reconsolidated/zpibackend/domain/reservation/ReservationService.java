@@ -11,12 +11,14 @@ import io.github.reconsolidated.zpibackend.domain.reservation.request.CheckAvail
 import io.github.reconsolidated.zpibackend.domain.reservation.response.*;
 import io.github.reconsolidated.zpibackend.domain.reservation.dtos.UserReservationDto;
 import io.github.reconsolidated.zpibackend.domain.reservation.request.CheckAvailabilityRequest;
+import io.github.reconsolidated.zpibackend.domain.store.Store;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.CoreConfig;
 
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -228,15 +230,15 @@ public class ReservationService {
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
         Item item = reservation.getItem();
-        if (!appUser.getId().equals(reservation.getUser().getId()) &&
-                !appUser.getId().equals(item.getStore().getOwnerAppUserId())) {
+        if (!appUser.getId().equals(item.getStore().getOwnerAppUserId()) && (reservation.getUser() == null ||
+                !appUser.getId().equals(reservation.getUser().getId()))) {
             throw new IllegalArgumentException("Only owners of store or reservation cen cancel it!");
         }
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
         if (core.getFlexibility()) {
-            schedule.processReservationRemoval(reservation);
+            schedule.processReservationRemoval(core, reservation);
         } else {
             if (core.getPeriodicity() || core.getSpecificReservation()) {
                 ArrayList<SubItem> toReserve = new ArrayList<>();
@@ -257,5 +259,16 @@ public class ReservationService {
         reservation.setStatus(appUser.getId().equals(reservation.getUser().getId()) ?
                 ReservationStatus.CANCELLED_BY_USER : ReservationStatus.CANCELLED_BY_ADMIN);
         reservationRepository.save(reservation);
+    }
+
+    public boolean confirm(AppUser currentUser, String storeName, Long reservationId) {
+        Store store = storeService.getStore(storeName);
+        if(!currentUser.getId().equals(store.getOwnerAppUserId())) {
+            throw new IllegalArgumentException("Only owners of store can confirm reservations!");
+        }
+        Reservation toConfirm = reservationRepository.findById(reservationId).orElseThrow();
+        toConfirm.setConfirmed(true);
+        reservationRepository.save(toConfirm);
+        return true;
     }
 }

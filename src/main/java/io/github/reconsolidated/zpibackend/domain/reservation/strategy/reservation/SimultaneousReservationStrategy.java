@@ -46,4 +46,14 @@ public final class SimultaneousReservationStrategy implements FlexibleReservatio
         }
         return true;
     }
+
+    @Override
+    public List<ScheduleSlot> processReservationDelete(Reservation reservation, List<ScheduleSlot> toReserve) {
+        for (ScheduleSlot slot : toReserve) {
+            slot.setCurrAmount(slot.getCurrAmount() + reservation.getAmount());
+        }
+        return toReserve;
+    }
+
+
 }

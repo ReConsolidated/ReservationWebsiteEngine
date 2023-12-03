@@ -10,4 +10,5 @@ public interface FlexibleReservationStrategy {
 
     boolean verifyReservationFitting(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot);
     boolean processReservation(Schedule schedule, Reservation reservation, List<ScheduleSlot> toReserve);
+    List<ScheduleSlot> processReservationDelete(Reservation reservation, List<ScheduleSlot> toReserve);
 }

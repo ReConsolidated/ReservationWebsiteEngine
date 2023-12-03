@@ -37,6 +37,7 @@ public class ScheduleSlotTest {
 
         Item item = Item.builder()
                 .store(store)
+                .initialAmount(5)
                 .amount(5)
                 .build();
 

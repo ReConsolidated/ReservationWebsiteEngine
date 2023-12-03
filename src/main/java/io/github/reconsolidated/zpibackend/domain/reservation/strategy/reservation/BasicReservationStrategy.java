@@ -28,4 +28,9 @@ public final class BasicReservationStrategy implements FlexibleReservationStrate
     public boolean processReservation(Schedule schedule, Reservation reservation, List<ScheduleSlot> toReserve) {
         return SimultaneousReservationStrategy.getInstance().processReservation(schedule, reservation, toReserve);
     }
+
+    @Override
+    public List<ScheduleSlot> processReservationDelete(Reservation reservation, List<ScheduleSlot> toReserve) {
+        return SimultaneousReservationStrategy.getInstance().processReservationDelete(reservation, toReserve);
+    }
 }
