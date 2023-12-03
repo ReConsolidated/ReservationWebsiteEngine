@@ -136,6 +136,9 @@ public class ItemService {
                 return new UpdateItemSuccess(itemMapper.toItemDto(item));
             }
         }
+        if(itemDto.getSubItems() != null) {
+            itemDto.setAmount(null);
+        }
         item = new Item(store, itemDto);
         item.setItemId(itemId);
         itemRepository.save(item);
