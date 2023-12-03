@@ -146,6 +146,7 @@ public class StoreConfigTest {
                 .core(coreConfig2)
                 .mainPage(mainPageConfig)
                 .detailsPage(detailsPageConfig)
+                .owner(new Owner())
                 .build();
 
         storeConfigService.updateStoreConfig(user, storeConfig2);

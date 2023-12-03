@@ -228,7 +228,7 @@ public class ReservationService {
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
         Item item = reservation.getItem();
-        if(!appUser.getId().equals(reservation.getUser().getId()) &&
+        if (!appUser.getId().equals(reservation.getUser().getId()) &&
                 !appUser.getId().equals(item.getStore().getOwnerAppUserId())) {
             throw new IllegalArgumentException("Only owners of store or reservation cen cancel it!");
         }

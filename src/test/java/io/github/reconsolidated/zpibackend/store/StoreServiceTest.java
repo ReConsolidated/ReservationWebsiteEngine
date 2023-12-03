@@ -41,7 +41,7 @@ public class StoreServiceTest {
     public void testGetStore_StoreFound() {
         String storeName = "Test Store";
         Store mockStore = new Store();
-        when(storeRepository.findByStoreConfigName(storeName)).thenReturn(Optional.of(mockStore));
+        when(storeRepository.findByStoreName(storeName)).thenReturn(Optional.of(mockStore));
 
         Store result = storeService.getStore(storeName);
 
@@ -52,7 +52,7 @@ public class StoreServiceTest {
     @Test
     public void testGetStore_StoreNotFound() {
         String storeName = "Nonexistent Store";
-        when(storeRepository.findByStoreConfigName(storeName)).thenReturn(Optional.empty());
+        when(storeRepository.findByStoreName(storeName)).thenReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> storeService.getStore(storeName));
     }
@@ -68,7 +68,7 @@ public class StoreServiceTest {
         owner.setAppUserId(currentUser.getId());
         storeConfig.setOwner(owner);
 
-        when(storeConfigService.getStoreConfig(currentUser, dto.getStoreConfigId())).thenReturn(storeConfig);
+        when(storeConfigService.getStoreConfig(dto.getStoreConfigId())).thenReturn(storeConfig);
         when(storeRepository.save(any(Store.class))).thenReturn(new Store(storeConfig));
 
         Store result = storeService.createStore(currentUser, dto);

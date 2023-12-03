@@ -63,13 +63,13 @@ public class Item {
         this.amount = itemDto.getAmount() == null ?
                 (itemDto.getSubItems() == null ? 1 : itemDto.getSubItems().size()) : itemDto.getAmount();
         this.initialAmount = this.amount;
-        for(int i = 0; i < store.getStoreConfig().getCustomAttributesSpec().size(); i++) {
+        for (int i = 0; i < store.getStoreConfig().getCustomAttributesSpec().size(); i++) {
             ParameterSettings curr = store.getStoreConfig().getCustomAttributesSpec().get(i);
             if (curr instanceof ParameterStringSettings currString) {
-                if(currString.getLimitValues() &&
+                if (currString.getLimitValues() &&
                         (currString.getIsRequired() || itemDto.getCustomAttributeList().get(i).getValue() != null)) {
                     int finalI = i;
-                    if(currString.getPossibleValues()
+                    if (currString.getPossibleValues()
                             .stream()
                             .noneMatch(value -> value.equals(itemDto.getCustomAttributeList().get(finalI).getValue()))) {
                         throw new IllegalArgumentException("Parameter " + curr.getName()

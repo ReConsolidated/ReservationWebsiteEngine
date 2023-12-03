@@ -2,6 +2,13 @@ package io.github.reconsolidated.zpibackend.domain.reservation;
 
 import io.github.reconsolidated.zpibackend.domain.availability.Availability;
 import io.github.reconsolidated.zpibackend.domain.item.Item;
+import io.github.reconsolidated.zpibackend.domain.reservation.strategy.reservation.BasicReservationStrategy;
+import io.github.reconsolidated.zpibackend.domain.reservation.strategy.reservation.FlexibleReservationStrategy;
+import io.github.reconsolidated.zpibackend.domain.reservation.strategy.reservation.NotUniqueReservationStrategy;
+import io.github.reconsolidated.zpibackend.domain.reservation.strategy.reservation.SimultaneousReservationStrategy;
+import io.github.reconsolidated.zpibackend.domain.reservation.strategy.time.ContinuousTimeStrategy;
+import io.github.reconsolidated.zpibackend.domain.reservation.strategy.time.FlexibleTimeStrategy;
+import io.github.reconsolidated.zpibackend.domain.reservation.strategy.time.GranularTimeStrategy;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.CoreConfig;
 import lombok.*;
 
@@ -218,6 +225,23 @@ public class Schedule {
         }
     }
 
+    private FlexibleTimeStrategy getTimeStrategy(CoreConfig core) {
+        if (core.getGranularity()) {
+            return GranularTimeStrategy.getInstance();
+        } else {
+            return ContinuousTimeStrategy.getInstance();
+        }
+    }
+
+    private FlexibleReservationStrategy getReservationStrategy(CoreConfig core) {
+        if (!core.getUniqueness()) {
+            return NotUniqueReservationStrategy.getInstance();
+        }
+        if (core.getSimultaneous()) {
+            return SimultaneousReservationStrategy.getInstance();
+        }
+        return BasicReservationStrategy.getInstance();
+    }
     public boolean verify(CoreConfig coreConfig, ScheduleSlot scheduleSlot) {
         if (!scheduleSlot.getStartDateTime().isBefore(scheduleSlot.getEndDateTime())) {
             return false;
@@ -227,187 +251,23 @@ public class Schedule {
                 .filter(slot -> slot.overlap(scheduleSlot))
                 .toList();
         //verification of continuity of slots and boundaries
-        if (!verifyScheduleSlots(coreConfig.getGranularity(), toVerify, scheduleSlot)) {
+        if (!getTimeStrategy(coreConfig).verifyScheduleSlots(this, toVerify, scheduleSlot)) {
             return false;
         }
-        return verifyReservationFitting(coreConfig, toVerify, scheduleSlot);
-    }
-
-    private boolean verifyReservationFitting(CoreConfig coreConfig, List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
-        if (!coreConfig.getUniqueness()) {
-            return verifyReservationFittingNotUnique(scheduleSlots, reservationSlot);
-        }
-        if (coreConfig.getSimultaneous()) {
-            return verifyReservationFittingSimultaneously(scheduleSlots, reservationSlot);
-        }
-        return true;
-    }
-
-    private boolean verifyReservationFittingSimultaneously(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
-
-        if (scheduleSlots.isEmpty()) {
-            return false;
-        }
-        return scheduleSlots
-                .stream()
-                .allMatch(scheduleSlot -> scheduleSlot.getCurrAmount() >= reservationSlot.getCurrAmount());
-    }
-
-    private boolean verifyReservationFittingNotUnique(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
-
-        if (scheduleSlots.isEmpty()) {
-            return false;
-        }
-        ArrayList<Integer> subItemIndexes = scheduleSlots.get(0).getAvailableItemsIndexes();
-        for (ScheduleSlot currSlot : scheduleSlots) {
-            //remove indexes that aren't available in all slots
-            subItemIndexes.removeIf(index -> !currSlot.getAvailableItemsIndexes().contains(index));
-            //amount is too small
-            if (subItemIndexes.size() < reservationSlot.getCurrAmount()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean verifyScheduleSlots(boolean granularity, List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
-        return granularity ?
-                verifyScheduleSlotsGranular(scheduleSlots, reservationSlot) :
-                verifyScheduleSlotsNotGranular(scheduleSlots, reservationSlot);
-    }
-
-    private boolean verifyScheduleSlotsGranular(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
-        if (scheduleSlots.isEmpty()) {
-            return false;
-        }
-        if (!scheduleSlots.get(0).getStartDateTime().equals(reservationSlot.getStartDateTime())) {
-            return false;
-        }
-        if (!scheduleSlots.get(scheduleSlots.size() - 1).getEndDateTime().equals(reservationSlot.getEndDateTime())) {
-            return false;
-        }
-        return checkSlotsContinuity(scheduleSlots);
-    }
-
-    private boolean verifyScheduleSlotsNotGranular(List<ScheduleSlot> scheduleSlots, ScheduleSlot reservationSlot) {
-        if (scheduleSlots.isEmpty()) {
-            return false;
-        }
-        if (scheduleSlots.get(0).getStartDateTime().isAfter(reservationSlot.getStartDateTime())) {
-            return false;
-        }
-        if (scheduleSlots.get(scheduleSlots.size() - 1).getEndDateTime().isBefore(reservationSlot.getEndDateTime())) {
-            return false;
-        }
-        return checkSlotsContinuity(scheduleSlots);
-    }
-
-    private boolean checkSlotsContinuity(List<ScheduleSlot> scheduleSlots) {
-        for (int i = 0; i < scheduleSlots.size() - 1; i++) {
-            if (!scheduleSlots.get(i).getEndDateTime().equals(scheduleSlots.get(i + 1).getStartDateTime()) &&
-                    !(scheduleSlots.get(i).getType() == ReservationType.OVERNIGHT &&
-                    scheduleSlots.get(i + 1).getType() == ReservationType.MORNING)) {
-                return false;
-            }
-        }
-        return true;
+        return getReservationStrategy(coreConfig).verifyReservationFitting(toVerify, scheduleSlot);
     }
 
     public boolean processReservation(CoreConfig core, Reservation reservation) {
         List<ScheduleSlot> toReserve = availableScheduleSlots.stream()
                 .filter(slot -> slot.overlap(reservation.getScheduleSlot()))
                 .toList();
-        if (core.getGranularity()) {
-            if (!verifyScheduleSlotsGranular(toReserve, reservation.getScheduleSlot())) {
-                return false;
-            }
-        } else {
-            if (!verifyScheduleSlotsNotGranular(toReserve, reservation.getScheduleSlot())) {
-                return false;
-            }
-            toReserve = prepareScheduleNotGranular(reservation, toReserve);
-        }
-        if (!core.getUniqueness()) {
-            return processReservationNotUnique(reservation, toReserve);
-        } else {
-            return processReservationUnique(reservation, toReserve);
-        }
-    }
 
-    private List<ScheduleSlot> prepareScheduleNotGranular(Reservation reservation, List<ScheduleSlot> toReserve) {
-        if (toReserve.isEmpty()) {
-            return new ArrayList<>();
-        }
-        ArrayList<ScheduleSlot> preparedToReserve = new ArrayList<>(toReserve.size());
-        preparedToReserve.addAll(toReserve);
-
-        if (preparedToReserve.get(0).getStartDateTime().isBefore(reservation.getStartDateTime())) {
-            ScheduleSlot first = preparedToReserve.get(0);
-            int firstIndex = availableScheduleSlots.indexOf(first);
-            availableScheduleSlots.remove(firstIndex);
-            preparedToReserve.remove(0);
-            ScheduleSlot[] split = first.split(reservation.getStartDateTime());
-            availableScheduleSlots.addAll(firstIndex, Arrays.asList(split));
-            preparedToReserve.add(0, split[1]);
-        }
-        if (preparedToReserve.get(preparedToReserve.size() - 1).getEndDateTime().isAfter(reservation.getEndDateTime())) {
-            ScheduleSlot last = preparedToReserve.get(preparedToReserve.size() - 1);
-            int lastIndex = availableScheduleSlots.indexOf(last);
-            availableScheduleSlots.remove(lastIndex);
-            preparedToReserve.remove(preparedToReserve.size() - 1);
-            ScheduleSlot[] split = last.split(reservation.getEndDateTime());
-            availableScheduleSlots.addAll(lastIndex, Arrays.asList(split));
-            preparedToReserve.add(split[0]);
-        }
-        return preparedToReserve;
-    }
-
-    private boolean processReservationNotUnique(Reservation reservation, List<ScheduleSlot> toReserve) {
-        if (toReserve.isEmpty()) {
+        if (!getTimeStrategy(core).verifyScheduleSlots(this, toReserve, reservation.getScheduleSlot())) {
             return false;
         }
-        List<Integer> availableSubItemsId = toReserve.get(0).getAvailableItemsIndexes();
-        for (ScheduleSlot slot : toReserve) {
-            availableSubItemsId = availableSubItemsId
-                    .stream()
-                    .filter(index -> slot.getAvailableItemsIndexes().contains(index))
-                    .toList();
-            if (availableSubItemsId.size() < reservation.getAmount()) {
-                return false;
-            }
-        }
-        ArrayList<Long> reservedSubItemsIndexes = new ArrayList<>();
-        for (int i = 0; i < reservation.getAmount(); i++) {
-            reservedSubItemsIndexes.add(Long.valueOf(availableSubItemsId.get(i)));
-        }
-        for (ScheduleSlot slot : toReserve) {
-            slot.setCurrAmount(slot.getCurrAmount() - reservation.getAmount());
-            for (Long subItemId : reservedSubItemsIndexes) {
-                slot.getItemsAvailability().set(subItemId.intValue(), false);
-            }
-            if (slot.getCurrAmount() == 0) {
-                removeSlot(slot);
-            }
-        }
-        reservation.setSubItemIdList(reservedSubItemsIndexes);
-        return true;
-    }
+        toReserve = getTimeStrategy(core).prepareSchedule(this, reservation, toReserve);
 
-    private boolean processReservationUnique(Reservation reservation, List<ScheduleSlot> toReserve) {
-        if (toReserve.isEmpty()) {
-            return false;
-        }
-        for (ScheduleSlot slot : toReserve) {
-            if (slot.getCurrAmount() >= reservation.getAmount()) {
-                slot.setCurrAmount(slot.getCurrAmount() - reservation.getAmount());
-                if (slot.getCurrAmount() == 0) {
-                    removeSlot(slot);
-                }
-            } else {
-                return false;
-            }
-        }
-        return true;
+        return getReservationStrategy(core).processReservation(this, reservation, toReserve);
     }
 
     /**
