@@ -76,7 +76,7 @@ public class ItemTest {
         );
         commentService.addComment(appUser, item.getItemId(), commentDto);
 
-        ItemDto resultItem = itemService.getItemDto(item.getItemId());
+        ItemDto resultItem = itemService.getItemDtoWithAvailableSubItems(item.getItemId());
         assertThat(resultItem.getMark()).isEqualTo(4.0);
     }
 

@@ -58,7 +58,7 @@ public class ItemController {
     public ResponseEntity<ItemDto> getItem(@CurrentUser AppUser currentUser,
                                         @PathVariable String storeName,
                                         @PathVariable Long itemId) {
-        return ResponseEntity.ok(itemService.getItemDto(itemId));
+        return ResponseEntity.ok(itemService.getItemDtoWithAvailableSubItems(itemId));
     }
 
     @DeleteMapping("/{itemId}")

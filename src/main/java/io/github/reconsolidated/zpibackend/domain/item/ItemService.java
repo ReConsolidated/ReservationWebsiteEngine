@@ -52,8 +52,18 @@ public class ItemService {
     }
 
 
-    public ItemDto getItemDto(Long itemId) {
-        return itemMapper.toItemDto(itemRepository.findById(itemId).orElseThrow());
+    public ItemDto getItemDtoWithAvailableSubItems(Long itemId) {
+        List<Reservation> reservations = reservationService.getItemReservations(itemId);
+        Item item = itemRepository.findById(itemId).orElseThrow();
+        item.setSubItems(item.getSubItems().stream().filter((subItem) -> {
+            for (Reservation reservation : reservations) {
+                if (reservation.getSubItemIdList().contains(subItem.getSubItemId())) {
+                    return false;
+                }
+            }
+            return true;
+        }).toList());
+        return itemMapper.toItemDto(item);
     }
 
     public List<ItemDto> getItems(AppUser currentUser, String storeName) {
