@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubItemDto {
-    private Long subItemId;
+    private Long id;
     private String title;
     private String subtitle;
     private Integer amount;
