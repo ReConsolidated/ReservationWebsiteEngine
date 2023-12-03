@@ -25,6 +25,8 @@ public class Comment {
     @ManyToOne
     private AppUser user;
     private LocalDateTime dateTime;
+    @Column(length = 1000)
     private String content;
     private Double rating;
+    private String nickname;
 }
