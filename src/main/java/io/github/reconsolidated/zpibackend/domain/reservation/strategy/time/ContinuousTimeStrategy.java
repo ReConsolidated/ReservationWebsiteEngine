@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ContinuousTimeStrategy implements FlexibleTimeStrategy {
+public final class ContinuousTimeStrategy implements FlexibleTimeStrategy {
 
     private static ContinuousTimeStrategy INSTANCE;
     private ContinuousTimeStrategy() {
     }
 
     public static ContinuousTimeStrategy getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new ContinuousTimeStrategy();
         }
         return INSTANCE;

@@ -7,14 +7,14 @@ import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotUniqueReservationStrategy implements FlexibleReservationStrategy {
+public final class NotUniqueReservationStrategy implements FlexibleReservationStrategy {
 
     private static NotUniqueReservationStrategy INSTANCE;
     private NotUniqueReservationStrategy() {
     }
 
     public static NotUniqueReservationStrategy getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new NotUniqueReservationStrategy();
         }
         return INSTANCE;

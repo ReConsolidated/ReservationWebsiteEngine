@@ -226,7 +226,7 @@ public class Schedule {
     }
 
     private FlexibleTimeStrategy getTimeStrategy(CoreConfig core) {
-        if(core.getGranularity()) {
+        if (core.getGranularity()) {
             return GranularTimeStrategy.getInstance();
         } else {
             return ContinuousTimeStrategy.getInstance();
@@ -234,10 +234,10 @@ public class Schedule {
     }
 
     private FlexibleReservationStrategy getReservationStrategy(CoreConfig core) {
-        if(!core.getUniqueness()) {
+        if (!core.getUniqueness()) {
             return NotUniqueReservationStrategy.getInstance();
         }
-        if(core.getSimultaneous()) {
+        if (core.getSimultaneous()) {
             return SimultaneousReservationStrategy.getInstance();
         }
         return BasicReservationStrategy.getInstance();

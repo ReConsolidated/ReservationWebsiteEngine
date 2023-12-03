@@ -6,7 +6,7 @@ import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
 
 import java.util.List;
 
-public class BasicReservationStrategy implements FlexibleReservationStrategy{
+public final class BasicReservationStrategy implements FlexibleReservationStrategy {
 
     private static BasicReservationStrategy INSTANCE;
 
@@ -14,7 +14,7 @@ public class BasicReservationStrategy implements FlexibleReservationStrategy{
     }
 
     public static BasicReservationStrategy getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new BasicReservationStrategy();
         }
         return INSTANCE;

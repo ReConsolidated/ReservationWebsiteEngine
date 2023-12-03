@@ -6,7 +6,7 @@ import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
 
 import java.util.List;
 
-public class GranularTimeStrategy implements FlexibleTimeStrategy {
+public final class GranularTimeStrategy implements FlexibleTimeStrategy {
 
     private static GranularTimeStrategy INSTANCE;
 
@@ -14,7 +14,7 @@ public class GranularTimeStrategy implements FlexibleTimeStrategy {
     }
 
     public static GranularTimeStrategy getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new GranularTimeStrategy();
         }
         return INSTANCE;

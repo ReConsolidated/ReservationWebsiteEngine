@@ -6,7 +6,7 @@ import io.github.reconsolidated.zpibackend.domain.reservation.ScheduleSlot;
 
 import java.util.List;
 
-public class SimultaneousReservationStrategy implements FlexibleReservationStrategy {
+public final class SimultaneousReservationStrategy implements FlexibleReservationStrategy {
 
     private static SimultaneousReservationStrategy INSTANCE;
 
@@ -14,7 +14,7 @@ public class SimultaneousReservationStrategy implements FlexibleReservationStrat
     }
 
     public static SimultaneousReservationStrategy getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new SimultaneousReservationStrategy();
         }
         return INSTANCE;
