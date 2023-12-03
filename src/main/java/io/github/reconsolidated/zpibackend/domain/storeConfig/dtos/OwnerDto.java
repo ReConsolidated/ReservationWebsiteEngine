@@ -23,7 +23,7 @@ public class OwnerDto {
         this.ownerId = owner.getOwnerId();
         this.name = owner.getStoreName();
         this.logoSrc = owner.getImageUrl();
-        this.phone = owner.getPhoneNumber();
+        this.phone = owner.getPhone();
         this.email = owner.getEmail();
         this.color = owner.getColor();
         this.storeName = owner.getStoreName().replaceAll("[ /]", "_");
@@ -35,7 +35,7 @@ public class OwnerDto {
                 .appUserId(ownerUserId)
                 .storeName(name)
                 .imageUrl(logoSrc)
-                .phoneNumber(phone)
+                .phone(phone)
                 .email(email)
                 .color(color)
                 .build();
