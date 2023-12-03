@@ -68,4 +68,13 @@ public final class NotUniqueReservationStrategy implements FlexibleReservationSt
         reservation.setSubItemIdList(reservedSubItemsIndexes);
         return true;
     }
+
+    @Override
+    public List<ScheduleSlot> processReservationDelete(Reservation reservation, List<ScheduleSlot> toReserve) {
+        for (ScheduleSlot slot : toReserve) {
+            slot.setCurrAmount(slot.getCurrAmount() + reservation.getAmount());
+            reservation.getSubItemIdList().forEach(index -> slot.getItemsAvailability().set(index.intValue(), true));
+        }
+        return toReserve;
+    }
 }

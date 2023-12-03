@@ -146,7 +146,7 @@ public class Schedule {
                     ScheduleSlot morningSlot = new ScheduleSlot(
                             scheduleSlot.getStartDateTime().minusMinutes(OVERNIGHT_DURATION),
                             scheduleSlot.getStartDateTime(),
-                            scheduleSlot.getCurrAmount(),
+                            scheduleSlot.getItemsAvailability().size(),
                             ReservationType.MORNING);
                     availableScheduleSlots.add(index, morningSlot);
                 } else {
@@ -169,7 +169,7 @@ public class Schedule {
                                 new ScheduleSlot(
                                         scheduleSlot.getEndDateTime(),
                                         scheduleSlot.getEndDateTime().plusMinutes(OVERNIGHT_DURATION),
-                                        scheduleSlot.getCurrAmount(),
+                                        scheduleSlot.getItemsAvailability().size(),
                                         ReservationType.OVERNIGHT));
                     }
                 }
@@ -190,12 +190,12 @@ public class Schedule {
                             new ScheduleSlot(
                                     scheduleSlot.getStartDateTime().minusMinutes(OVERNIGHT_DURATION),
                                     scheduleSlot.getStartDateTime(),
-                                    scheduleSlot.getCurrAmount(),
+                                    scheduleSlot.getItemsAvailability().size(),
                                     ReservationType.MORNING),
                             new ScheduleSlot(
                                     scheduleSlot.getEndDateTime(),
                                     scheduleSlot.getEndDateTime().plusMinutes(OVERNIGHT_DURATION),
-                                    scheduleSlot.getCurrAmount(),
+                                    scheduleSlot.getItemsAvailability().size(),
                                     ReservationType.OVERNIGHT)));
             }
         } else {
@@ -408,25 +408,17 @@ public class Schedule {
         return continuousSlots;
     }
 
-    public void processReservationRemoval(Reservation reservation) {
-        for (ScheduleSlot scheduleSlot : availableScheduleSlots) {
-            if (scheduleSlot.equalsTime(reservation.getScheduleSlot())) {
-                scheduleSlot.setCurrAmount(scheduleSlot.getCurrAmount() + reservation.getAmount());
-                for (int i = 0; i < reservation.getAmount(); i++) {
-                    scheduleSlot.getItemsAvailability().set(reservation.getSubItemIdList().get(i).intValue(), true);
-                }
-                return;
-            }
-        }
-        for (int i = 0; i < reservation.getAmount(); i++) {
-            int index = reservation.getSubItemIdList().get(i).intValue();
-            List<Boolean> itemAvailability = reservation.getScheduleSlot().getItemsAvailability();
-            while (index >= itemAvailability.size()) {
-                itemAvailability.add(true);
-            }
-            itemAvailability.set(index, true);
-            reservation.getScheduleSlot().setItemsAvailability(itemAvailability);
-        }
-        availableScheduleSlots.add(reservation.getScheduleSlot());
+    public void processReservationRemoval(CoreConfig core, Reservation reservation) {
+
+        ScheduleSlot reservationSlot = reservation.getScheduleSlot();
+        List<ScheduleSlot> reservationSlots = availableScheduleSlots
+                .stream()
+                .filter(slot -> slot.overlap(reservationSlot))
+                .toList();
+        availableScheduleSlots.removeAll(reservationSlots);
+        reservationSlots = getTimeStrategy(core).fillGaps(reservation, reservationSlots);
+
+        List<ScheduleSlot> restoredSlots = getReservationStrategy(core).processReservationDelete(reservation, reservationSlots);
+        restoredSlots.forEach(this::addSlot);
     }
 }

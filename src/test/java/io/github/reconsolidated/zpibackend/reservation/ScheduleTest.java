@@ -801,4 +801,113 @@ public class ScheduleTest {
         assertEquals(ReservationType.OVERNIGHT, result.get(6).getType());
     }
 
+    @Test
+    public void processReservationRemovalEmptyScheduleTest() {
+        CoreConfig core = CoreConfig.builder()
+                .flexibility(true)
+                .granularity(false)
+                .uniqueness(false)
+                .allowOverNight(true)
+                .uniqueness(false)
+                .simultaneous(false)
+                .build();
+
+        StoreConfig storeConfig = StoreConfig.builder()
+                .core(core)
+                .build();
+
+        Store store = Store.builder()
+                .storeConfig(storeConfig)
+                .build();
+
+        LocalDateTime startDateTime = LocalDateTime.of(2023, 1, 1, 14, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2023, 1, 1, 16, 0);
+
+        Item item = Item.builder()
+                .store(store)
+                .initialAmount(3)
+                .amount(3)
+                .build();
+
+        Schedule schedule = new Schedule(1L, item);
+
+        Reservation reservation = Reservation.builder()
+                .item(item)
+                .amount(2)
+                .startDateTime(startDateTime)
+                .endDateTime(endDateTime)
+                .subItemIdList(List.of(0L,2L))
+                .build();
+
+        schedule.processReservationRemoval(core, reservation);
+        ScheduleSlot morningSlot = new ScheduleSlot(
+                startDateTime.minusMinutes(OVERNIGHT_DURATION),
+                startDateTime,
+                item.getAmount(),
+                ReservationType.MORNING);
+        ScheduleSlot resultSlot = new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), List.of(1L));
+        ScheduleSlot overnightSlot = new ScheduleSlot(
+                endDateTime,
+                endDateTime.plusMinutes(OVERNIGHT_DURATION),
+                item.getAmount(),
+                ReservationType.OVERNIGHT);
+        assertEquals(List.of(morningSlot, resultSlot, overnightSlot), schedule.getAvailableScheduleSlots());
+    }
+
+    @Test
+    public void processReservationRemovalTest() {
+        CoreConfig core = CoreConfig.builder()
+                .flexibility(true)
+                .granularity(false)
+                .uniqueness(false)
+                .allowOverNight(true)
+                .uniqueness(false)
+                .simultaneous(false)
+                .build();
+
+        StoreConfig storeConfig = StoreConfig.builder()
+                .core(core)
+                .build();
+
+        Store store = Store.builder()
+                .storeConfig(storeConfig)
+                .build();
+
+        LocalDateTime startDateTime = LocalDateTime.of(2023, 1, 1, 14, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(2023, 1, 1, 16, 0);
+
+        Item item = Item.builder()
+                .store(store)
+                .initialAmount(3)
+                .amount(3)
+                .build();
+
+
+
+        Schedule schedule = new Schedule(1L, item);
+        schedule.addSlot(new ScheduleSlot(startDateTime, endDateTime, item.getInitialAmount(), List.of(0L, 2L)));
+
+        Reservation reservation = Reservation.builder()
+                .item(item)
+                .amount(2)
+                .startDateTime(startDateTime)
+                .endDateTime(endDateTime)
+                .subItemIdList(List.of(0L,2L))
+                .build();
+
+        schedule.processReservationRemoval(core, reservation);
+        ScheduleSlot morningSlot = new ScheduleSlot(
+                startDateTime.minusMinutes(OVERNIGHT_DURATION),
+                startDateTime,
+                item.getAmount(),
+                ReservationType.MORNING);
+        ScheduleSlot resultSlot = new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), List.of());
+        ScheduleSlot overnightSlot = new ScheduleSlot(
+                endDateTime,
+                endDateTime.plusMinutes(OVERNIGHT_DURATION),
+                item.getAmount(),
+                ReservationType.OVERNIGHT);
+        assertEquals(List.of(morningSlot, resultSlot, overnightSlot), schedule.getAvailableScheduleSlots());
+    }
+
 }

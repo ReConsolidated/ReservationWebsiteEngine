@@ -230,15 +230,15 @@ public class ReservationService {
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow();
         Item item = reservation.getItem();
-        if (!appUser.getId().equals(reservation.getUser().getId()) &&
-                !appUser.getId().equals(item.getStore().getOwnerAppUserId())) {
+        if (!appUser.getId().equals(item.getStore().getOwnerAppUserId()) && (reservation.getUser() == null ||
+                !appUser.getId().equals(reservation.getUser().getId()))) {
             throw new IllegalArgumentException("Only owners of store or reservation cen cancel it!");
         }
         Schedule schedule = item.getSchedule();
         CoreConfig core = item.getStore().getStoreConfig().getCore();
 
         if (core.getFlexibility()) {
-            schedule.processReservationRemoval(reservation);
+            schedule.processReservationRemoval(core, reservation);
         } else {
             if (core.getPeriodicity() || core.getSpecificReservation()) {
                 ArrayList<SubItem> toReserve = new ArrayList<>();

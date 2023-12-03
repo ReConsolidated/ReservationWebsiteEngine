@@ -36,7 +36,7 @@ public class Reservation {
     private ReservationStatus status;
 
     public ScheduleSlot getScheduleSlot() {
-        return new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), subItemIdList);
+        return new ScheduleSlot(startDateTime, endDateTime, item.getInitialAmount(), subItemIdList);
     }
 
     public void addPersonalData(int index, String data) {
