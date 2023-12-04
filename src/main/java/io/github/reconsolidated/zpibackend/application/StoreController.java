@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.application;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
+import io.github.reconsolidated.zpibackend.domain.store.Store;
 import io.github.reconsolidated.zpibackend.infrastracture.currentUser.CurrentUser;
 import io.github.reconsolidated.zpibackend.domain.store.StoreService;
 import io.github.reconsolidated.zpibackend.domain.store.dtos.StoreNameDto;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -29,6 +31,7 @@ public class StoreController {
     public ResponseEntity<List<StoreNameDto>> listStores() {
         return ResponseEntity.ok(storeService.listStores()
                 .stream()
+                .sorted(Comparator.comparingLong(Store::getId).reversed())
                 .map(store -> new StoreNameDto(store.getStoreConfig()))
                 .toList());
     }
@@ -37,6 +40,7 @@ public class StoreController {
     public ResponseEntity<List<StoreNameDto>> listAllStores(@CurrentUser AppUser currentUser) {
         return ResponseEntity.ok(storeService.listStores(currentUser)
                 .stream()
+                .sorted(Comparator.comparingLong(Store::getId).reversed())
                 .map(store -> new StoreNameDto(store.getStoreConfig()))
                 .toList());
     }
