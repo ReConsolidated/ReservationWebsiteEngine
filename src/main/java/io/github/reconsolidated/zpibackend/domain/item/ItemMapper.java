@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 @Component
 @NoArgsConstructor
@@ -20,13 +21,18 @@ public class ItemMapper {
     public ItemDto toItemDto(Item item) {
         List<CommentDto> comments = commentService.getComments(item.getItemId());
         Double average = comments.stream()
+                .filter(comment -> comment.getRating() != null && comment.getRating() > 0)
                 .mapToDouble(CommentDto::getRating)
                 .average()
                 .orElse(0);
+
+        long count = comments.stream()
+                .filter(comment -> comment.getRating() != null && comment.getRating() > 0)
+                .count();
         return new ItemDto(
                 item,
                 average,
-                comments.size()
+                (int) count
         );
     }
 }
