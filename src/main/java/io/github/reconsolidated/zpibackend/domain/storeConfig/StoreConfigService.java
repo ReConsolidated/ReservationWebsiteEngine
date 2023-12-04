@@ -35,7 +35,6 @@ public class StoreConfigService {
                 .authConfig(storeConfigDto.getAuthConfig())
                 .customAttributesSpec(storeConfigDto.getCustomAttributesSpec())
                 .build();
-
         storeConfigValidator.validateStoreConfig(storeConfig);
 
         return storeConfigRepository.save(storeConfig);

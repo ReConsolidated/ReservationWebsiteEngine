@@ -21,6 +21,9 @@ public class ScheduleSlot {
     @Id
     @GeneratedValue(generator = "schedule_slot_generator")
     private Long scheduleSlotId;
+    @JoinColumn(name = "schedule_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    Schedule schedule;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime startDateTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -28,7 +31,19 @@ public class ScheduleSlot {
     private Integer currAmount;
     @Convert(converter = BooleanListToStringConverter.class)
     private List<Boolean> itemsAvailability;
+    @Builder.Default
     private ReservationType type = ReservationType.NONE;
+
+    public ScheduleSlot(Schedule schedule, LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initialAmount) {
+        this.schedule = schedule;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.currAmount = initialAmount;
+        this.itemsAvailability = new ArrayList<>(initialAmount);
+        for (int i = 0; i < initialAmount; i++) {
+            itemsAvailability.add(true);
+        }
+    }
 
     public ScheduleSlot(LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initialAmount) {
         this.startDateTime = startDateTime;

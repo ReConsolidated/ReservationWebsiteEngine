@@ -24,8 +24,10 @@ public class Reservation {
     private String email;
     @ManyToOne
     private Item item;
+    @Builder.Default
     @ElementCollection
     private List<Long> subItemIdList = new ArrayList<>();
+    @Builder.Default
     @ElementCollection
     private List<String> personalData = new ArrayList<>();
     private LocalDateTime startDateTime;
@@ -39,14 +41,8 @@ public class Reservation {
         return new ScheduleSlot(startDateTime, endDateTime, item.getInitialAmount(), subItemIdList);
     }
 
-    public void addPersonalData(int index, String data) {
-        personalData.add(index, data);
-    }
-
     public void setStatus(LocalDateTime now) {
-        if (status == ReservationStatus.CANCELLED_BY_USER || status == ReservationStatus.CANCELLED_BY_ADMIN) {
-
-        } else {
+        if (!(status == ReservationStatus.CANCELLED_BY_USER || status == ReservationStatus.CANCELLED_BY_ADMIN)) {
             if (startDateTime == null || !startDateTime.isBefore(now)) {
                 status = ReservationStatus.ACTIVE;
             } else {

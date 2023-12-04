@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -31,7 +32,8 @@ public class Item {
     @Id
     @GeneratedValue(generator = "item_generator")
     private Long itemId;
-    @ManyToOne
+    @JoinColumn(name = "store_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Store store;
     private Boolean active;
     private String title;
@@ -45,13 +47,13 @@ public class Item {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Schedule initialSchedule = new Schedule(this, new ArrayList<>());
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", orphanRemoval = true)
     private List<Parameter> customAttributeList;
     @Builder.Default
     private Integer amount = 1;
     @Builder.Default
     private Integer initialAmount = 1;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", orphanRemoval = true)
     private List<SubItem> subItems;
 
     public Item(Store store, ItemDto itemDto) {
@@ -80,7 +82,10 @@ public class Item {
                 }
             }
         }
-        this.customAttributeList = itemDto.getCustomAttributeList().stream().map((p) -> new Parameter(p, this)).toList();
+        this.customAttributeList = itemDto.getCustomAttributeList()
+                .stream()
+                .map((p) -> new Parameter(p, this))
+                .collect(Collectors.toList());
         if (store.getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
             this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
@@ -111,7 +116,7 @@ public class Item {
         }
         this.subItems = itemDto.getSubItems() == null ?
                 new ArrayList<>() :
-                itemDto.getSubItems().stream().map(SubItem::new).toList();
+                itemDto.getSubItems().stream().map(subItemDto -> new SubItem(subItemDto, this)).toList();
     }
 
     public SubItemListDto getSubItemsListDto() {
