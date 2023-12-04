@@ -30,13 +30,13 @@ public class ScheduleTest {
     public void testAddSlot() {
 
         //slots to be added to schedule
-        ScheduleSlot firstSlot = new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        ScheduleSlot firstSlot = new ScheduleSlot(null, LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 1);
-        ScheduleSlot secondSlot = new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 14, 0),
+        ScheduleSlot secondSlot = new ScheduleSlot(null, LocalDateTime.of(2023, 1, 1, 14, 0),
                 LocalDateTime.of(2023, 1, 1, 14, 0),
                 1);
-        ScheduleSlot overlappingSlot = new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 30),
+        ScheduleSlot overlappingSlot = new ScheduleSlot(null, LocalDateTime.of(2023, 1, 1, 12, 30),
                 LocalDateTime.of(2023, 1, 1, 14, 30),
                 1);
 
@@ -94,7 +94,7 @@ public class ScheduleTest {
 
         Schedule schedule = new Schedule(1L, item);
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        schedule.addSlot(new ScheduleSlot(schedule, LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 1));
 
@@ -123,18 +123,19 @@ public class ScheduleTest {
 
         Schedule schedule = new Schedule(1L, item);
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        schedule.addSlot(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 1));
         //creating expected result
         ArrayList<ScheduleSlot> result = new ArrayList<>();
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
+        result.add(new ScheduleSlot(schedule,LocalDateTime.of(2023, 1, 1, 11, 30),
                 LocalDateTime.of(2023, 1, 1, 12, 0),
                 1, ReservationType.MORNING));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        result.add(new ScheduleSlot(schedule, LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 1, ReservationType.CONTINUOUS));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 13, 0),
+        result.add(new ScheduleSlot(schedule, LocalDateTime.of(2023, 1, 1, 13, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 30),
                 1, ReservationType.OVERNIGHT));
 
@@ -143,21 +144,25 @@ public class ScheduleTest {
             assertEquals(result.get(i).getType(), schedule.getAvailableScheduleSlots().get(i).getType());
         }
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 14, 0),
+        schedule.addSlot(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 14, 0),
                 LocalDateTime.of(2023, 1, 1, 15, 0),
                 1));
         //creating expected result
         result.clear();
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
+        result.add(new ScheduleSlot(schedule, LocalDateTime.of(2023, 1, 1, 11, 30),
                 LocalDateTime.of(2023, 1, 1, 12, 0),
                 1, ReservationType.MORNING));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        result.add(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 1, ReservationType.CONTINUOUS));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 14, 0),
+        result.add(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 14, 0),
                 LocalDateTime.of(2023, 1, 1, 15, 0),
                 1, ReservationType.CONTINUOUS));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 15, 0),
+        result.add(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 15, 0),
                 LocalDateTime.of(2023, 1, 1, 15, 30),
                 1, ReservationType.OVERNIGHT));
 
@@ -167,24 +172,30 @@ public class ScheduleTest {
             assertEquals(result.get(i).getType(), schedule.getAvailableScheduleSlots().get(i).getType());
         }
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 13, 0),
+        schedule.addSlot(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 13, 0),
                 LocalDateTime.of(2023, 1, 1, 14, 0),
                 1));
         //creating expected result
         result.clear();
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
+        result.add(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 11, 30),
                 LocalDateTime.of(2023, 1, 1, 12, 0),
                 1, ReservationType.MORNING));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        result.add(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 1, ReservationType.CONTINUOUS));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 13, 0),
+        result.add(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 13, 0),
                 LocalDateTime.of(2023, 1, 1, 14, 0),
                 1, ReservationType.CONTINUOUS));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 14, 0),
+        result.add(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 14, 0),
                 LocalDateTime.of(2023, 1, 1, 15, 0),
                 1, ReservationType.CONTINUOUS));
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 15, 0),
+        result.add(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 15, 0),
                 LocalDateTime.of(2023, 1, 1, 15, 30),
                 1, ReservationType.OVERNIGHT));
 
@@ -215,7 +226,8 @@ public class ScheduleTest {
 
         Schedule schedule = new Schedule(1L, item);
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        schedule.addSlot(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0), 1));
 
         assertEquals(ReservationType.SLOT, schedule.getAvailableScheduleSlots().get(0).getType());
@@ -248,30 +260,36 @@ public class ScheduleTest {
         //empty schedule
         assertFalse(
                 schedule.verify(core,
-                new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+                new ScheduleSlot(schedule,
+                        LocalDateTime.of(2023, 1, 1, 12, 0),
                         LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        schedule.addSlot(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0), 1));
         //fitting slot
         assertTrue(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 12, 30), 1)));
         //too big amount
         assertFalse(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 2)));
         //too early slot
         assertFalse(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 11, 30),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
         //too late slot
         assertFalse(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 30), 1)));
 
     }
@@ -300,35 +318,42 @@ public class ScheduleTest {
         //empty schedule
         assertFalse(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        schedule.addSlot(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0), 1));
         //fitting slot
         assertTrue(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
         //slot not matching whole schedule slot
         assertFalse(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 12, 30), 1)));
         //too big amount
         assertFalse(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 2)));
         //too early slot
         assertFalse(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 11, 30),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 11, 30),
                                 LocalDateTime.of(2023, 1, 1, 13, 0), 1)));
         //too late slot
         assertFalse(
                 schedule.verify(core,
-                        new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+                        new ScheduleSlot(schedule,
+                                LocalDateTime.of(2023, 1, 1, 12, 0),
                                 LocalDateTime.of(2023, 1, 1, 13, 30), 1)));
 
     }
@@ -360,7 +385,8 @@ public class ScheduleTest {
 
         Schedule schedule = new Schedule(1L, item);
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        schedule.addSlot(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 14, 0), 2));
 
         ArrayList<ScheduleSlot> result = new ArrayList<>();
@@ -370,7 +396,8 @@ public class ScheduleTest {
                 .currAmount(1)
                 .itemsAvailability(Arrays.asList(false, true))
                 .build());
-        result.add(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 13, 0),
+        result.add(new ScheduleSlot(schedule,
+                LocalDateTime.of(2023, 1, 1, 13, 0),
                 LocalDateTime.of(2023, 1, 1, 14, 0), 2));
 
         Reservation reservation = Reservation.builder()
@@ -452,6 +479,7 @@ public class ScheduleTest {
         Schedule schedule = new Schedule(1L, item);
         //empty schedule -> no suggestions
         ScheduleSlot testSlot = new ScheduleSlot(
+                schedule,
                 LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 13, 0),
                 2);
@@ -464,22 +492,27 @@ public class ScheduleTest {
         item.setAmount(4);
         //all types of suggestions
         ScheduleSlot dayBeforeSlot = new ScheduleSlot(
+                schedule,
                 LocalDateTime.of(2022, 12, 31, 12, 0),
                 LocalDateTime.of(2022, 12, 31, 13, 0),
                 4);
         ScheduleSlot dayAfterSlotSchedule = new ScheduleSlot(
+                schedule,
                 LocalDateTime.of(2023, 1, 2, 11, 0),
                 LocalDateTime.of(2023, 1, 2, 13, 0),
                 4);
         ScheduleSlot dayAfterSlot = new ScheduleSlot(
+                schedule,
                 LocalDateTime.of(2023, 1, 2, 12, 0),
                 LocalDateTime.of(2023, 1, 2, 13, 0),
                 4);
         ScheduleSlot weekAfterSlotSchedule = new ScheduleSlot(
+                schedule,
                 LocalDateTime.of(2023, 1, 8, 12, 0),
                 LocalDateTime.of(2023, 1, 8, 14, 0),
                 4);
         ScheduleSlot weekAfterSlot = new ScheduleSlot(
+                schedule,
                 LocalDateTime.of(2023, 1, 8, 12, 0),
                 LocalDateTime.of(2023, 1, 8, 13, 0),
                 4);
@@ -841,12 +874,14 @@ public class ScheduleTest {
 
         schedule.processReservationRemoval(core, reservation);
         ScheduleSlot morningSlot = new ScheduleSlot(
+                schedule,
                 startDateTime.minusMinutes(OVERNIGHT_DURATION),
                 startDateTime,
                 item.getAmount(),
                 ReservationType.MORNING);
-        ScheduleSlot resultSlot = new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), List.of(1L));
+        ScheduleSlot resultSlot = new ScheduleSlot(schedule, startDateTime, endDateTime, item.getAmount(), List.of(1L));
         ScheduleSlot overnightSlot = new ScheduleSlot(
+                schedule,
                 endDateTime,
                 endDateTime.plusMinutes(OVERNIGHT_DURATION),
                 item.getAmount(),
@@ -885,7 +920,7 @@ public class ScheduleTest {
 
 
         Schedule schedule = new Schedule(1L, item);
-        schedule.addSlot(new ScheduleSlot(startDateTime, endDateTime, item.getInitialAmount(), List.of(0L, 2L)));
+        schedule.addSlot(new ScheduleSlot(schedule, startDateTime, endDateTime, item.getInitialAmount(), List.of(0L, 2L)));
 
         Reservation reservation = Reservation.builder()
                 .item(item)
@@ -897,12 +932,14 @@ public class ScheduleTest {
 
         schedule.processReservationRemoval(core, reservation);
         ScheduleSlot morningSlot = new ScheduleSlot(
+                schedule,
                 startDateTime.minusMinutes(OVERNIGHT_DURATION),
                 startDateTime,
                 item.getAmount(),
                 ReservationType.MORNING);
-        ScheduleSlot resultSlot = new ScheduleSlot(startDateTime, endDateTime, item.getAmount(), List.of());
+        ScheduleSlot resultSlot = new ScheduleSlot(schedule, startDateTime, endDateTime, item.getAmount(), List.of());
         ScheduleSlot overnightSlot = new ScheduleSlot(
+                schedule,
                 endDateTime,
                 endDateTime.plusMinutes(OVERNIGHT_DURATION),
                 item.getAmount(),

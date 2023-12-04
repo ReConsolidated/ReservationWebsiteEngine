@@ -85,7 +85,7 @@ public class ReservationIT {
 
         Schedule schedule = new Schedule(1L, item);
 
-        schedule.addSlot(new ScheduleSlot(LocalDateTime.of(2023, 1, 1, 12, 0),
+        schedule.addSlot(new ScheduleSlot(schedule, LocalDateTime.of(2023, 1, 1, 12, 0),
                 LocalDateTime.of(2023, 1, 1, 14, 0), item.getInitialAmount()));
 
         item.setSchedule(schedule);
@@ -147,7 +147,7 @@ public class ReservationIT {
 
         LocalDateTime start = LocalDateTime.of(2023, 1, 1, 12, 0);
         LocalDateTime end = LocalDateTime.of(2023, 1, 1, 14, 0);
-        ScheduleSlot subItemSlot = new ScheduleSlot(start, end, 1);
+        ScheduleSlot subItemSlot = new ScheduleSlot(null, start, end, 1);
 
         storeConfig = storeConfigService.createStoreConfig(appUser, new StoreConfigDto(storeConfig));
         storeService.createStore(

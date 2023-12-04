@@ -26,7 +26,7 @@ public interface FlexibleTimeStrategy {
         return true;
     }
 
-    default List<ScheduleSlot> fillGaps(Reservation reservation, List<ScheduleSlot> scheduleSlots) {
+    default List<ScheduleSlot> fillGaps(Schedule schedule, Reservation reservation, List<ScheduleSlot> scheduleSlots) {
 
         //needed to initialize slots with currentAmount = 0 that were fully reserved and removed
         List<Long> allSubItems = new ArrayList<>();
@@ -35,6 +35,7 @@ public interface FlexibleTimeStrategy {
         }
         if (scheduleSlots.isEmpty()) {
             scheduleSlots.add(new ScheduleSlot(
+                    schedule,
                     reservation.getStartDateTime(),
                     reservation.getEndDateTime(),
                     allSubItems.size(),
@@ -43,6 +44,7 @@ public interface FlexibleTimeStrategy {
         //adding starting slot of reservation if it was fully reserved and removed
         if (!scheduleSlots.get(0).getStartDateTime().isEqual(reservation.getStartDateTime())) {
             scheduleSlots.add(0, new ScheduleSlot(
+                    schedule,
                     reservation.getStartDateTime(),
                     scheduleSlots.get(0).getStartDateTime(),
                     allSubItems.size(),
@@ -51,6 +53,7 @@ public interface FlexibleTimeStrategy {
         //adding ending slot of reservation if it was fully reserved and removed
         if (!scheduleSlots.get(scheduleSlots.size() - 1).getEndDateTime().isEqual(reservation.getEndDateTime())) {
             scheduleSlots.add(new ScheduleSlot(
+                    schedule,
                     scheduleSlots.get(scheduleSlots.size() - 1).getEndDateTime(),
                     reservation.getEndDateTime(),
                     allSubItems.size(),
@@ -62,6 +65,7 @@ public interface FlexibleTimeStrategy {
             if (!prev.getType().equals(ReservationType.OVERNIGHT) &&
                     scheduleSlots.get(i).getType().equals(ReservationType.MORNING)) {
                 scheduleSlots.add(i + 1, new ScheduleSlot(
+                        schedule,
                         prev.getEndDateTime(),
                         scheduleSlots.get(i).getEndDateTime(),
                         allSubItems.size(),
@@ -70,6 +74,7 @@ public interface FlexibleTimeStrategy {
             if (!scheduleSlots.get(i).getType().equals(ReservationType.MORNING) &&
                     !prev.getEndDateTime().equals(scheduleSlots.get(i).getStartDateTime())) {
                 scheduleSlots.add(i, new ScheduleSlot(
+                        schedule,
                         prev.getEndDateTime(),
                         scheduleSlots.get(i).getStartDateTime(),
                         allSubItems.size(),

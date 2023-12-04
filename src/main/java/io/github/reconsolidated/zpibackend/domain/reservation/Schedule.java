@@ -44,7 +44,7 @@ public class Schedule {
         this.item = item;
         this.availableScheduleSlots = new ArrayList<>();
         for (Availability availability: availabilities) {
-            addSlot(new ScheduleSlot(availability.getStartDateTime(), availability.getEndDateTime(), item.getAmount()));
+            addSlot(new ScheduleSlot(this, availability.getStartDateTime(), availability.getEndDateTime(), item.getAmount()));
         }
 
     }
@@ -144,6 +144,7 @@ public class Schedule {
                         availableScheduleSlots.remove(index);
                     }
                     ScheduleSlot morningSlot = new ScheduleSlot(
+                            this,
                             scheduleSlot.getStartDateTime().minusMinutes(OVERNIGHT_DURATION),
                             scheduleSlot.getStartDateTime(),
                             scheduleSlot.getItemsAvailability().size(),
@@ -167,6 +168,7 @@ public class Schedule {
                         availableScheduleSlots.add(
                                 overnightIndex,
                                 new ScheduleSlot(
+                                        this,
                                         scheduleSlot.getEndDateTime(),
                                         scheduleSlot.getEndDateTime().plusMinutes(OVERNIGHT_DURATION),
                                         scheduleSlot.getItemsAvailability().size(),
@@ -188,11 +190,13 @@ public class Schedule {
                         index,
                         Arrays.asList(
                             new ScheduleSlot(
+                                    this,
                                     scheduleSlot.getStartDateTime().minusMinutes(OVERNIGHT_DURATION),
                                     scheduleSlot.getStartDateTime(),
                                     scheduleSlot.getItemsAvailability().size(),
                                     ReservationType.MORNING),
                             new ScheduleSlot(
+                                    this,
                                     scheduleSlot.getEndDateTime(),
                                     scheduleSlot.getEndDateTime().plusMinutes(OVERNIGHT_DURATION),
                                     scheduleSlot.getItemsAvailability().size(),
@@ -290,6 +294,7 @@ public class Schedule {
                 getLongestSlotsWithAmount(originalSlot.getCurrAmount(), fittingDaySlots));
 
         ScheduleSlot dayBeforeSlot = new ScheduleSlot(
+                this,
                 originalSlot.getStartDateTime().minusDays(1),
                 originalSlot.getEndDateTime().minusDays(1),
                 item.getAmount());
@@ -297,6 +302,7 @@ public class Schedule {
             suggestions.add(dayBeforeSlot);
         }
         ScheduleSlot dayAfterSlot = new ScheduleSlot(
+                this,
                 originalSlot.getStartDateTime().plusDays(1),
                 originalSlot.getEndDateTime().plusDays(1),
                 item.getAmount());
@@ -304,6 +310,7 @@ public class Schedule {
             suggestions.add(dayAfterSlot);
         }
         ScheduleSlot weekAfterSlot = new ScheduleSlot(
+                this,
                 originalSlot.getStartDateTime().plusDays(WEEKDAYS),
                 originalSlot.getEndDateTime().plusDays(WEEKDAYS),
                 item.getAmount());
@@ -416,7 +423,7 @@ public class Schedule {
                 .filter(slot -> slot.overlap(reservationSlot))
                 .collect(Collectors.toList());
         availableScheduleSlots.removeAll(reservationSlots);
-        reservationSlots = getTimeStrategy(core).fillGaps(reservation, reservationSlots);
+        reservationSlots = getTimeStrategy(core).fillGaps(this, reservation, reservationSlots);
 
         List<ScheduleSlot> restoredSlots = getReservationStrategy(core).processReservationDelete(reservation, reservationSlots);
         restoredSlots.forEach(this::addSlot);

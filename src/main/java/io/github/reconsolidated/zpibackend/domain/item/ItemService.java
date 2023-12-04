@@ -237,4 +237,8 @@ public class ItemService {
         }
         storeService.saveStore(store);
     }
+
+    public void saveItem(Item item) {
+        itemRepository.save(item);
+    }
 }
