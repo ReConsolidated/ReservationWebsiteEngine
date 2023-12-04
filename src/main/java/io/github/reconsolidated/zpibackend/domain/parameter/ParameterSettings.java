@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.domain.parameter;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.github.reconsolidated.zpibackend.domain.parameter.dtos.ParameterSettingsDto;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfig;
 import lombok.*;
 
@@ -27,4 +28,14 @@ public class ParameterSettings {
     protected Boolean isFilterable;
     protected Boolean showMainPage;
     protected Boolean showDetailsPage;
+
+    public ParameterSettings(ParameterSettingsDto parameterSettingsDto) {
+        this.id = parameterSettingsDto.getId();
+        this.name = parameterSettingsDto.getName();
+        this.dataType = parameterSettingsDto.getDataType();
+        this.isRequired = parameterSettingsDto.getIsRequired();
+        this.isFilterable = parameterSettingsDto.getIsFilterable();
+        this.showMainPage = parameterSettingsDto.getShowMainPage();
+        this.showDetailsPage = parameterSettingsDto.getShowDetailsPage();
+    }
 }

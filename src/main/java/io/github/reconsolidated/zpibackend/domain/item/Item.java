@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -81,7 +82,10 @@ public class Item {
                 }
             }
         }
-        this.customAttributeList = itemDto.getCustomAttributeList().stream().map((p) -> new Parameter(p, this)).toList();
+        this.customAttributeList = itemDto.getCustomAttributeList()
+                .stream()
+                .map((p) -> new Parameter(p, this))
+                .collect(Collectors.toList());
         if (store.getStoreConfig().getCore().getFlexibility()) {
             this.schedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
             this.initialSchedule = new Schedule(this, itemDto.getSchedule().getScheduledRanges());
@@ -112,7 +116,7 @@ public class Item {
         }
         this.subItems = itemDto.getSubItems() == null ?
                 new ArrayList<>() :
-                itemDto.getSubItems().stream().map(SubItem::new).toList();
+                itemDto.getSubItems().stream().map(subItemDto -> new SubItem(subItemDto, this)).toList();
     }
 
     public SubItemListDto getSubItemsListDto() {

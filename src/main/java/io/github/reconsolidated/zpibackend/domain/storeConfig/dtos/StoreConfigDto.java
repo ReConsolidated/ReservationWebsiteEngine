@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.domain.storeConfig.dtos;
 
 import io.github.reconsolidated.zpibackend.domain.parameter.ParameterSettings;
+import io.github.reconsolidated.zpibackend.domain.parameter.dtos.ParameterSettingsDto;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public class StoreConfigDto {
     private CoreConfig core;
     private MainPageConfig mainPage;
     private DetailsPageConfig detailsPage;
-    private List<ParameterSettings> customAttributesSpec;
+    private List<ParameterSettingsDto> customAttributesSpec;
     private AuthenticationConfig authConfig;
     private String storeName;
 
@@ -29,7 +30,10 @@ public class StoreConfigDto {
         core = storeConfig.getCore();
         mainPage = storeConfig.getMainPage();
         detailsPage = storeConfig.getDetailsPage();
-        customAttributesSpec = storeConfig.getCustomAttributesSpec();
+        customAttributesSpec = storeConfig.getCustomAttributesSpec()
+                .stream()
+                .map(ParameterSettingsDto::new)
+                .toList();
         authConfig = storeConfig.getAuthConfig();
     }
 

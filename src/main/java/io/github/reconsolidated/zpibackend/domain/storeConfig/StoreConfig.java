@@ -38,6 +38,7 @@ public class StoreConfig {
         this.detailsPage = detailsPage;
         this.authConfig = authConfig;
         this.customAttributesSpec = customAttributesSpec;
+        this.customAttributesSpec.forEach(parameterSettings -> parameterSettings.setStoreConfig(this));
     }
 
     public StoreNameDto getStoreSummary() {

@@ -30,8 +30,9 @@ public class SubItem {
     @Builder.Default
     private Integer amount = 1;
 
-    public SubItem(SubItemDto subItemDto) {
+    public SubItem(SubItemDto subItemDto, Item item) {
         this.subItemId = subItemDto.getId();
+        this.item = item;
         this.title = subItemDto.getTitle();
         this.subtitle = subItemDto.getSubtitle();
         this.amount = subItemDto.getAmount() == null ? 1 : subItemDto.getAmount();
