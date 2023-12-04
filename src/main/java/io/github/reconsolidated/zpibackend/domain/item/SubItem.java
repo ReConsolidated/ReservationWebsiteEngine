@@ -61,7 +61,13 @@ public class SubItem {
         return new ScheduleSlot(startDateTime, endDateTime, amount);
     }
     public SubItemDto toSubItemDto() {
-        return new SubItemDto(subItemId, title, subtitle, amount, new ScheduleDto(startDateTime, endDateTime));
+        return new SubItemDto(
+                subItemId,
+                title,
+                subtitle,
+                amount, 
+                item != null ? item.getInitialAmount() : 1,
+                new ScheduleDto(startDateTime, endDateTime));
     }
     public SubItemInfoDto toSubItemInfoDto() {
         return new SubItemInfoDto(subItemId, title, subtitle);

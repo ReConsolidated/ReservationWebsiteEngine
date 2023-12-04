@@ -42,7 +42,7 @@ public class ItemDto {
         this.customAttributeList = item.getCustomAttributeList().stream().map(ParameterDto::new).toList();
         this.amount = item.getInitialAmount();
         this.availableAmount = item.getAmount();
-        this.subItems = item.getSubItems().stream().map(SubItem::toSubItemDto).toList();
+        this.subItems = item.getSubItems().stream().map(SubItem::toSubItemDto).sorted().toList();
         this.availabilities = item.getSchedule().getLongestAvailabilities();
         this.mark = average;
         this.ratingCount = ratingCount;
