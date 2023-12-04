@@ -18,7 +18,6 @@ import io.github.reconsolidated.zpibackend.domain.storeConfig.CoreConfig;
 import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -263,7 +262,7 @@ public class ReservationService {
 
     public boolean confirm(AppUser currentUser, String storeName, Long reservationId) {
         Store store = storeService.getStore(storeName);
-        if(!currentUser.getId().equals(store.getOwnerAppUserId())) {
+        if (!currentUser.getId().equals(store.getOwnerAppUserId())) {
             throw new IllegalArgumentException("Only owners of store can confirm reservations!");
         }
         Reservation toConfirm = reservationRepository.findById(reservationId).orElseThrow();

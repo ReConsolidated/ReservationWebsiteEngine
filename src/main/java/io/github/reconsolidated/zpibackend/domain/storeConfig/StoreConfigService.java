@@ -1,7 +1,6 @@
 package io.github.reconsolidated.zpibackend.domain.storeConfig;
 
 import io.github.reconsolidated.zpibackend.domain.appUser.AppUser;
-import io.github.reconsolidated.zpibackend.domain.parameter.ParameterSettings;
 import io.github.reconsolidated.zpibackend.domain.store.dtos.StoreNameDto;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.StoreConfigDto;
 import io.github.reconsolidated.zpibackend.domain.storeConfig.dtos.StoreConfigsListDto;

@@ -59,7 +59,7 @@ public interface FlexibleTimeStrategy {
         //filling all possible gaps in time range of reservation
         ScheduleSlot prev = scheduleSlots.get(0);
         for (int i = 1; i < scheduleSlots.size(); i++) {
-            if(!prev.getType().equals(ReservationType.OVERNIGHT) &&
+            if (!prev.getType().equals(ReservationType.OVERNIGHT) &&
                     scheduleSlots.get(i).getType().equals(ReservationType.MORNING)) {
                 scheduleSlots.add(i + 1, new ScheduleSlot(
                         prev.getEndDateTime(),

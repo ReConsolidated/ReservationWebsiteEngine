@@ -1,6 +1,5 @@
 package io.github.reconsolidated.zpibackend.domain.parameter;
 
-import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfig;
 import lombok.*;
 
 import javax.persistence.Entity;
