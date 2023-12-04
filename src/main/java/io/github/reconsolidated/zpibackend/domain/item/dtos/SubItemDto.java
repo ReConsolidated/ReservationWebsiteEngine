@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubItemDto implements Comparable<SubItemDto>{
+public class SubItemDto implements Comparable<SubItemDto> {
     private Long id;
     private String title;
     private String subtitle;
@@ -23,7 +23,7 @@ public class SubItemDto implements Comparable<SubItemDto>{
 
     @Override
     public int compareTo(@NotNull SubItemDto subItemDto) {
-        if(id == null) {
+        if (id == null) {
             return 1;
         }
         return id.compareTo(subItemDto.getId());
