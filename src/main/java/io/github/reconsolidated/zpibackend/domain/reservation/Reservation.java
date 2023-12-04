@@ -24,8 +24,10 @@ public class Reservation {
     private String email;
     @ManyToOne
     private Item item;
+    @Builder.Default
     @ElementCollection
     private List<Long> subItemIdList = new ArrayList<>();
+    @Builder.Default
     @ElementCollection
     private List<String> personalData = new ArrayList<>();
     private LocalDateTime startDateTime;

@@ -13,7 +13,6 @@ public class ParameterBooleanSettings extends ParameterSettings {
 
     public ParameterBooleanSettings(ParameterSettings parameterSettings) {
         super(parameterSettings.getId(),
-                parameterSettings.getStoreConfig(),
                 parameterSettings.getName(),
                 parameterSettings.getDataType(),
                 parameterSettings.getIsRequired(),

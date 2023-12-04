@@ -26,7 +26,7 @@ public class Schedule {
     @Id
     @GeneratedValue(generator = "schedule_generator")
     private Long scheduleId;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     private Item item;
     @OrderBy("startDateTime ASC, endDateTime ASC")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "schedule", orphanRemoval = true)

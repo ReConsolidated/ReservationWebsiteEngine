@@ -27,7 +27,7 @@ public class StoreConfig {
     private DetailsPageConfig detailsPage;
     @OneToOne(cascade = CascadeType.ALL)
     private AuthenticationConfig authConfig;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "storeConfig")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ParameterSettings> customAttributesSpec;
 
     public StoreConfig(Owner owner, CoreConfig core, MainPageConfig mainPage, DetailsPageConfig detailsPage,
@@ -38,7 +38,6 @@ public class StoreConfig {
         this.detailsPage = detailsPage;
         this.authConfig = authConfig;
         this.customAttributesSpec = customAttributesSpec;
-        this.customAttributesSpec.forEach(parameterSettings -> parameterSettings.setStoreConfig(this));
     }
 
     public StoreNameDto getStoreSummary() {

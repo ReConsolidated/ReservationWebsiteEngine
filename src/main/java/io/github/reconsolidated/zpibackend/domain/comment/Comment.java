@@ -20,9 +20,9 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private Item item;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private AppUser user;
     private LocalDateTime dateTime;
     @Column(length = 1000)

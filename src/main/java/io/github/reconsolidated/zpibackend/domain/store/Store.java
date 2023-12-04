@@ -26,7 +26,7 @@ public class Store {
     private String storeName;
     @OneToOne(cascade = CascadeType.ALL)
     private StoreConfig storeConfig;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "store")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "store", orphanRemoval = true)
     private List<Item> items;
 
     public Store(StoreConfig storeConfig) {
