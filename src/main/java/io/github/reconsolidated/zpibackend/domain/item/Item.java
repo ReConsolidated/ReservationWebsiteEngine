@@ -52,7 +52,7 @@ public class Item {
     private Integer amount = 1;
     @Builder.Default
     private Integer initialAmount = 1;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "item", orphanRemoval = true)
     private List<SubItem> subItems;
 
     public Item(Store store, ItemDto itemDto) {

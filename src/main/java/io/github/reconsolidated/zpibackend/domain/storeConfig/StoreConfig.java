@@ -25,10 +25,10 @@ public class StoreConfig {
     private MainPageConfig mainPage;
     @OneToOne(cascade = CascadeType.ALL)
     private DetailsPageConfig detailsPage;
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<ParameterSettings> customAttributesSpec;
     @OneToOne(cascade = CascadeType.ALL)
     private AuthenticationConfig authConfig;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "storeConfig")
+    private List<ParameterSettings> customAttributesSpec;
 
     public StoreConfig(Owner owner, CoreConfig core, MainPageConfig mainPage, DetailsPageConfig detailsPage,
                        AuthenticationConfig authConfig, List<ParameterSettings> customAttributesSpec) {

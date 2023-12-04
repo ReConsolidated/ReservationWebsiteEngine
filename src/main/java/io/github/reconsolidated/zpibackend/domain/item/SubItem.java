@@ -22,6 +22,9 @@ public class SubItem {
     private Long subItemId;
     private String title;
     private String subtitle;
+    @JoinColumn(name = "item_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Item item;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     @Builder.Default

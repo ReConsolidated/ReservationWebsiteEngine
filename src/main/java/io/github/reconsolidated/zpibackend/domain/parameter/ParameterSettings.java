@@ -1,6 +1,7 @@
 package io.github.reconsolidated.zpibackend.domain.parameter;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.github.reconsolidated.zpibackend.domain.storeConfig.StoreConfig;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,6 +18,9 @@ public class ParameterSettings {
     @Id
     @GeneratedValue(generator = "parameter_settings_generator")
     protected Long id;
+    @JoinColumn(name = "store_config_id")
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    protected StoreConfig storeConfig;
     protected String name;
     protected ParameterType dataType;
     protected Boolean isRequired;
