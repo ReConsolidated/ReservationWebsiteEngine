@@ -28,5 +28,8 @@ public class ScheduleDto {
         scheduledRanges = new ArrayList<>();
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        if (endDateTime.isEqual(startDateTime)) {
+            endDateTime = null;
+        }
     }
 }
