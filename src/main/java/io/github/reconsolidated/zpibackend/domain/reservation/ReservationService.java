@@ -49,7 +49,7 @@ public class ReservationService {
         if (core.getFlexibility()) {
             //reservations with schedule
             Schedule schedule = item.getSchedule();
-            ScheduleSlot requestSlot = new ScheduleSlot(reservationDto.getStartDateTime(), reservationDto.getEndDateTime(),
+            ScheduleSlot requestSlot = new ScheduleSlot(schedule, reservationDto.getStartDateTime(), reservationDto.getEndDateTime(),
                     reservationDto.getAmount());
             if (!schedule.verify(core, requestSlot)) {
                 throw new IllegalArgumentException("Right slot is not available. Reservation is not possible!");
@@ -138,7 +138,7 @@ public class ReservationService {
             throw new IllegalArgumentException("For core with unique items use \"/refetch\" endpoint!");
         }
 
-        ScheduleSlot requestSlot = new ScheduleSlot(request.getStartDate(), request.getEndDate(), request.getAmount());
+        ScheduleSlot requestSlot = new ScheduleSlot(schedule, request.getStartDate(), request.getEndDate(), request.getAmount());
         if (schedule.verify(core, requestSlot)) {
             return Collections.singletonList(CheckAvailabilityResponseSuccess.builder()
                     .itemId(request.getItemId())

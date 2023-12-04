@@ -45,17 +45,8 @@ public class ScheduleSlot {
         }
     }
 
-    public ScheduleSlot(LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initialAmount) {
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
-        this.currAmount = initialAmount;
-        this.itemsAvailability = new ArrayList<>(initialAmount);
-        for (int i = 0; i < initialAmount; i++) {
-            itemsAvailability.add(true);
-        }
-    }
-
-    public ScheduleSlot(LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initAmount, ReservationType type) {
+    public ScheduleSlot(Schedule schedule, LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initAmount, ReservationType type) {
+        this.schedule = schedule;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.type = type;
@@ -66,7 +57,8 @@ public class ScheduleSlot {
         }
     }
 
-    public ScheduleSlot(LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initAmount, List<Long> subItemIdList) {
+    public ScheduleSlot(Schedule schedule, LocalDateTime startDateTime, LocalDateTime endDateTime, Integer initAmount, List<Long> subItemIdList) {
+        this.schedule = schedule;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.currAmount = initAmount - subItemIdList.size();
@@ -93,8 +85,8 @@ public class ScheduleSlot {
             throw new IllegalArgumentException("Cannot split Schedule slot by time outside the slot time range!\nSlot: "
                     + this + ", splitBy: " + splitBy);
         }
-        ScheduleSlot first = new ScheduleSlot(startDateTime, splitBy, itemsAvailability.size(), type);
-        ScheduleSlot second = new ScheduleSlot(splitBy, endDateTime, itemsAvailability.size(), type);
+        ScheduleSlot first = new ScheduleSlot(schedule, startDateTime, splitBy, itemsAvailability.size(), type);
+        ScheduleSlot second = new ScheduleSlot(schedule, splitBy, endDateTime, itemsAvailability.size(), type);
         for (int i = 0; i < itemsAvailability.size(); i++) {
             first.getItemsAvailability().set(i, itemsAvailability.get(i));
             second.getItemsAvailability().set(i, itemsAvailability.get(i));

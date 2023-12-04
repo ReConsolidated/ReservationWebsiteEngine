@@ -50,7 +50,7 @@ public class SubItem {
         }
     }
     public ScheduleSlot getSlot() {
-        return new ScheduleSlot(startDateTime, endDateTime, amount);
+        return new ScheduleSlot(null, startDateTime, endDateTime, amount);
     }
     public SubItemDto toSubItemDto() {
         return new SubItemDto(
