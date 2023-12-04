@@ -29,7 +29,7 @@ public class ScheduleDto {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         if (endDateTime.isEqual(startDateTime)) {
-            endDateTime = null;
+            this.endDateTime = null;
         }
     }
 }
