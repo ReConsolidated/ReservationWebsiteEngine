@@ -15,8 +15,10 @@ public class SubItemDto implements Comparable<SubItemDto>{
     private Long id;
     private String title;
     private String subtitle;
+    @JsonProperty("amount")
+    private Integer initialAmount;
+    @JsonProperty("availableAmount")
     private Integer amount;
-    private Integer availableAmount;
     private ScheduleDto schedule;
 
     @Override
