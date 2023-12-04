@@ -39,14 +39,8 @@ public class Reservation {
         return new ScheduleSlot(startDateTime, endDateTime, item.getInitialAmount(), subItemIdList);
     }
 
-    public void addPersonalData(int index, String data) {
-        personalData.add(index, data);
-    }
-
     public void setStatus(LocalDateTime now) {
-        if (status == ReservationStatus.CANCELLED_BY_USER || status == ReservationStatus.CANCELLED_BY_ADMIN) {
-
-        } else {
+        if (!(status == ReservationStatus.CANCELLED_BY_USER || status == ReservationStatus.CANCELLED_BY_ADMIN)) {
             if (startDateTime == null || !startDateTime.isBefore(now)) {
                 status = ReservationStatus.ACTIVE;
             } else {
