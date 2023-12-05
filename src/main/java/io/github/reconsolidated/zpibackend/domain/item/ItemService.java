@@ -108,7 +108,8 @@ public class ItemService {
             List<Reservation> itemReservations = reservationService
                     .getItemReservations(item.getItemId())
                     .stream()
-                    .filter(reservation -> reservation.getStartDateTime().isAfter(LocalDateTime.now()))
+                    .filter(reservation -> reservation.getStartDateTime().isAfter(LocalDateTime.now()) &&
+                            reservation.getStatus().equals(ReservationStatus.ACTIVE))
                     .toList();
             List<Reservation> toProcess = new ArrayList<>();
             List<Reservation> causeError = new ArrayList<>();
