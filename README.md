@@ -1,4 +1,4 @@
-# ZPIBackend
+# Reservation Website Engine, formerly known as "ZPIBackend"
 
 Project built for engineering degree at University of Science and Technology in Wrocław.
 
